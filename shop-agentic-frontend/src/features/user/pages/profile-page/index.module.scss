@@ -179,7 +179,7 @@
   background: transparent;
 
   &:hover:not(:disabled) {
-    background: #fff1f2;
+    background: tokens.color(surface-error-soft);
   }
 }
 

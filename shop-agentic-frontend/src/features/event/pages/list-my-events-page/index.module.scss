@@ -107,8 +107,8 @@
 }
 
 .closing-pill {
-  background: #fef3c7;
-  color: #d97706;
+  background: tokens.color(warning-bg-soft);
+  color: tokens.color(warning-strong);
 }
 
 .delivery-pill {
