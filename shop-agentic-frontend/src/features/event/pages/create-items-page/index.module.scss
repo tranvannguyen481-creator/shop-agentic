@@ -345,6 +345,103 @@
   }
 }
 
+// ── Option Groups (loaded from template) ─────────────────────────────────────
+
+.option-groups {
+  display: grid;
+  gap: 8px;
+}
+
+.option-group {
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(sm);
+  padding: 8px 10px;
+  background: tokens.color(surface-muted);
+  display: grid;
+  gap: 6px;
+}
+
+.option-group-header {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.option-group-title {
+  font-size: tokens.fs(sm);
+  font-weight: 600;
+  color: tokens.color(text-muted-1);
+}
+
+.option-required-badge {
+  font-size: tokens.fs(xs);
+  color: tokens.color(form-required);
+  border: 1px solid currentColor;
+  border-radius: tokens.radius(pill);
+  padding: 1px 6px;
+  line-height: 1.4;
+}
+
+.remove-option-group {
+  border: 0;
+  background: transparent;
+  color: tokens.color(text-muted-1);
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+
+  &:hover {
+    color: tokens.color(form-required);
+  }
+}
+
+.option-group-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.option-group-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(pill);
+  padding: 2px 6px 2px 10px;
+  background: tokens.color(surface);
+  font-size: tokens.fs(sm);
+}
+
+.choice-name {
+  color: tokens.color(text-base);
+}
+
+.choice-price {
+  color: tokens.color(text-muted-1);
+  font-size: tokens.fs(xs);
+}
+
+.remove-choice {
+  border: 0;
+  background: transparent;
+  color: tokens.color(text-soft);
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover {
+    color: tokens.color(form-required);
+  }
+}
+
 .add-items {
   justify-self: center;
   border: 1px solid tokens.color(border-soft);

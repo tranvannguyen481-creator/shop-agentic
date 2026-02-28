@@ -20,6 +20,7 @@ interface HostedEventItem {
   closingInText?: string;
   deliveryInText?: string;
   hostDisplayName?: string;
+  bannerPreviewUrls?: string[];
   [key: string]: unknown;
 }
 

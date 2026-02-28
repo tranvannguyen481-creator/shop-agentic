@@ -5,8 +5,11 @@ import {
   Avatar,
   Badge,
   Button,
+  Chip,
+  Divider,
   Modal,
   SectionCard,
+  ZoomImage,
 } from "../../../../shared/components/ui";
 import { useCurrentUserQuery } from "../../../../shared/hooks/use-current-user-query";
 import { useCreatedConfirm } from "../../hooks/use-created-confirm";
@@ -34,12 +37,10 @@ const modeLabel: Record<string, string> = {
 function CreatedConfirmView() {
   const vm = useCreatedConfirm();
   const { data: currentUser } = useCurrentUserQuery();
-  const hostName =
-    currentUser?.displayName ?? currentUser?.email ?? "You";
+  const hostName = currentUser?.displayName ?? currentUser?.email ?? "You";
 
   return (
     <section className={styles.page}>
-
       {/* ── Event header card ─────────────────────────────────────── */}
       <SectionCard className={styles.eventCard}>
         <div className={styles.eventHead}>
@@ -91,6 +92,19 @@ function CreatedConfirmView() {
             </div>
           ) : null}
         </dl>
+
+        {vm.bannerPreviewUrls.length > 0 && (
+          <div className={styles.bannerGallery}>
+            {vm.bannerPreviewUrls.map((url, i) => (
+              <ZoomImage
+                key={i}
+                src={url}
+                alt={`Banner ${i + 1}`}
+                className={styles.bannerThumb}
+              />
+            ))}
+          </div>
+        )}
       </SectionCard>
 
       {/* ── Items ─────────────────────────────────────────────────── */}
@@ -98,8 +112,53 @@ function CreatedConfirmView() {
         <div className={styles.itemList}>
           {vm.items.map((item, i) => (
             <SectionCard key={i} className={styles.itemRow}>
+              {item.imagePreviewUrl && (
+                <ZoomImage
+                  src={item.imagePreviewUrl}
+                  alt={item.name}
+                  className={styles.itemThumb}
+                />
+              )}
               <div className={styles.itemInfo}>
                 <p className={styles.itemName}>{item.name}</p>
+
+                {item.options.length > 0 && (
+                  <div className={styles.itemOptions}>
+                    {item.options.map((opt, oi) => (
+                      <Chip key={oi}>{opt.value}</Chip>
+                    ))}
+                  </div>
+                )}
+
+                {item.optionGroups.length > 0 && (
+                  <div className={styles.itemOptionGroups}>
+                    {item.optionGroups.map((group, gi) => (
+                      <div key={gi} className={styles.optionGroup}>
+                        <span className={styles.optionGroupName}>
+                          {group.name}
+                          {group.required && (
+                            <span className={styles.requiredBadge}>
+                              Required
+                            </span>
+                          )}
+                        </span>
+                        <Divider />
+                        <div className={styles.optionGroupChoices}>
+                          {group.choices.map((choice, ci) => (
+                            <Chip key={ci}>
+                              {choice.name}
+                              {choice.price > 0 && (
+                                <span className={styles.choicePrice}>
+                                  +${choice.price.toFixed(2)}
+                                </span>
+                              )}
+                            </Chip>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <span className={styles.itemPrice}>{item.price}</span>
             </SectionCard>

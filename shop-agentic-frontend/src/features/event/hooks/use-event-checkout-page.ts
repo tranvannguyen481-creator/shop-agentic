@@ -3,13 +3,13 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { APP_PATHS } from "../../../app/route-config";
 import { calculateOrder, placeOrder } from "../../../shared/services/order-api";
+import { toVND } from "../../../shared/utils/price-utils";
 import { EVENT_QUERY_KEYS } from "../constants/event-query-keys";
 import {
   CheckoutPricingBreakdown,
   EventCheckoutLineItem,
   EventCheckoutPageViewModel,
 } from "../types/event-checkout-page-types";
-import { toVND } from "../utils/price-utils";
 
 const toLineItem = (source: unknown): EventCheckoutLineItem | null => {
   if (!source || typeof source !== "object") return null;

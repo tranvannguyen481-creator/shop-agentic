@@ -1,26 +1,33 @@
 @use "sass:map";
 
 $color-tokens: (
-  primary: #6366f1,
-  secondary: #14b8a6,
-  primary-legacy: #4f46e5,
-  primary-legacy-strong: #4338ca,
-  success: #10b981,
-  warning: #f59e0b,
-  warning-strong: #d97706,
-  warning-soft: #f59e0b,
-  warning-accent: #fbbf24,
+  // --- BRAND IDENTITY: Blue for trust, Orange for energy ---
+  primary: #3b82f6,              // Blue (Gắn kết cộng đồng)
+  secondary: #f97316,            // Orange (Năng lượng sự kiện/Hot)
+  primary-legacy: #2563eb,
+  primary-legacy-strong: #1d4ed8,
+  
+  // --- STATUS ---
+  success: #10b981,              // Đã đặt vé/Đã tham gia
+  warning: #facc15,              // Sắp diễn ra
+  warning-strong: #eab308,
+  warning-soft: #fefce8,
+  warning-accent: #fef08a,
+  
+  // --- SURFACES (Dùng Slate/Gray để tạo cảm giác hiện đại) ---
   light: #f8fafc,
-  dark: #0f172a,
-  surface: #ffffff,
-  surface-muted: #f8fafc,
-  surface-soft: #f1f5f9,
-  surface-card: #f1f5f9,
-  surface-card-2: #e2e8f0,
-  surface-card-3: #cbd5e1,
-  shell-bg: #f8fafc,
+  dark: #0f172a,                 // Nền Header hoặc Sidebar chuyên nghiệp
+  surface: #ffffff,              // Card sự kiện
+  surface-muted: #f1f5f9,
+  surface-soft: #f8fafc,
+  surface-card: #ffffff,
+  surface-card-2: #f1f5f9,
+  surface-card-3: #e2e8f0,
+  shell-bg: #f8fafc,             // Nền app chính
   shell-border: #e2e8f0,
-  body-bg: #f1f5f9,
+  body-bg: #f8fafc,
+  
+  // --- TYPOGRAPHY (Slate tones cho độ tương phản cao) ---
   body-text: #1e293b,
   text-soft: #475569,
   text-muted-1: #64748b,
@@ -32,46 +39,54 @@ $color-tokens: (
   text-neutral-2: #64748b,
   text-neutral-3: #64748b,
   text-neutral-4: #94a3b8,
-  text-neutral-5: #64748b,
+  text-neutral-5: #cbd5e1,
   text-neutral-6: #475569,
-  text-neutral-7: #374151,
+  text-neutral-7: #334155,
   text-neutral-8: #94a3b8,
-  text-brand-soft: #818cf8,
-  text-brand-dark: #3730a3,
-  text-brand-cool: #6366f1,
-  text-brand-sky: #a5b4fc,
-  text-brand-cyan: #14b8a6,
+  
+  // --- BRAND TEXT VARIANTS ---
+  text-brand-soft: #60a5fa,
+  text-brand-dark: #1e3a8a,
+  text-brand-cool: #3b82f6,
+  text-brand-sky: #93c5fd,
+  text-brand-cyan: #06b6d4,
   text-on-dark: #ffffff,
-  text-on-brand-dark: #e0e7ff,
-  text-aqua-soft: #c7d2fe,
-  text-subtle: #6b7280,
-  text-emphasis: #374151,
-  text-dim: #9ca3af,
-  border-soft: #e2e8f0,
-  border-muted: #e5e7eb,
-  border-contrast: #d1d5db,
-  border-neutral: #d1d5db,
-  border-mid: #9ca3af,
-  border-input-underline: #6366f1,
+  text-on-brand-dark: #dbeafe,
+  text-aqua-soft: #e0f2fe,
+  text-subtle: #9ca3af,
+  text-emphasis: #111827,
+  text-dim: #6b7280,
+  
+  // --- BORDERS & INPUTS ---
+  border-soft: #f1f5f9,
+  border-muted: #e2e8f0,
+  border-contrast: #cbd5e1,
+  border-neutral: #cbd5e1,
+  border-mid: #94a3b8,
+  border-input-underline: #3b82f6,
   border-input: #e2e8f0,
-  border-input-focus: #6366f1,
-  border-upload: #c7d2fe,
-  border-aqua: #e0e7ff,
-  accent-cyan-soft: #5eead4,
-  form-label: #6b7280,
-  form-input-text: #374151,
-  form-required: #f43f5e,
-  form-checkbox-accent: #6366f1,
-  brand-soft-bg: #eef2ff,
-  brand-soft-text: #4338ca,
-  feature-soft-bg: #f0fdf4,
-  feature-soft-border: #bbf7d0,
-  profile-banner-start: #e0e7ff,
-  profile-banner-end: #c7d2fe,
-  profile-avatar-border: #e0e7ff,
-  warning-bg-soft: #fef3c7,
-  surface-error-soft: #fff1f2,
-  link-primary: #6366f1,
+  border-input-focus: #3b82f6,
+  border-upload: #93c5fd,
+  border-aqua: #bae6fd,
+  
+  // --- FORM & UI ELEMENTS ---
+  accent-cyan-soft: #22d3ee,
+  form-label: #475569,
+  form-input-text: #1e293b,
+  form-required: #ef4444,
+  form-checkbox-accent: #3b82f6,
+  brand-soft-bg: #eff6ff,
+  brand-soft-text: #1d4ed8,
+  feature-soft-bg: #ecfdf5,
+  feature-soft-border: #a7f3d0,
+  
+  // --- PROFILE & VISUALS (Gradient xanh dương - xanh lá nhẹ) ---
+  profile-banner-start: #3b82f6,
+  profile-banner-end: #06b6d4,
+  profile-avatar-border: #ffffff,
+  warning-bg-soft: #fffbeb,
+  surface-error-soft: #fef2f2,
+  link-primary: #3b82f6,
 );
 
 $radius-tokens: (

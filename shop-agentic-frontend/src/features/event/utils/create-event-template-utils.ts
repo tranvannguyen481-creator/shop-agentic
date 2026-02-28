@@ -15,50 +15,28 @@ interface ParseTemplateUploadResult {
   error?: string;
 }
 
-export const parseCsvLine = (line: string) => {
-  const values: string[] = [];
-  let current = "";
-  let inQuotes = false;
-
-  for (let index = 0; index < line.length; index += 1) {
-    const character = line[index];
-
-    if (character === '"') {
-      if (inQuotes && line[index + 1] === '"') {
-        current += '"';
-        index += 1;
-      } else {
-        inQuotes = !inQuotes;
-      }
-      continue;
-    }
-
-    if (character === "," && !inQuotes) {
-      values.push(current.trim());
-      current = "";
-      continue;
-    }
-
-    current += character;
-  }
-
-  values.push(current.trim());
-  return values;
-};
+/**
+ * Split a pipe-separated template line into column values.
+ * Pipe (`|`) is used as the column separator to avoid conflicts with commas
+ * that may appear naturally inside descriptions, location names, etc.
+ */
+export const parsePipeLine = (line: string): string[] =>
+  line.split("|").map((v) => v.trim());
 
 export const buildTemplateCsvText = () => {
+  const SEP = "|";
   const eventFields = [...CREATE_EVENT_TEMPLATE_FIELDS];
   const itemFields = [...CREATE_EVENT_ITEM_TEMPLATE_FIELDS];
   const allFields = [...eventFields, ...itemFields];
 
-  const headerLine = allFields.join(",");
+  const headerLine = allFields.join(SEP);
 
   // First data row: event info + first item
   const firstItemRow = CREATE_EVENT_ITEM_SAMPLE_ROWS[0];
   const firstDataLine = [
     ...eventFields.map((field) => CREATE_EVENT_TEMPLATE_SAMPLE_VALUES[field]),
     ...itemFields.map((field) => firstItemRow[field]),
-  ].join(",");
+  ].join(SEP);
 
   // Remaining item rows: event fields blank, only item data
   const additionalItemLines = CREATE_EVENT_ITEM_SAMPLE_ROWS.slice(1).map(
@@ -66,7 +44,7 @@ export const buildTemplateCsvText = () => {
       [
         ...eventFields.map(() => ""),
         ...itemFields.map((field) => itemRow[field]),
-      ].join(","),
+      ].join(SEP),
   );
 
   return [headerLine, firstDataLine, ...additionalItemLines, ""].join("\n");
@@ -86,8 +64,8 @@ export const parseTemplateUpload = (
     };
   }
 
-  const headers = parseCsvLine(lines[0]);
-  const firstDataRow = parseCsvLine(lines[1]);
+  const headers = parsePipeLine(lines[0]);
+  const firstDataRow = parsePipeLine(lines[1]);
 
   if (!headers.length || !firstDataRow.length) {
     return {
@@ -120,7 +98,7 @@ export const parseTemplateUpload = (
   const items: ItemFormValue[] = [];
 
   for (let rowIndex = 1; rowIndex < lines.length; rowIndex += 1) {
-    const row = parseCsvLine(lines[rowIndex]);
+    const row = parsePipeLine(lines[rowIndex]);
     const itemRecord: Partial<Record<CreateEventItemTemplateField, string>> =
       {};
 

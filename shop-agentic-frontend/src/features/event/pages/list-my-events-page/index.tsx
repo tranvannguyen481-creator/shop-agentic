@@ -1,4 +1,8 @@
 import { CalendarDays, Pencil, Share2 } from "lucide-react";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Autoplay, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { APP_PATHS } from "../../../../app/route-config";
 import SearchBar from "../../../../shared/components/search-bar";
 import {
@@ -90,6 +94,33 @@ function ListMyEventsPage() {
                       }}
                     >
                       <SectionCard className={styles["event-item"]}>
+                        {Array.isArray(event.bannerPreviewUrls) &&
+                        event.bannerPreviewUrls.length > 0 ? (
+                          <div className={styles["banner-slider"]}>
+                            <Swiper
+                              modules={[Pagination, Autoplay]}
+                              pagination={{ clickable: true }}
+                              autoplay={{
+                                delay: 3000,
+                                disableOnInteraction: false,
+                              }}
+                              loop={event.bannerPreviewUrls.length > 1}
+                              className={styles["banner-swiper"]}
+                            >
+                              {event.bannerPreviewUrls.map(
+                                (url: string, idx: number) => (
+                                  <SwiperSlide key={idx}>
+                                    <img
+                                      src={url}
+                                      alt={`Banner ${idx + 1}`}
+                                      className={styles["banner-img"]}
+                                    />
+                                  </SwiperSlide>
+                                ),
+                              )}
+                            </Swiper>
+                          </div>
+                        ) : null}
                         <div className={styles["event-header"]}>
                           <h3 className={styles.title}>
                             {String(event.title ?? "Untitled Event")}

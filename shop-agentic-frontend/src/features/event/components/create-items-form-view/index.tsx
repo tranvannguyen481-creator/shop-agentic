@@ -5,7 +5,12 @@ import {
   FormInput,
   FormTextarea,
 } from "../../../../shared/components/form";
-import { SectionCard, UploadField } from "../../../../shared/components/ui";
+import {
+  Button,
+  SectionCard,
+  UploadField,
+  ZoomImage,
+} from "../../../../shared/components/ui";
 import styles from "../../pages/create-items-page/index.module.scss";
 import {
   CreateItemsFormValues,
@@ -23,9 +28,13 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
       <section className={styles["create-items-page"]}>
         <div className={styles.banner}>
           <p className={styles["section-name"]}>Banner</p>
-          <button type="button" className={styles["photo-limit"]}>
+          <Button
+            type="button"
+            variant="text"
+            className={styles["photo-limit"]}
+          >
             Remain ({viewModel.bannerPhotosLeft} photos left)
-          </button>
+          </Button>
           <div className={styles["banner-media"]}>
             {viewModel.bannerPreviewUrls.length > 0 ? (
               <div className={styles["banner-gallery"]}>
@@ -34,9 +43,13 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                     className={styles["banner-preview"]}
                     key={previewUrl}
                   >
-                    <img src={previewUrl} alt={`Banner preview ${index + 1}`} />
-                    <button
+                    <ZoomImage
+                      src={previewUrl}
+                      alt={`Banner preview ${index + 1}`}
+                    />
+                    <Button
                       type="button"
+                      variant="text"
                       className={styles["remove-banner-photo"]}
                       aria-label={`Remove banner image ${index + 1}`}
                       onClick={() =>
@@ -44,7 +57,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                       }
                     >
                       <Trash2 size={14} strokeWidth={2.2} />
-                    </button>
+                    </Button>
                   </article>
                 ))}
               </div>
@@ -70,6 +83,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
           {viewModel.itemFields.map((itemField, itemIndex) => {
             const itemPreviewUrl = viewModel.getItemPreviewUrl(itemIndex);
             const itemOptions = viewModel.getItemOptions(itemIndex);
+            const itemOptionGroups = viewModel.getItemOptionGroups(itemIndex);
 
             return (
               <SectionCard className={styles["item-card"]} key={itemField.id}>
@@ -80,12 +94,13 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                       <>
                         <div className={styles["item-preview-slot"]}>
                           <div className={styles["item-preview"]}>
-                            <img
+                            <ZoomImage
                               src={itemPreviewUrl}
                               alt={`Item preview ${itemIndex + 1}`}
                             />
-                            <button
+                            <Button
                               type="button"
+                              variant="text"
                               className={styles["remove-item-photo"]}
                               aria-label={`Remove item image ${itemIndex + 1}`}
                               onClick={() =>
@@ -93,7 +108,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                               }
                             >
                               <Trash2 size={14} strokeWidth={2.2} />
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       </>
@@ -131,22 +146,24 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                     name={`items.${itemIndex}.description` as const}
                   />
                   <div className={styles["description-actions"]}>
-                    <button
+                    <Button
                       type="button"
+                      variant="text"
                       aria-label={`Move item ${itemIndex + 1} up`}
                       onClick={() => viewModel.handleSwapItemUp(itemIndex)}
                       disabled={itemIndex === 0}
                     >
                       <ChevronUp size={18} strokeWidth={2.2} />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
+                      variant="text"
                       aria-label={`Move item ${itemIndex + 1} down`}
                       onClick={() => viewModel.handleSwapItemDown(itemIndex)}
                       disabled={itemIndex === viewModel.itemFields.length - 1}
                     >
                       <ChevronDown size={18} strokeWidth={2.2} />
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
@@ -156,21 +173,23 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                     name={`items.${itemIndex}.price` as const}
                   />
                   <div className={styles["item-actions"]}>
-                    <button
+                    <Button
                       type="button"
+                      variant="text"
                       aria-label={`Duplicate item ${itemIndex + 1}`}
                       onClick={() => viewModel.handleDuplicateItem(itemIndex)}
                     >
                       <Copy size={16} strokeWidth={2.2} />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
+                      variant="text"
                       aria-label={`Delete item ${itemIndex + 1}`}
                       onClick={() => viewModel.handleRemoveItem(itemIndex)}
                       disabled={viewModel.itemFields.length === 1}
                     >
                       <Trash2 size={16} strokeWidth={2.2} />
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
@@ -187,8 +206,9 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                             `items.${itemIndex}.options.${optionIndex}.value` as const
                           }
                         />
-                        <button
+                        <Button
                           type="button"
+                          variant="text"
                           className={styles["remove-option"]}
                           aria-label={`Remove option ${optionIndex + 1}`}
                           onClick={() =>
@@ -196,41 +216,113 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                           }
                         >
                           <Trash2 size={14} strokeWidth={2.2} />
-                        </button>
+                        </Button>
                       </div>
                     ))}
                   </div>
                 ) : null}
 
-                <button
+                {itemOptionGroups.length > 0 ? (
+                  <div className={styles["option-groups"]}>
+                    {itemOptionGroups.map((group, groupIndex) => (
+                      <div
+                        className={styles["option-group"]}
+                        key={`${itemField.id}-group-${groupIndex}`}
+                      >
+                        <div className={styles["option-group-header"]}>
+                          <span className={styles["option-group-title"]}>
+                            {group.name}
+                          </span>
+                          {group.required ? (
+                            <span className={styles["option-required-badge"]}>
+                              Required
+                            </span>
+                          ) : null}
+                          <Button
+                            type="button"
+                            variant="text"
+                            className={styles["remove-option-group"]}
+                            aria-label={`Remove option group ${group.name}`}
+                            onClick={() =>
+                              viewModel.handleRemoveOptionGroup(
+                                itemIndex,
+                                groupIndex,
+                              )
+                            }
+                          >
+                            <Trash2 size={14} strokeWidth={2.2} />
+                          </Button>
+                        </div>
+                        <div className={styles["option-group-choices"]}>
+                          {group.choices.map((choice, choiceIndex) => (
+                            <span
+                              className={styles["option-group-choice"]}
+                              key={`${itemField.id}-group-${groupIndex}-choice-${choiceIndex}`}
+                            >
+                              <span className={styles["choice-name"]}>
+                                {choice.name}
+                              </span>
+                              {typeof choice.price === "number" &&
+                              choice.price > 0 ? (
+                                <span className={styles["choice-price"]}>
+                                  +${choice.price.toFixed(2)}
+                                </span>
+                              ) : null}
+                              <Button
+                                type="button"
+                                variant="text"
+                                className={styles["remove-choice"]}
+                                aria-label={`Remove choice ${choice.name}`}
+                                onClick={() =>
+                                  viewModel.handleRemoveGroupChoice(
+                                    itemIndex,
+                                    groupIndex,
+                                    choiceIndex,
+                                  )
+                                }
+                              >
+                                <Trash2 size={11} strokeWidth={2.2} />
+                              </Button>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                <Button
                   type="button"
+                  variant="text"
                   className={styles["add-options"]}
                   onClick={() => viewModel.handleAddOption(itemIndex)}
                 >
                   Add Options
-                </button>
+                </Button>
 
-                <button
+                <Button
                   type="button"
+                  variant="text"
                   className={styles["remove-item"]}
                   onClick={() => viewModel.handleRemoveItem(itemIndex)}
                   disabled={viewModel.itemFields.length === 1}
                 >
                   Remove Item
-                </button>
+                </Button>
               </SectionCard>
             );
           })}
         </div>
 
-        <button
+        <Button
           type="button"
+          variant="text"
           className={styles["add-items"]}
           onClick={viewModel.handleAddItem}
         >
           <ImagePlus size={18} strokeWidth={2.1} />
           Add Items
-        </button>
+        </Button>
 
         <EventStepNavigation
           currentPath={APP_PATHS.createEventItems}

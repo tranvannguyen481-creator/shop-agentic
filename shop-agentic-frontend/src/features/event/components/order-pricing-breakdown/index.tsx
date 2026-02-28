@@ -1,5 +1,11 @@
+import {
+  Alert,
+  Divider,
+  SectionCard,
+  Skeleton,
+} from "../../../../shared/components/ui";
+import { toPercent, toVND } from "../../../../shared/utils/price-utils";
 import { OrderPricingBreakdownProps } from "../../types/order-pricing-breakdown-types";
-import { toPercent, toVND } from "../../utils/price-utils";
 
 function OrderPricingBreakdown({
   breakdown,
@@ -22,88 +28,90 @@ function OrderPricingBreakdown({
 
   if (isLoading) {
     return (
-      <div className="border rounded p-3 bg-light">
-        <p className="text-secondary small text-center mb-0">
-          Đang tính toán giá...
-        </p>
-      </div>
+      <SectionCard>
+        <div className="d-flex flex-column gap-2">
+          <Skeleton height={14} width="60%" />
+          <Skeleton height={14} width="80%" />
+          <Skeleton height={14} width="70%" />
+          <Skeleton height={18} width="90%" />
+        </div>
+      </SectionCard>
     );
   }
 
   return (
-    <div className="border rounded p-3 bg-light">
+    <SectionCard>
       {/* Group buy member progress */}
       {isGroupBuy && minMembers > 0 && (
-        <div className="mb-3">
+        <>
           {willGetExtraDiscount ? (
-            <div className="alert alert-success py-2 px-3 mb-0 small">
+            <Alert tone="success" className="mb-3">
               ✅ Đã đủ {minMembers} thành viên! Đang được giảm thêm{" "}
               {toPercent(extraGroupDiscountPercent)}.
-            </div>
+            </Alert>
           ) : (
-            <div className="alert alert-warning py-2 px-3 mb-0 small">
+            <Alert tone="warning" className="mb-3">
               👥 Còn thiếu <strong>{membersNeededForDiscount} người nữa</strong>{" "}
               để được giảm thêm {toPercent(extraGroupDiscountPercent)} (
               {currentMembers}/{minMembers} thành viên hiện tại).
-            </div>
+            </Alert>
           )}
-        </div>
+        </>
       )}
 
-      <table className="table table-sm table-borderless mb-0">
-        <tbody>
-          <tr>
-            <td className="text-secondary ps-0">Tạm tính</td>
-            <td className="text-end pe-0 font-monospace">
-              {toVND(subtotalBeforeDiscount)}
-            </td>
-          </tr>
+      <div className="d-flex flex-column gap-2">
+        <div className="d-flex justify-content-between align-items-center">
+          <span className="text-secondary small">Tạm tính</span>
+          <span className="font-monospace small">
+            {toVND(subtotalBeforeDiscount)}
+          </span>
+        </div>
 
-          {isGroupBuy && totalDiscount > 0 && (
-            <tr className="text-success">
-              <td className="ps-0">
-                Giảm giá nhóm ({toPercent(extraGroupDiscountPercent)})
-              </td>
-              <td className="text-end pe-0 font-monospace">
-                −{toVND(totalDiscount)}
-              </td>
-            </tr>
-          )}
+        {isGroupBuy && totalDiscount > 0 && (
+          <div className="d-flex justify-content-between align-items-center">
+            <span className="text-success small">
+              Giảm giá nhóm ({toPercent(extraGroupDiscountPercent)})
+            </span>
+            <span className="text-success font-monospace small">
+              −{toVND(totalDiscount)}
+            </span>
+          </div>
+        )}
 
-          {isGroupBuy && totalDiscount > 0 && (
-            <tr>
-              <td className="text-secondary ps-0">Sau giảm giá</td>
-              <td className="text-end pe-0 font-monospace">
-                {toVND(subtotalAfterDiscount)}
-              </td>
-            </tr>
-          )}
+        {isGroupBuy && totalDiscount > 0 && (
+          <div className="d-flex justify-content-between align-items-center">
+            <span className="text-secondary small">Sau giảm giá</span>
+            <span className="font-monospace small">
+              {toVND(subtotalAfterDiscount)}
+            </span>
+          </div>
+        )}
 
-          <tr>
-            <td className="text-secondary ps-0">
-              VAT ({toPercent(vatRate * 100)})
-            </td>
-            <td className="text-end pe-0 font-monospace">{toVND(vatAmount)}</td>
-          </tr>
+        <div className="d-flex justify-content-between align-items-center">
+          <span className="text-secondary small">
+            VAT ({toPercent(vatRate * 100)})
+          </span>
+          <span className="font-monospace small">{toVND(vatAmount)}</span>
+        </div>
 
-          <tr className="border-top">
-            <td className="ps-0 pt-2 fw-semibold">Tổng cộng</td>
-            <td className="text-end pe-0 pt-2 fw-semibold font-monospace">
-              {toVND(grandTotal)}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <Divider />
+
+        <div className="d-flex justify-content-between align-items-center">
+          <span className="fw-semibold">Tổng cộng</span>
+          <span className="fw-semibold font-monospace">
+            {toVND(grandTotal)}
+          </span>
+        </div>
+      </div>
 
       {isGroupBuy && totalDiscount > 0 && (
-        <div className="alert alert-success py-2 px-3 mt-2 mb-0 small fw-medium">
+        <Alert tone="success" className="mt-2 fw-medium">
           🎉 Tiết kiệm {toVND(subtotalBeforeDiscount - subtotalAfterDiscount)}{" "}
           so với mua lẻ!
-        </div>
+        </Alert>
       )}
-    </div>
+    </SectionCard>
   );
 }
 
 export default OrderPricingBreakdown;
- 
