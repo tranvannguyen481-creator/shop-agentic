@@ -15,11 +15,6 @@ interface ParseTemplateUploadResult {
   error?: string;
 }
 
-/**
- * Split a pipe-separated template line into column values.
- * Pipe (`|`) is used as the column separator to avoid conflicts with commas
- * that may appear naturally inside descriptions, location names, etc.
- */
 export const parsePipeLine = (line: string): string[] =>
   line.split("|").map((v) => v.trim());
 
@@ -31,14 +26,12 @@ export const buildTemplateCsvText = () => {
 
   const headerLine = allFields.join(SEP);
 
-  // First data row: event info + first item
   const firstItemRow = CREATE_EVENT_ITEM_SAMPLE_ROWS[0];
   const firstDataLine = [
     ...eventFields.map((field) => CREATE_EVENT_TEMPLATE_SAMPLE_VALUES[field]),
     ...itemFields.map((field) => firstItemRow[field]),
   ].join(SEP);
 
-  // Remaining item rows: event fields blank, only item data
   const additionalItemLines = CREATE_EVENT_ITEM_SAMPLE_ROWS.slice(1).map(
     (itemRow) =>
       [
@@ -73,7 +66,6 @@ export const parseTemplateUpload = (
     };
   }
 
-  // Parse event fields from first data row
   const rowRecord: Partial<Record<CreateEventTemplateField, string>> = {};
 
   headers.forEach((header, index) => {
@@ -94,7 +86,6 @@ export const parseTemplateUpload = (
     };
   }
 
-  // Parse items from all data rows (rows 2 onwards)
   const items: ItemFormValue[] = [];
 
   for (let rowIndex = 1; rowIndex < lines.length; rowIndex += 1) {
@@ -111,7 +102,7 @@ export const parseTemplateUpload = (
     });
 
     if (itemRecord.itemName) {
-      // Parse up to 3 option groups
+
       const optionGroups: Array<{
         id: string;
         name: string;

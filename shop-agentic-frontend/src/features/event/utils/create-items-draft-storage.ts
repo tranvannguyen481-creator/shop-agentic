@@ -115,6 +115,6 @@ export const saveCreateItemsDraft = (
       JSON.stringify(toPersistedDraft(values, bannerPreviewUrls)),
     );
   } catch {
-    // Ignore storage write failures.
+
   }
 };

@@ -5,9 +5,6 @@ import {
 } from "../../../shared/services/order-api";
 import type { ListOrdersResult, OrderDetail } from "../types/order.types";
 
-/**
- * Lấy danh sách đơn hàng của user hiện tại.
- */
 export const useMyOrders = (
   page = 1,
   pageSize = 20,
@@ -19,9 +16,6 @@ export const useMyOrders = (
   });
 };
 
-/**
- * Lấy chi tiết 1 đơn hàng.
- */
 export const useOrderDetail = (orderId: string) => {
   return useQuery<OrderDetail>({
     queryKey: ["orderDetail", orderId],

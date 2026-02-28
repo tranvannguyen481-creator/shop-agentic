@@ -18,9 +18,9 @@ import styles from "./index.module.scss";
 
 const formatDate = (isoOrDisplay: string): string => {
   if (!isoOrDisplay) return "—";
-  // already formatted (e.g. DD-MM-YYYY)
+
   if (/^\d{2}-\d{2}-\d{4}$/.test(isoOrDisplay)) return isoOrDisplay;
-  // try to parse ISO (YYYY-MM-DD)
+
   const d = new Date(isoOrDisplay);
   if (Number.isNaN(d.getTime())) return isoOrDisplay;
   return d.toLocaleDateString("en-AU", {
@@ -41,7 +41,7 @@ function CreatedConfirmView() {
 
   return (
     <section className={styles.page}>
-      {/* ── Event header card ─────────────────────────────────────── */}
+      {}
       <SectionCard className={styles.eventCard}>
         <div className={styles.eventHead}>
           <div className={styles.sellerWrap}>
@@ -107,7 +107,7 @@ function CreatedConfirmView() {
         )}
       </SectionCard>
 
-      {/* ── Items ─────────────────────────────────────────────────── */}
+      {}
       {vm.items.length > 0 ? (
         <div className={styles.itemList}>
           {vm.items.map((item, i) => (
@@ -166,7 +166,7 @@ function CreatedConfirmView() {
         </div>
       ) : null}
 
-      {/* ── Summary ───────────────────────────────────────────────── */}
+      {}
       <SectionCard className={styles.totalPanel}>
         <div className={styles.totalRow}>
           <span className={styles.totalLabel}>Admin fee per order</span>
@@ -186,7 +186,7 @@ function CreatedConfirmView() {
         onNextClick={vm.handleOpenPublishModal}
       />
 
-      {/* ── Publish modal ─────────────────────────────────────────── */}
+      {}
       <Modal
         open={vm.isPublishModalOpen}
         onClose={vm.handleClosePublishModal}

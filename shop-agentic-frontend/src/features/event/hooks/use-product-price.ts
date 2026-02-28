@@ -7,9 +7,6 @@ import type {
 } from "../types/product-price-types";
 import { calcPerProductPriceInfo } from "../utils/price-utils";
 
-/**
- * Tham số đầu vào của hook.
- */
 export interface UseProductPriceParams {
   eventId: string;
   productId: string;
@@ -17,34 +14,13 @@ export interface UseProductPriceParams {
   isGroupBuy: boolean;
 }
 
-/**
- * Kết quả trả về của hook.
- */
 export interface UseProductPriceResult {
-  /** Thông tin giá chi tiết, null nếu chưa có dữ liệu */
+  
   priceInfo: ProductPriceInfo | null;
   isLoading: boolean;
   isError: boolean;
 }
 
-/**
- * Hook tính giá realtime cho 1 sản phẩm của 1 user.
- *
- * Dùng polling 10 giây để lấy dữ liệu mới nhất từ server:
- * - totalGroupQty (số lượng nhóm đã mua sản phẩm này)
- * - currentMemberCount (số member đã join event)
- *
- * ⚠️ Giá hiển thị là ước tính realtime.
- *    Server sẽ tính lại và lock giá khi user đặt hàng (POST /api/orders).
- *
- * @example
- * const { priceInfo, isLoading } = useProductPrice({
- *   eventId: "abc123",
- *   productId: "product-1",
- *   userQty: 3,
- *   isGroupBuy: true,
- * });
- */
 export const useProductPrice = ({
   eventId,
   productId,
@@ -65,9 +41,9 @@ export const useProductPrice = ({
     ],
     queryFn: () => fetchEventDetail(eventId),
     enabled: !!eventId && !!productId && userQty > 0,
-    // Polling 10s để cập nhật totalGroupQty và currentMemberCount realtime
+
     refetchInterval: 10_000,
-    // Giữ dữ liệu cũ khi re-fetch để tránh flash loading
+
     placeholderData: (previousData) => previousData,
     select: (event): ProductPriceInfo | null => {
       const rawProducts = Array.isArray(event.products) ? event.products : [];

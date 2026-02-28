@@ -57,7 +57,7 @@ export const useGroupDetailPage = () => {
     if (!canUsePremiumLayout && mode === "premium") {
       setMode("admin-mobile");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [canUsePremiumLayout]);
 
   const dashboardCards = useMemo(

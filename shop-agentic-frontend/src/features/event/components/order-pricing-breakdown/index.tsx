@@ -41,7 +41,7 @@ function OrderPricingBreakdown({
 
   return (
     <SectionCard>
-      {/* Group buy member progress */}
+      {}
       {isGroupBuy && minMembers > 0 && (
         <>
           {willGetExtraDiscount ? (

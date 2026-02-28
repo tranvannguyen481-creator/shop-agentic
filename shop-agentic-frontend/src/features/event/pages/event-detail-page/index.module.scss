@@ -1,14 +1,10 @@
 @use "../../../../shared/styles/tokens";
 
-// ── Page shell ────────────────────────────────────────────────────────────────
-
 .page {
   display: grid;
   gap: 0.625rem;
   padding-bottom: 5.5rem;
 }
-
-// ── Hero banner ───────────────────────────────────────────────────────────────
 
 .hero {
   position: relative;
@@ -79,8 +75,6 @@
   font-weight: 600;
 }
 
-// ── Closed strip ─────────────────────────────────────────────────────────────
-
 .closedStrip {
   display: flex;
   align-items: center;
@@ -92,8 +86,6 @@
   font-size: tokens.fs(xs);
   font-weight: 700;
 }
-
-// ── Host card ─────────────────────────────────────────────────────────────────
 
 .hostCard {
   padding: 0.625rem 0.75rem !important;
@@ -137,8 +129,6 @@
     font-weight: 700;
   }
 }
-
-// ── Meta chips grid ───────────────────────────────────────────────────────────
 
 .metaGrid {
   display: grid;
@@ -195,8 +185,6 @@
   text-overflow: ellipsis;
 }
 
-// ── Description ───────────────────────────────────────────────────────────────
-
 .descCard {
   padding: 0.625rem 0.875rem !important;
 }
@@ -207,8 +195,6 @@
   color: tokens.color(text-muted-1);
   line-height: 1.6;
 }
-
-// ── Notes ─────────────────────────────────────────────────────────────────────
 
 .notesCard {
   padding: 0.625rem 0.875rem !important;
@@ -229,8 +215,6 @@
   }
 }
 
-// ── Section label ─────────────────────────────────────────────────────────────
-
 .sectionLabel {
   margin: 0;
   font-size: tokens.fs(xs);
@@ -239,8 +223,6 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-
-// ── Products ──────────────────────────────────────────────────────────────────
 
 .productsSection {
   display: grid;
@@ -267,8 +249,6 @@
   pointer-events: none;
   user-select: none;
 }
-
-// ── Checkout bar ──────────────────────────────────────────────────────────────
 
 .checkoutBar {
   position: fixed;

@@ -1,12 +1,8 @@
-/**
- * TanStack Query keys cho Event feature.
- * Luôn dùng constant array — không hardcode string inline trong useQuery.
- */
+
 export const EVENT_QUERY_KEYS = {
   all: ["events"] as const,
   detail: (eventId: string) => ["eventDetail", eventId] as const,
-  /** Key cho POST /api/orders/calculate — bao gồm isGroupBuy và items
-   *  để react-query tự deduplicate và invalidate đúng khi tham số thay đổi. */
+  
   calculateOrder: (
     eventId: string,
     isGroupBuy: boolean,

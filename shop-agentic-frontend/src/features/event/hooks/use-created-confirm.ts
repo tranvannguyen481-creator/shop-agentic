@@ -83,7 +83,6 @@ export const useCreatedConfirm = (): CreatedConfirmViewModel => {
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
 
-  // ── Read draft data from localStorage on mount ──────────────────────────
   const draft = useMemo(() => {
     if (typeof window === "undefined") return null;
     try {
@@ -152,7 +151,7 @@ export const useCreatedConfirm = (): CreatedConfirmViewModel => {
   }, []);
 
   const clearCreateEventProcessState = useCallback(() => {
-    // Modal state is now local to each component — no global state to clean up.
+
   }, []);
 
   const clearCreateEventProcessStorage = useCallback(() => {
@@ -240,7 +239,7 @@ export const useCreatedConfirm = (): CreatedConfirmViewModel => {
   ]);
 
   return {
-    // draft data
+
     title:
       typeof draft?.title === "string" && draft.title.trim()
         ? draft.title
@@ -268,7 +267,7 @@ export const useCreatedConfirm = (): CreatedConfirmViewModel => {
         )
       : [],
     hasDraft: draft !== null,
-    // publish modal
+
     isPublishModalOpen,
     isPublishing,
     publishError,

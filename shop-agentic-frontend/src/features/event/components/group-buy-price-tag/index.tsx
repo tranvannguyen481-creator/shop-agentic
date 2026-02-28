@@ -24,7 +24,7 @@ function GroupBuyPriceTag({
 
   return (
     <div className="d-flex flex-column gap-1">
-      {/* Giá mua lẻ */}
+      {}
       <div className="d-flex align-items-center gap-2">
         <span className="text-secondary small" style={{ minWidth: 64 }}>
           Mua lẻ
@@ -38,7 +38,7 @@ function GroupBuyPriceTag({
         </span>
       </div>
 
-      {/* Giá mua nhóm */}
+      {}
       {hasGroupDiscount && effectiveGroupPrice !== null && (
         <div className="d-flex align-items-center gap-2">
           <span
@@ -58,7 +58,7 @@ function GroupBuyPriceTag({
         </div>
       )}
 
-      {/* Threshold progress */}
+      {}
       {qtyThreshold > 0 && (
         <div className="mt-1">
           <p className="small text-secondary mb-1">

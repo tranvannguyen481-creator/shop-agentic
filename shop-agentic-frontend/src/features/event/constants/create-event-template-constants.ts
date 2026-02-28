@@ -57,14 +57,11 @@ export const CREATE_EVENT_TEMPLATE_SAMPLE_VALUES: Record<
   adminFee: "0.0",
 };
 
-// Choices format inside a column: "OptionName:ExtraPrice;OptionName2:ExtraPrice2"
-// Extra price = 0 means no surcharge. Use semicolon (;) to separate choices within a group.
-// Up to 3 option groups per item are supported.
 export const CREATE_EVENT_ITEM_SAMPLE_ROWS: Array<
   Record<CreateEventItemTemplateField, string>
 > = [
   {
-    // Has 2 option groups: Size (required, 3 choices with price) + Packaging (optional, 2 choices)
+
     itemName: "Organic Apples (1kg)",
     itemDescription: "Fresh and crispy Fuji apples",
     itemPrice: "8.50",
@@ -79,7 +76,7 @@ export const CREATE_EVENT_ITEM_SAMPLE_ROWS: Array<
     itemOptionGroup3Choices: "",
   },
   {
-    // Has 1 option group: Bundle size (required)
+
     itemName: "Fresh Spinach",
     itemDescription: "Garden-fresh leafy greens",
     itemPrice: "3.00",
@@ -94,7 +91,7 @@ export const CREATE_EVENT_ITEM_SAMPLE_ROWS: Array<
     itemOptionGroup3Choices: "",
   },
   {
-    // No options – plain item
+
     itemName: "Sweet Carrots (500g)",
     itemDescription: "Tender baby carrots",
     itemPrice: "2.50",

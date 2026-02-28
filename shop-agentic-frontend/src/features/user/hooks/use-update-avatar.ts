@@ -29,10 +29,8 @@ export function useUpdateAvatar() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Reset the input so selecting the same file again triggers onChange
     event.target.value = "";
 
-    // Validate type & size (max 5 MB)
     if (!file.type.startsWith("image/")) {
       setUploadError("Please select an image file.");
       return;
@@ -42,7 +40,6 @@ export function useUpdateAvatar() {
       return;
     }
 
-    // Optimistic local preview
     const localPreview = URL.createObjectURL(file);
     setPreviewUrl(localPreview);
     setUploadError(null);
@@ -57,10 +54,9 @@ export function useUpdateAvatar() {
         updatedUser,
       );
 
-      // Clear local preview — authoritative URL now in cache
       setPreviewUrl(null);
     } catch {
-      // Revert preview on error
+
       setPreviewUrl(null);
       setUploadError("Failed to update avatar. Please try again.");
     } finally {

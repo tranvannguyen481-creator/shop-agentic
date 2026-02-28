@@ -19,7 +19,7 @@ function EventCheckoutPage() {
   return (
     <AppLayout>
       <div className="container py-4" style={{ maxWidth: 640 }}>
-        {/* ── Header ── */}
+        {}
         <div className="d-flex align-items-center gap-3 mb-4">
           <Button
             type="button"
@@ -38,7 +38,7 @@ function EventCheckoutPage() {
           </div>
         </div>
 
-        {/* ── Success state ── */}
+        {}
         {vm.orderId ? (
           <div className="text-center py-5">
             <div style={{ fontSize: "3rem" }} className="mb-3">
@@ -75,7 +75,7 @@ function EventCheckoutPage() {
           />
         ) : (
           <div className="d-flex flex-column gap-3">
-            {/* ── Items list ── */}
+            {}
             <SectionCard>
               <p
                 className="fw-semibold text-uppercase text-secondary mb-3"
@@ -115,7 +115,7 @@ function EventCheckoutPage() {
               </div>
             </SectionCard>
 
-            {/* ── Group buy toggle ── */}
+            {}
             <SectionCard>
               <div className="d-flex justify-content-between align-items-center">
                 <div>
@@ -132,7 +132,7 @@ function EventCheckoutPage() {
               </div>
             </SectionCard>
 
-            {/* ── Pricing breakdown ── */}
+            {}
             {vm.isCalculating && !vm.pricingBreakdown ? (
               <div className="border rounded p-3 bg-light text-center">
                 <div
@@ -152,10 +152,10 @@ function EventCheckoutPage() {
               />
             ) : null}
 
-            {/* ── Error ── */}
+            {}
             {vm.errorMessage && <Alert tone="error">{vm.errorMessage}</Alert>}
 
-            {/* ── CTA ── */}
+            {}
             <Button
               type="button"
               variant="primary"

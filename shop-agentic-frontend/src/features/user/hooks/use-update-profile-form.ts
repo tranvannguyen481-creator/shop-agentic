@@ -62,8 +62,7 @@ export function useUpdateProfileForm(onSuccess?: () => void) {
             : "",
       });
     }
-    // form.reset is stable from react-hook-form and does not need to be listed
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [currentUser]);
 
   const onSubmit = async (values: UpdateProfileFormValues) => {

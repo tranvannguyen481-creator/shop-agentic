@@ -133,7 +133,7 @@ export const useCreateEventPage = (
           );
         }
       } catch {
-        // Ignore storage write failures.
+
       }
     }
   }, [editDraftData, editEventId, form]);

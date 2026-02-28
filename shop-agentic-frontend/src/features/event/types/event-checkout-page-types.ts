@@ -16,7 +16,7 @@ export interface CheckoutPricingBreakdown {
   vatRate: number;
   vatAmount: number;
   grandTotal: number;
-  // Group buy progress
+
   currentMembers: number;
   minMembers: number;
   membersNeededForDiscount: number;
@@ -34,7 +34,7 @@ export interface EventCheckoutPageViewModel {
   isGroupBuy: boolean;
   isCalculating: boolean;
   isPlacingOrder: boolean;
-  orderId: string | null; // set after success
+  orderId: string | null;
   pricingBreakdown: CheckoutPricingBreakdown | null;
   onToggleGroupBuy: (value: boolean) => void;
   onBackToDetail: () => void;

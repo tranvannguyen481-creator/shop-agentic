@@ -8,10 +8,6 @@ import type {
 } from "../../features/event/types/order.types";
 import api from "./api";
 
-/**
- * Tính tiền đơn hàng (preview, không lưu DB).
- * Gọi API này để hiển thị breakdown trước khi user xác nhận.
- */
 export const calculateOrder = async (
   payload: CalculateOrderRequest,
 ): Promise<CalculateOrderResult> => {
@@ -19,9 +15,6 @@ export const calculateOrder = async (
   return response.data?.data as CalculateOrderResult;
 };
 
-/**
- * Đặt đơn hàng thực sự — lưu vào Firestore.
- */
 export const placeOrder = async (
   payload: PlaceOrderRequest,
 ): Promise<PlaceOrderResult> => {
@@ -29,9 +22,6 @@ export const placeOrder = async (
   return response.data?.data as PlaceOrderResult;
 };
 
-/**
- * Lấy chi tiết 1 đơn hàng theo orderId.
- */
 export const fetchOrderDetail = async (
   orderId: string,
 ): Promise<OrderDetail> => {
@@ -41,9 +31,6 @@ export const fetchOrderDetail = async (
   return order;
 };
 
-/**
- * Lấy danh sách đơn hàng của user hiện tại (phân trang, có thể lọc theo event/status).
- */
 export const fetchMyOrders = async (
   page = 1,
   pageSize = 20,
@@ -61,9 +48,6 @@ export const fetchMyOrders = async (
   };
 };
 
-/**
- * Host xem tất cả đơn hàng của 1 event.
- */
 export const fetchEventOrders = async (
   eventId: string,
 ): Promise<OrderDetail[]> => {

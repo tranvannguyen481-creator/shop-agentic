@@ -32,7 +32,7 @@ function EventDetailPage() {
     <AppLayout>
       <div className={styles.page} data-event-id={vm.eventId}>
 
-        {/* ── Banner / Hero ───────────────────────────────────────── */}
+        {}
         <div className={styles.hero}>
           {vm.bannerPreviewUrl ? (
             <img src={vm.bannerPreviewUrl} alt={vm.title} className={styles.heroBg} />
@@ -65,7 +65,7 @@ function EventDetailPage() {
           </div>
         </div>
 
-        {/* ── Closed notice ───────────────────────────────────────── */}
+        {}
         {vm.isClosed && !vm.isLoading ? (
           <div className={styles.closedStrip}>
             <ClockAlert size={15} />
@@ -73,11 +73,11 @@ function EventDetailPage() {
           </div>
         ) : null}
 
-        {/* ── Alerts ──────────────────────────────────────────────── */}
+        {}
         {vm.error ? <Alert tone="error">{vm.error}</Alert> : null}
         {vm.infoMessage ? <Alert tone="success">{vm.infoMessage}</Alert> : null}
 
-        {/* ── Host + join count ───────────────────────────────────── */}
+        {}
         {!vm.isLoading ? (
           <SectionCard className={styles.hostCard}>
             <div className={styles.hostRow}>
@@ -96,7 +96,7 @@ function EventDetailPage() {
           </SectionCard>
         ) : null}
 
-        {/* ── Key info chips ──────────────────────────────────────── */}
+        {}
         {!vm.isLoading ? (
           <div className={styles.metaGrid}>
             <div className={[styles.metaChip, vm.isClosed ? styles.metaChipClosed : styles.metaChipCountdown].join(" ")}>
@@ -130,14 +130,14 @@ function EventDetailPage() {
           </div>
         ) : null}
 
-        {/* ── Description ─────────────────────────────────────────── */}
+        {}
         {!vm.isLoading && vm.description ? (
           <SectionCard className={styles.descCard}>
             <p className={styles.descText}>{vm.description}</p>
           </SectionCard>
         ) : null}
 
-        {/* ── Important notes ─────────────────────────────────────── */}
+        {}
         {!vm.isLoading && vm.importantNotes.length > 0 ? (
           <SectionCard className={styles.notesCard}>
             <h4 className={styles.sectionLabel}>Important notes</h4>
@@ -149,7 +149,7 @@ function EventDetailPage() {
           </SectionCard>
         ) : null}
 
-        {/* ── Products ────────────────────────────────────────────── */}
+        {}
         <div className={styles.productsSection}>
           <h4 className={styles.sectionLabel}>Products</h4>
 
@@ -196,7 +196,7 @@ function EventDetailPage() {
           ) : null}
         </div>
 
-        {/* ── Sticky checkout bar ─────────────────────────────────── */}
+        {}
         <div className={styles.checkoutBar}>
           <Button
             type="button"

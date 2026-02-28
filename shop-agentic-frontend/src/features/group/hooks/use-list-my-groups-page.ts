@@ -43,7 +43,6 @@ export const useListMyGroupsPage = (): ListMyGroupsPageViewModel => {
     useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Debounce search for group-by-code lookup
   useEffect(() => {
     const normalizedSearch = search.trim().toUpperCase();
 

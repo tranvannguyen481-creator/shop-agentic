@@ -12,7 +12,6 @@
   min-height: var(--app-footer-height, 3.75rem);
   box-shadow: 0 -0.0625rem 0 tokens.color(shell-border);
 
-  // safe area for notched phones
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -61,7 +60,7 @@
 }
 
 .label {
-  font-size: 0.625rem; // 10px
+  font-size: 0.625rem;
   font-weight: 500;
   line-height: 1;
   letter-spacing: 0.01em;
@@ -82,7 +81,7 @@
 
 @media (min-width: 576px) {
   .bottom-nav {
-    --app-footer-height: 4rem; // 64px
+    --app-footer-height: 4rem;
   }
 
   .icon {
@@ -91,6 +90,6 @@
   }
 
   .label {
-    font-size: 0.6875rem; // 11px
+    font-size: 0.6875rem;
   }
 }

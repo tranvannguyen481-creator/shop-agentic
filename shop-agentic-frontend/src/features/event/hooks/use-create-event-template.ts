@@ -26,7 +26,7 @@ const saveItemsDraftFromTemplate = (items: ItemFormValue[]) => {
       JSON.stringify({ items, bannerPreviewUrls: [] }),
     );
   } catch {
-    // Ignore storage write failures.
+
   }
 };
 

@@ -79,13 +79,13 @@ export const signOutSession = async (): Promise<void> => {
   try {
     await api.post("/auth/signout");
   } catch {
-    // no-op
+
   }
 
   try {
     await auth.signOut();
   } catch {
-    // no-op
+
   }
 };
 

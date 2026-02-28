@@ -1,4 +1,4 @@
-// Order type constants
+
 export const ORDER_TYPE = {
   INDIVIDUAL: "individual",
   GROUP: "group",
@@ -23,8 +23,6 @@ export type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];
 export type PaymentMethod =
   (typeof PAYMENT_METHOD)[keyof typeof PAYMENT_METHOD];
 
-// ─── Request Types ─────────────────────────────────────────────────────────
-
 export interface OrderItemInput {
   productId: string;
   qty: number;
@@ -42,8 +40,6 @@ export interface PlaceOrderRequest extends CalculateOrderRequest {
   deliveryAddress?: string;
   note?: string;
 }
-
-// ─── Response Types ────────────────────────────────────────────────────────
 
 export interface OrderLineItem {
   productId: string;
@@ -71,7 +67,7 @@ export interface CalculateOrderResult extends OrderBreakdown {
   eventId: string;
   isGroupBuy: boolean;
   orderItems: OrderLineItem[];
-  // Realtime group progress
+
   currentMembers: number;
   minMembers: number;
   membersNeededForDiscount: number;
@@ -116,15 +112,13 @@ export interface ListOrdersResult {
   pageSize: number;
 }
 
-// ─── Event Product with Pricing ───────────────────────────────────────────
-
 export interface EventProduct {
   id: string;
   name: string;
   description?: string;
   normalPrice: number;
   basePrice: number;
-  price: string; // formatted "$X.XX"
+  price: string;
   groupPrice?: number;
   groupDiscountPercent?: number;
   qtyThreshold?: number;

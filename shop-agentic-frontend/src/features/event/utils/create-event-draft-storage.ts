@@ -48,6 +48,6 @@ export const saveCreateEventDraft = (values: CreateEventFormValues) => {
       JSON.stringify(toPersistedEventDraft(values)),
     );
   } catch {
-    // Ignore storage write failures.
+
   }
 };

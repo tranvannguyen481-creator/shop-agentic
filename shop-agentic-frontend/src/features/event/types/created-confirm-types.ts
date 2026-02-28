@@ -23,7 +23,7 @@ export interface ConfirmItemRow {
 }
 
 export interface CreatedConfirmViewModel {
-  // draft data
+
   title: string;
   closingDate: string;
   collectionDate: string;
@@ -34,7 +34,7 @@ export interface CreatedConfirmViewModel {
   bannerPreviewUrls: string[];
   items: ConfirmItemRow[];
   hasDraft: boolean;
-  // publish modal
+
   isPublishModalOpen: boolean;
   isPublishing: boolean;
   publishError: string | null;

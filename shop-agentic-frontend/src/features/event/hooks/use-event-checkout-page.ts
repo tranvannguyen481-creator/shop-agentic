@@ -40,7 +40,6 @@ export const useEventCheckoutPage = (): EventCheckoutPageViewModel => {
   const [placeOrderError, setPlaceOrderError] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
 
-  // Read draft-order from localStorage (written by event detail page on checkout)
   const items = useMemo(() => {
     const rawDraft = window.localStorage.getItem(
       `event:${eventId}:draft-order`,
@@ -62,7 +61,6 @@ export const useEventCheckoutPage = (): EventCheckoutPageViewModel => {
     [items],
   );
 
-  // Auto-calculate pricing — useQuery deduplicates and is StrictMode-safe
   const {
     data: pricingBreakdown = null,
     isFetching: isCalculating,

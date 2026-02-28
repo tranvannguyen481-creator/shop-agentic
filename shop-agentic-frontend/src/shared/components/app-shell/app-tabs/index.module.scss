@@ -2,7 +2,7 @@
 
 .shell {
   position: fixed;
-  top: var(--app-header-height, 3.25rem); // 52px fallback
+  top: var(--app-header-height, 3.25rem);
   left: 0;
   right: 0;
   z-index: 85;

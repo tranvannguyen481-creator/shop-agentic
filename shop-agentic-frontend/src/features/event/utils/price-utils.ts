@@ -1,9 +1,5 @@
 export { toPercent, toVND } from "../../../shared/utils/price-utils";
 
-/**
- * Tính giá nhóm hiệu lực cho 1 sản phẩm.
- * Ưu tiên: groupPrice (host nhập tay) > normalPrice * (1 - groupDiscountPercent%) > null
- */
 export const calcEffectiveGroupPrice = (
   normalPrice: number,
   groupPrice?: number,
@@ -15,28 +11,12 @@ export const calcEffectiveGroupPrice = (
   return null;
 };
 
-/**
- * Tính phần trăm progress (0–100) của qty hiện tại so với ngưỡng.
- */
 export const calcProgressPercent = (
   current: number,
   threshold: number,
 ): number =>
   threshold > 0 ? Math.min(100, Math.round((current / threshold) * 100)) : 0;
 
-/**
- * Tính đầy đủ thông tin giá của 1 sản phẩm dành riêng cho 1 user.
- *
- * Công thức (theo spec v1.1):
- *  1. basePrice = groupPrice (cố định) hoặc normalPrice (nếu dùng % threshold)
- *  2. itemDiscountPercent = groupDiscountPercent nếu projectedQty ≥ qtyThreshold và isGroupBuy
- *  3. unitPriceAfterItemDiscount = round(basePrice × (1 - itemDiscountPercent%))
- *  4. extraPercent = extraDiscountPercent nếu projectedMembers ≥ minMembers và isGroupBuy
- *  5. finalUnitPrice = unitPriceAfterItemDiscount − round(unitPriceAfterItemDiscount × extraPercent%)
- *
- * Quan trọng: giá hiển thị trên UI chỉ là ƯỚC TÍNH realtime.
- * Server sẽ tính lại và lock giá khi user đặt hàng.
- */
 import type {
   ProductPriceInfo,
   ProductPriceInput,
@@ -56,13 +36,8 @@ export const calcPerProductPriceInfo = ({
 }: ProductPriceInput): ProductPriceInfo => {
   const hasFixedGroupPrice = isGroupBuy && !!groupPrice && groupPrice > 0;
 
-  // Bước 1: basePrice
-  // Nếu host nhập groupPrice cố định → dùng luôn (không qua threshold)
-  // Ngược lại giữ normalPrice; discount sẽ áp qua itemDiscountPercent ở bước 2-3
   const basePrice = hasFixedGroupPrice ? (groupPrice as number) : normalPrice;
 
-  // Bước 2: item-level discount (qtyThreshold gating)
-  // Chỉ áp khi: mua nhóm + KHÔNG có groupPrice cố định + threshold > 0 + đã đủ qty
   const projectedTotalQty = totalGroupQty + userQty;
   const itemDiscountActive =
     isGroupBuy &&
@@ -71,14 +46,11 @@ export const calcPerProductPriceInfo = ({
     projectedTotalQty >= qtyThreshold;
   const itemDiscountPercent = itemDiscountActive ? groupDiscountPercent : 0;
 
-  // Bước 3: giá sau item discount
   const unitPriceAfterItemDiscount = Math.round(
     basePrice * (1 - itemDiscountPercent / 100),
   );
   const itemDiscountAmountPerUnit = basePrice - unitPriceAfterItemDiscount;
 
-  // Bước 4: extra group discount (order-level, gated bởi minMembers)
-  // +1 để tính cả user hiện tại sắp join
   const projectedMemberCount = currentMemberCount + 1;
   const willGetExtraDiscount =
     isGroupBuy && minMembers > 0 && projectedMemberCount >= minMembers;
@@ -87,7 +59,6 @@ export const calcPerProductPriceInfo = ({
     unitPriceAfterItemDiscount * (extraPercent / 100),
   );
 
-  // Bước 5: giá cuối cùng
   const finalUnitPrice =
     unitPriceAfterItemDiscount - proratedExtraDiscountPerUnit;
   const finalLineTotal = finalUnitPrice * userQty;

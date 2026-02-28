@@ -1,9 +1,9 @@
 @use "../../styles/tokens";
 
 .app-page {
-  --app-max-width: 35rem; // 560px
-  --app-header-height: 3.25rem; // 52px
-  --app-footer-height: 3.75rem; // 60px
+  --app-max-width: 35rem;
+  --app-header-height: 3.25rem;
+  --app-footer-height: 3.75rem;
 
   min-height: 100vh;
   background: tokens.color(body-bg);
@@ -24,9 +24,9 @@
 
 @media (min-width: 576px) {
   .app-page {
-    --app-max-width: 37.5rem; // 600px
-    --app-header-height: 3.5rem; // 56px
-    --app-footer-height: 4rem; // 64px
+    --app-max-width: 37.5rem;
+    --app-header-height: 3.5rem;
+    --app-footer-height: 4rem;
 
     font-size: tokens.fs(sm);
   }
@@ -39,12 +39,12 @@
 
 @media (min-width: 768px) {
   .app-page {
-    --app-max-width: 40rem; // 640px
+    --app-max-width: 40rem;
   }
 }
 
 @media (min-width: 992px) {
   .app-page {
-    --app-max-width: 42.5rem; // 680px
+    --app-max-width: 42.5rem;
   }
 }
