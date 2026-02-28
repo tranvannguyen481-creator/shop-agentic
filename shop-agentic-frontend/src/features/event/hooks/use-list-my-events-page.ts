@@ -34,9 +34,8 @@ export const useListMyEventsPage = () => {
       fetchHostedEvents(HOSTED_EVENTS_PAGE, HOSTED_EVENTS_PAGE_SIZE),
   });
 
-  const hostedEvents = (data?.items ?? []) as HostedEventItem[];
-
   const filteredEvents = useMemo(() => {
+    const hostedEvents = (data?.items ?? []) as HostedEventItem[];
     const keyword = search.trim().toLowerCase();
 
     if (!keyword) {
@@ -48,7 +47,7 @@ export const useListMyEventsPage = () => {
       const description = String(event.description ?? "").toLowerCase();
       return title.includes(keyword) || description.includes(keyword);
     });
-  }, [hostedEvents, search]);
+  }, [data, search]);
 
   const rowVirtualizer = useVirtualizer({
     count: filteredEvents.length,
