@@ -21,7 +21,6 @@ import eventRouter from "@/features/event";
 import groupRouter from "@/features/group";
 import notificationRouter from "@/features/notification";
 import orderRouter from "@/features/order";
-import testRouter from "@/features/test";
 import uploadRouter from "@/features/upload";
 
 const app = express();
@@ -84,7 +83,6 @@ app.use("/api/v1/groups", groupRouter);
 app.use("/api/v1/notifications", notificationRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/upload", uploadRouter);
-app.use("/api/v1/test", testRouter);
 
 // Health check
 app.get("/health", (_req: Request, res: Response) => {

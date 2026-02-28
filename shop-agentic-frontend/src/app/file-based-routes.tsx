@@ -18,7 +18,6 @@ const PUBLIC_PATHS = new Set<string>([
   APP_PATHS.landing,
   APP_PATHS.signIn,
   APP_PATHS.signUp,
-  APP_PATHS.test,
 ]);
 
 const routeModules = import.meta.glob<RouteModule>(

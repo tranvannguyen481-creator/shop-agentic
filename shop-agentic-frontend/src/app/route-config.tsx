@@ -16,5 +16,4 @@ export const APP_PATHS = {
   listMyGroups: "/group/list-my-groups",
   groupDetail: "/group/:groupId",
   welcome: "/welcome",
-  test: "/test",
 } as const;
