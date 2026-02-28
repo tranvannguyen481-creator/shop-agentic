@@ -6,6 +6,7 @@ import {
   completeProfileSchema,
   googleLoginSchema,
   sessionSchema,
+  updateProfileSchema,
 } from "@/features/auth/dtos/auth.dto";
 import * as authService from "@/features/auth/services/auth.service";
 import { AppError } from "@/shared/exceptions/AppError";
@@ -102,5 +103,25 @@ export async function completeProfile(
     success: true,
     data: { user: updatedUser },
     message: "Profile completed",
+  });
+}
+
+export async function updateProfile(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  const parsedBody = updateProfileSchema.parse(req.body ?? {});
+  const uid = req.user?.uid;
+
+  if (!uid) {
+    throw AppError.unauthorized();
+  }
+
+  const updatedUser = await authService.updateProfile(uid, parsedBody);
+
+  return res.status(200).json({
+    success: true,
+    data: { user: updatedUser },
+    message: "Profile updated",
   });
 }

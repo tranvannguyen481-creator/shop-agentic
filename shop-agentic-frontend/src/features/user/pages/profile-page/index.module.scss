@@ -208,3 +208,25 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+.editForm {
+  display: grid;
+  gap: 14px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.buttonLoading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modalError {
+  margin-top: 8px;
+}
