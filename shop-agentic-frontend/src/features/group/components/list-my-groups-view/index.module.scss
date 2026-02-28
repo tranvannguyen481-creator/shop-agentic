@@ -37,7 +37,7 @@
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid tokens.color(border-input-focus);
+    outline: 2px solid tokens.color(primary-legacy);
     outline-offset: 2px;
   }
 }
@@ -52,7 +52,7 @@
   }
 
   h3 {
-    color: tokens.color(text-brand-cool);
+    color: tokens.color(primary-legacy);
     font-size: tokens.fs(lg);
     font-weight: 700;
   }
@@ -60,6 +60,7 @@
   p {
     color: tokens.color(text-soft);
     font-size: tokens.fs(sm);
+    line-height: 1.5;
   }
 }
 

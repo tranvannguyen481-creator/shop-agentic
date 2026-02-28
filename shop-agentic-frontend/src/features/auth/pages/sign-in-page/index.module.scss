@@ -1,26 +1,30 @@
 @use "../../../../shared/styles/tokens";
 
 .sign-in-page {
-  height: 100vh;
-  background: tokens.color(primary-legacy-strong);
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    tokens.color(primary-legacy-strong) 0%,
+    tokens.color(primary-legacy) 50%,
+    #7c3aed 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  padding: clamp(8px, 1.6vw, 14px) clamp(10px, 1.8vw, 16px);
+  padding: clamp(16px, 3vw, 32px) clamp(12px, 2vw, 20px);
   font-size: tokens.fs(sm);
 }
 
 .sign-in-container {
-  width: min(900px, 100%);
+  width: min(440px, 100%);
   margin: 0 auto;
 }
 
 .sign-in-header {
   display: grid;
   justify-items: center;
-  gap: clamp(4px, 0.8vw, 8px);
-  margin-bottom: clamp(8px, 1.2vw, 12px);
+  gap: clamp(6px, 1vw, 10px);
+  margin-bottom: clamp(20px, 2.5vw, 28px);
 }
 
 .logo {
@@ -30,39 +34,43 @@
     color: tokens.color(text-on-dark);
     line-height: 1;
     margin: 0;
-    font-size: clamp(1.7rem, 1.5rem + 0.7vw, 2.2rem);
-    font-weight: 700;
+    font-size: clamp(1.8rem, 1.5rem + 1vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   span {
-    color: tokens.color(text-aqua-soft);
-    font-size: clamp(0.8rem, 0.76rem + 0.16vw, 0.9rem);
-    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: clamp(0.78rem, 0.72rem + 0.2vw, 0.9rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
   }
 }
 
 .bubble {
-  background: tokens.color(surface-muted);
-  border-radius: tokens.radius(2xl);
-  padding: 6px 10px;
-  font-size: clamp(0.7rem, 0.68rem + 0.12vw, 0.78rem);
-  color: tokens.color(text-neutral-5);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: tokens.radius(pill);
+  padding: 6px 14px;
+  font-size: clamp(0.7rem, 0.66rem + 0.15vw, 0.78rem);
+  color: rgba(255, 255, 255, 0.85);
   position: relative;
 
   &::after {
     content: "";
     position: absolute;
-    left: 28px;
-    bottom: -16px;
+    left: 24px;
+    bottom: -12px;
     width: 0;
     height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 16px solid tokens.color(surface-muted);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 12px solid rgba(255, 255, 255, 0.15);
   }
 
   a {
-    color: tokens.color(warning-soft);
+    color: tokens.color(warning-accent);
     font-weight: 700;
     text-decoration: none;
   }
@@ -70,29 +78,27 @@
 
 .card {
   margin: 0 auto;
-  width: min(700px, 100%);
   background: tokens.color(surface);
   border-radius: tokens.radius(4xl);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.14);
-  padding: clamp(12px, 1.8vw, 18px) clamp(12px, 1.8vw, 18px)
-    clamp(12px, 2vw, 20px);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.2),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: clamp(24px, 3vw, 32px);
 
   h2 {
-    margin: 0;
+    margin: 0 0 4px;
     text-align: center;
-    color: tokens.color(warning-soft);
-    font-size: clamp(1.08rem, 0.98rem + 0.5vw, 1.35rem);
+    color: tokens.color(body-text);
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.3rem);
     line-height: 1.2;
     font-weight: 700;
   }
 }
 
 .form {
-  margin-top: clamp(10px, 1.4vw, 14px);
-  border-radius: tokens.radius(3xl);
-  padding: 0;
+  margin-top: clamp(16px, 1.8vw, 20px);
   display: grid;
-  gap: 8px;
+  gap: 14px;
 }
 
 .field {
@@ -108,36 +114,59 @@
   }
 
   span {
-    color: tokens.color(text-neutral-7);
-    font-size: clamp(0.96rem, 0.9rem + 0.22vw, 1.05rem);
-    margin-bottom: 5px;
+    color: tokens.color(form-label);
+    font-size: tokens.fs(xs);
+    font-weight: 600;
+    margin-bottom: 6px;
     display: block;
   }
 
   input {
     width: 100%;
-    border-radius: 999px;
-    border-color: tokens.color(border-neutral);
+    border-radius: tokens.radius(lg);
+    border: 1.5px solid tokens.color(border-input);
     padding: 10px 40px 10px 14px;
-    font-size: clamp(0.88rem, 0.84rem + 0.14vw, 0.95rem);
+    font-size: tokens.fs(sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus {
+      border-color: tokens.color(primary-legacy);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+      outline: none;
+    }
   }
 }
 
 .login-btn {
-  margin-top: clamp(4px, 0.8vw, 8px);
+  margin-top: 4px;
   font-weight: 700;
-  border-radius: tokens.radius(pill);
+  border-radius: tokens.radius(lg);
+  background: tokens.color(primary-legacy);
+  border-color: tokens.color(primary-legacy);
   color: tokens.color(text-on-dark);
-  letter-spacing: 0.06em;
-  font-size: clamp(0.84rem, 0.8rem + 0.14vw, 0.92rem);
-  padding-top: 8px;
-  padding-bottom: 8px;
+  letter-spacing: 0.04em;
+  font-size: tokens.fs(sm);
+  padding: 11px 20px;
+  transition:
+    background-color 0.15s ease,
+    transform 0.08s ease,
+    box-shadow 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: tokens.color(primary-legacy-strong);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 .submit-error {
-  margin-top: 6px;
-  border-radius: tokens.radius(2xl);
-  font-size: clamp(0.82rem, 0.79rem + 0.15vw, 0.92rem);
+  margin-top: 8px;
+  border-radius: tokens.radius(lg);
+  font-size: tokens.fs(xs);
 }
 
 .pin-row {
@@ -159,22 +188,30 @@
   }
 
   a {
-    color: tokens.color(text-neutral-4);
-    font-size: clamp(0.84rem, 0.8rem + 0.18vw, 0.94rem);
+    color: tokens.color(primary-legacy);
+    font-size: tokens.fs(xs);
     text-decoration: none;
     font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
 .toggle-pin {
   border: 0;
   background: transparent;
-  color: tokens.color(text-neutral-6);
+  color: tokens.color(text-muted-1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   padding: 0;
+
+  &:hover {
+    color: tokens.color(primary-legacy);
+  }
 }
 
 .button-loading {
@@ -185,21 +222,20 @@
 }
 
 .button-spinner {
-  border-color: rgba(255, 255, 255, 0.45);
+  border-color: rgba(255, 255, 255, 0.35);
   border-top-color: tokens.color(text-on-dark);
 }
 
 .google-spinner {
-  border-color: rgba(35, 191, 193, 0.25);
+  border-color: rgba(79, 70, 229, 0.2);
   border-top-color: tokens.color(primary-legacy);
 }
 
 .divider {
-  margin: clamp(12px, 1.6vw, 16px) auto 0;
-  width: min(360px, 100%);
+  margin: clamp(14px, 1.8vw, 18px) auto;
   text-align: center;
-  color: tokens.color(text-neutral-2);
-  font-size: clamp(0.9rem, 0.86rem + 0.2vw, 1rem);
+  color: tokens.color(text-muted-1);
+  font-size: tokens.fs(xs);
   position: relative;
   font-weight: 600;
 
@@ -208,9 +244,9 @@
     content: "";
     position: absolute;
     top: 50%;
-    width: 26px;
-    height: 2px;
-    background: tokens.color(accent-cyan-soft);
+    width: calc(50% - 28px);
+    height: 1px;
+    background: tokens.color(border-muted);
   }
 
   &::before {
@@ -223,30 +259,45 @@
 }
 
 .google-btn {
-  margin-top: 10px;
-  border-radius: tokens.radius(pill);
-  color: tokens.color(primary-legacy-strong);
-  font-size: clamp(0.84rem, 0.8rem + 0.14vw, 0.92rem);
-  font-weight: 700;
-  padding: 8px 10px;
+  border-radius: tokens.radius(lg);
+  color: tokens.color(primary-legacy);
+  border-color: tokens.color(border-input);
+  font-size: tokens.fs(sm);
+  font-weight: 600;
+  padding: 10px 20px;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.08s ease;
+
+  &:hover:not(:disabled) {
+    background: tokens.color(brand-soft-bg);
+    border-color: tokens.color(primary-legacy);
+    transform: translateY(-1px);
+  }
 }
 
 .footer-links {
-  margin-top: clamp(10px, 1.4vw, 14px);
+  margin-top: clamp(16px, 1.8vw, 20px);
   display: grid;
-  gap: 6px;
+  gap: 8px;
 }
 
 .sign-up-text {
   margin: 0;
   text-align: center;
-  font-size: clamp(0.86rem, 0.82rem + 0.18vw, 0.95rem);
-  line-height: 1.25;
-  color: tokens.color(text-brand-soft);
+  font-size: tokens.fs(xs);
+  line-height: 1.4;
+  color: tokens.color(text-muted-1);
 
   a {
-    color: tokens.color(text-brand-soft);
-    text-decoration: underline;
+    color: tokens.color(primary-legacy);
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
@@ -255,50 +306,26 @@
   text-align: center;
 
   a {
-    color: tokens.color(text-brand-dark);
-    font-weight: 600;
-    font-size: clamp(0.72rem, 0.7rem + 0.12vw, 0.8rem);
+    color: tokens.color(text-muted-1);
+    font-weight: 500;
+    font-size: tokens.fs(xs);
     text-decoration: none;
+
+    &:hover {
+      color: tokens.color(primary-legacy);
+      text-decoration: underline;
+    }
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 480px) {
   .sign-in-page {
-    height: auto;
-    min-height: 100vh;
-    overflow-y: auto;
     align-items: flex-start;
-  }
-
-  .logo h1 {
-    font-size: clamp(1.7rem, 1.5rem + 1vw, 2.1rem);
-  }
-
-  .bubble {
-    font-size: tokens.fs(sm);
+    padding-top: 24px;
   }
 
   .card {
-    h2 {
-      font-size: clamp(1.02rem, 0.96rem + 0.65vw, 1.25rem);
-    }
-  }
-
-  .field {
-    label,
-    input,
-    .pin-row a {
-      font-size: tokens.fs(sm);
-    }
-  }
-}
-
-@media (max-width: 640px) {
-  .logo h1 {
-    font-size: clamp(1.4rem, 1.25rem + 0.8vw, 1.8rem);
-  }
-
-  .card h2 {
-    font-size: clamp(0.98rem, 0.92rem + 0.55vw, 1.12rem);
+    border-radius: tokens.radius(3xl);
+    padding: 20px 16px;
   }
 }

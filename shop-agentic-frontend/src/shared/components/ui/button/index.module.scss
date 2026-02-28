@@ -1,22 +1,23 @@
 @use "../../../styles/tokens";
 
 .button {
-  border-radius: tokens.radius(pill);
-  padding: 6px 14px;
+  border-radius: tokens.radius(lg);
+  padding: 8px 16px;
   font-size: tokens.fs(sm);
+  font-weight: 600;
   line-height: 1.25;
   text-transform: uppercase;
+  letter-spacing: 0.03em;
   cursor: pointer;
   transition:
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease,
-    box-shadow 0.18s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
     transform 0.08s ease;
 
   &:focus-visible {
-    outline: 2px solid
-      color-mix(in srgb, tokens.color(primary-legacy) 70%, transparent);
+    outline: 2px solid tokens.color(primary-legacy);
     outline-offset: 2px;
   }
 
@@ -26,7 +27,7 @@
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.65;
+    opacity: 0.55;
   }
 }
 
@@ -35,47 +36,43 @@
 }
 
 .primary {
-  border: 1px solid tokens.color(primary-legacy);
+  border: 1.5px solid tokens.color(primary-legacy);
   background: tokens.color(primary-legacy);
   color: tokens.color(text-on-dark);
-  box-shadow: 0 2px 0
-    color-mix(in srgb, tokens.color(primary-legacy-strong) 50%, transparent);
+  box-shadow: 0 1px 3px rgba(79, 70, 229, 0.2);
 
   &:hover:not(:disabled) {
     border-color: tokens.color(primary-legacy-strong);
     background: tokens.color(primary-legacy-strong);
-    box-shadow: 0 6px 14px
-      color-mix(in srgb, tokens.color(primary-legacy) 34%, transparent);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    transform: translateY(-1px);
   }
 
   &:active:not(:disabled) {
-    box-shadow: 0 1px 0
-      color-mix(in srgb, tokens.color(primary-legacy-strong) 42%, transparent);
+    box-shadow: none;
   }
 }
 
 .secondary {
-  border: 1px solid tokens.color(text-muted-1);
+  border: 1.5px solid tokens.color(text-muted-1);
   background: tokens.color(text-muted-1);
   color: tokens.color(text-on-dark);
 
   &:hover:not(:disabled) {
     border-color: tokens.color(text-soft);
     background: tokens.color(text-soft);
+    transform: translateY(-1px);
   }
 }
 
 .outline {
-  border: 1px solid tokens.color(primary-legacy);
+  border: 1.5px solid tokens.color(primary-legacy);
   background: transparent;
   color: tokens.color(primary-legacy);
 
   &:hover:not(:disabled) {
-    background: color-mix(
-      in srgb,
-      tokens.color(primary-legacy) 12%,
-      tokens.color(surface)
-    );
+    background: tokens.color(brand-soft-bg);
+    transform: translateY(-1px);
   }
 }
 
@@ -86,9 +83,10 @@
   text-transform: none;
   border-radius: 0;
   padding: 0;
+  letter-spacing: 0;
 
   &:hover:not(:disabled) {
-    color: tokens.color(text-brand-dark);
+    color: tokens.color(primary-legacy);
     text-decoration: none;
   }
 
@@ -99,20 +97,21 @@
 }
 
 .fab {
-  border: 1px solid tokens.color(primary-legacy);
+  border: 1.5px solid tokens.color(primary-legacy);
   background: tokens.color(primary-legacy);
   color: tokens.color(text-on-dark);
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border-radius: tokens.radius(pill);
   padding: 0;
   display: inline-grid;
   place-items: center;
-  box-shadow: 0 8px 16px
-    color-mix(in srgb, tokens.color(primary-legacy) 30%, transparent);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 
   &:hover:not(:disabled) {
     background: tokens.color(primary-legacy-strong);
     border-color: tokens.color(primary-legacy-strong);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
   }
 }

@@ -7,9 +7,10 @@
   bottom: 0;
   z-index: 90;
 
-  background: tokens.color(shell-bg);
+  background: tokens.color(surface);
   border-top: 1px solid tokens.color(shell-border);
   min-height: var(--app-footer-height, 56px);
+  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.06);
 }
 
 .nav-inner {
@@ -23,33 +24,27 @@
 .nav-item {
   border: 0;
   background: transparent;
-  padding: 5px 6px;
+  padding: 6px 8px;
   display: grid;
   place-items: center;
-  color: tokens.color(text-neutral-5);
-  gap: 2px;
+  color: tokens.color(text-muted-1);
+  gap: 3px;
   transition:
     color 0.18s ease,
     background-color 0.18s ease,
-    transform 0.08s ease,
-    box-shadow 0.18s ease;
+    transform 0.08s ease;
 
   &:hover {
-    color: tokens.color(text-emphasis);
-    background: color-mix(
-      in srgb,
-      tokens.color(surface-card-2) 55%,
-      tokens.color(shell-bg)
-    );
+    color: tokens.color(primary-legacy);
+    background: tokens.color(brand-soft-bg);
   }
 
   &:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
   }
 
   &:focus-visible {
-    outline: 2px solid
-      color-mix(in srgb, tokens.color(primary-legacy) 70%, transparent);
+    outline: 2px solid tokens.color(primary);
     outline-offset: -2px;
   }
 
@@ -58,31 +53,41 @@
   }
 
   .icon {
-    width: 15px;
-    height: 15px;
-    stroke-width: 2.1;
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.8;
   }
 
   small {
-    font-size: tokens.fs(xs);
+    font-size: tokens.fs(2xs);
+    font-weight: 500;
   }
 }
 
 .active {
-  color: tokens.color(warning-strong);
+  color: tokens.color(primary-legacy);
+
+  .icon {
+    stroke-width: 2.2;
+  }
+
+  small {
+    font-weight: 700;
+  }
 }
 
 @media (min-width: 576px) {
   .nav-item {
-    padding: 6px 8px;
+    padding: 8px 10px;
+    gap: 4px;
 
     .icon {
-      width: 17px;
-      height: 17px;
+      width: 20px;
+      height: 20px;
     }
 
     small {
-      font-size: tokens.fs(sm);
+      font-size: tokens.fs(xs);
     }
   }
 }

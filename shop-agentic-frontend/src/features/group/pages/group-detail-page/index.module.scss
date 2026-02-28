@@ -15,9 +15,10 @@
   }
 
   h2 {
-    color: tokens.color(text-brand-cool);
+    color: tokens.color(primary-legacy);
     font-size: tokens.fs(xl);
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.01em;
   }
 
   p {
@@ -65,15 +66,18 @@
   justify-items: center;
   text-align: center;
   gap: 4px;
+  padding: 14px 10px;
 
   strong {
-    color: tokens.color(text-brand-cool);
+    color: tokens.color(primary-legacy);
     font-size: tokens.fs(lg);
+    font-weight: 800;
   }
 
   span {
     color: tokens.color(text-muted-1);
     font-size: tokens.fs(xs);
+    font-weight: 500;
   }
 }
 
@@ -87,7 +91,7 @@
   }
 
   h3 {
-    color: tokens.color(text-brand-cool);
+    color: tokens.color(primary-legacy);
     font-size: tokens.fs(md);
     font-weight: 700;
   }
@@ -95,6 +99,7 @@
   p {
     color: tokens.color(text-soft);
     font-size: tokens.fs(sm);
+    line-height: 1.5;
   }
 }
 

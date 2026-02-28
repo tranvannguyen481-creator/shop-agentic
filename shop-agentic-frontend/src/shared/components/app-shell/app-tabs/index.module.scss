@@ -7,7 +7,7 @@
   right: 0;
   z-index: 85;
 
-  background: tokens.color(shell-bg);
+  background: tokens.color(surface);
   height: var(--app-tabs-height, 40px);
   border-bottom: 1px solid tokens.color(shell-border);
 }
@@ -18,7 +18,7 @@
   height: 100%;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  background-color: tokens.color(shell-bg);
+  background-color: tokens.color(surface);
 }
 
 .tab {
@@ -28,42 +28,34 @@
   align-items: center;
   justify-content: center;
   font-size: tokens.fs(xs);
-  color: tokens.color(text-neutral-6);
+  font-weight: 500;
+  color: tokens.color(text-muted-1);
   padding: 0 6px;
   height: 100%;
   line-height: 1;
   box-sizing: border-box;
   border-bottom: 2px solid transparent;
   transition:
-    color 0.18s ease,
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    transform 0.08s ease;
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 
   &:hover {
-    color: tokens.color(text-emphasis);
-    background: color-mix(
-      in srgb,
-      tokens.color(surface-card-2) 60%,
-      tokens.color(shell-bg)
-    );
-  }
-
-  &:active {
-    transform: scale(0.98);
+    color: tokens.color(primary-legacy);
+    background: tokens.color(brand-soft-bg);
   }
 
   &:focus-visible {
-    outline: 2px solid
-      color-mix(in srgb, tokens.color(primary-legacy) 70%, transparent);
+    outline: 2px solid tokens.color(primary);
     outline-offset: -2px;
   }
 }
 
 .active {
-  color: tokens.color(warning-strong);
-  border-bottom-color: tokens.color(warning-strong);
-  font-weight: 600;
+  color: tokens.color(primary-legacy);
+  border-bottom-color: tokens.color(primary-legacy);
+  font-weight: 700;
+  background: transparent;
 }
 
 @media (min-width: 576px) {
