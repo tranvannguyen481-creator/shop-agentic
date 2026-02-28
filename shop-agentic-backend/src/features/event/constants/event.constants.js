@@ -1,9 +1,0 @@
-const EVENTS_COLLECTION = "events";
-const USER_HOSTED_EVENTS_COLLECTION = "userHostedEvents";
-const GROUPS_COLLECTION = "groups";
-
-module.exports = {
-  EVENTS_COLLECTION,
-  USER_HOSTED_EVENTS_COLLECTION,
-  GROUPS_COLLECTION,
-};
