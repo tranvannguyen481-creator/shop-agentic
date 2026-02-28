@@ -1,6 +1,7 @@
+import { Bell, Camera, LockKeyhole, MapPin, SquarePen } from "lucide-react";
 import { useState } from "react";
-import { Bell, LockKeyhole, MapPin, SquarePen } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
+import { Form, FormInput } from "../../../../shared/components/form";
 import {
   Alert,
   Avatar,
@@ -10,10 +11,10 @@ import {
   SectionCard,
   Spinner,
 } from "../../../../shared/components/ui";
-import { Form, FormInput } from "../../../../shared/components/form";
-import AppLayout from "../../../../shared/layouts/app-layout";
 import { useCurrentUserQuery } from "../../../../shared/hooks/use-current-user-query";
+import AppLayout from "../../../../shared/layouts/app-layout";
 import { useSignOutSubmit } from "../../../auth/hooks/use-sign-out-submit";
+import { useUpdateAvatar } from "../../hooks/use-update-avatar";
 import {
   useUpdateProfileForm,
   type UpdateProfileFormValues,
@@ -27,16 +28,26 @@ function ProfilePage() {
   const { data: currentUser } = useCurrentUserQuery();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const { form, onSubmit, isSubmitting: isSaving, submitError } =
-    useUpdateProfileForm(() => setIsEditModalOpen(false));
+  const {
+    form,
+    onSubmit,
+    isSubmitting: isSaving,
+    submitError,
+  } = useUpdateProfileForm(() => setIsEditModalOpen(false));
+
+  const {
+    fileInputRef,
+    isUploading,
+    uploadError: avatarError,
+    avatarSrc,
+    triggerFileInput,
+    handleFileChange,
+  } = useUpdateAvatar();
 
   const displayName =
     typeof currentUser?.displayName === "string" && currentUser.displayName
       ? currentUser.displayName
       : "User";
-
-  const photoURL =
-    typeof currentUser?.photoURL === "string" ? currentUser.photoURL : undefined;
 
   const createdAt =
     typeof currentUser?.createdAt === "number" && currentUser.createdAt > 0
@@ -47,12 +58,44 @@ function ProfilePage() {
     <AppLayout>
       <section className={styles.page}>
         <SectionCard className={styles.profileHeader}>
-          <Avatar
-            name={displayName}
-            src={photoURL}
-            size={88}
-            className={styles.avatar}
+          <button
+            type="button"
+            className={styles.avatarWrapper}
+            onClick={triggerFileInput}
+            disabled={isUploading}
+            aria-label="Change avatar"
+          >
+            {isUploading ? (
+              <span className={styles.avatarSpinner}>
+                <Spinner size={40} />
+              </span>
+            ) : (
+              <>
+                <Avatar
+                  name={displayName}
+                  src={avatarSrc}
+                  size={88}
+                  className={styles.avatar}
+                />
+                <span className={styles.avatarOverlay} aria-hidden="true">
+                  <Camera size={20} strokeWidth={1.8} />
+                </span>
+              </>
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className={styles.avatarInput}
+            onChange={handleFileChange}
+            aria-hidden="true"
           />
+          {avatarError ? (
+            <Alert tone="error" className={styles.avatarError}>
+              {avatarError}
+            </Alert>
+          ) : null}
           <h2 className={styles.name}>{displayName}</h2>
           {createdAt !== null && (
             <p className={styles.memberSince}>Member since {createdAt}</p>

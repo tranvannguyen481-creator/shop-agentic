@@ -29,6 +29,7 @@ export const updateProfileSchema = z.object({
     .min(3, "Postal code must be at least 3 characters")
     .max(12, "Postal code is too long")
     .optional(),
+  photoURL: z.string().url("Invalid photo URL").optional(),
 });
 
 export type SessionDto = z.infer<typeof sessionSchema>;

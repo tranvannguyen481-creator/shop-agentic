@@ -93,6 +93,7 @@ export interface UpdateProfilePayload {
   displayName?: string;
   mobileNumber?: string;
   postalCode?: string;
+  photoURL?: string;
 }
 
 export const updateUserProfile = async (
@@ -106,4 +107,21 @@ export const updateUserProfile = async (
   }
 
   return user;
+};
+
+export const uploadAvatar = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append("images", file);
+
+  const response = await api.post("/upload/images", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  const urls = response.data?.urls as string[] | undefined;
+
+  if (!urls || urls.length === 0) {
+    throw new Error("Upload failed: no URL returned");
+  }
+
+  return urls[0];
 };

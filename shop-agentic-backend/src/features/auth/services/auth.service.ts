@@ -183,6 +183,10 @@ export async function updateProfile(
     nextData.postalCode = payload.postalCode;
   }
 
+  if (payload.photoURL !== undefined) {
+    nextData.photoURL = payload.photoURL;
+  }
+
   await userRef.set(nextData, { merge: true });
 
   return {
