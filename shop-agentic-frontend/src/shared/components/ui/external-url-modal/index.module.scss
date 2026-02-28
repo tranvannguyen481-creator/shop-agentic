@@ -2,7 +2,7 @@
 
 .container {
   display: grid;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .helper {
@@ -19,5 +19,5 @@
 .actions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 0.5rem;
 }

@@ -4,9 +4,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 18px;
+  min-height: 1.125rem;
   border-radius: tokens.radius(pill);
-  padding: 0 8px;
+  padding: 0 0.5rem;
   font-size: tokens.fs(2xs);
   font-weight: 600;
 }

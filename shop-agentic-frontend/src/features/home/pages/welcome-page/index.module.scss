@@ -5,14 +5,14 @@
     100vh - var(--app-header-height) - var(--app-tabs-height) - var(
         --app-footer-height
       ) -
-      32px
+      2rem
   );
   display: grid;
   place-content: start center;
   justify-items: center;
-  gap: 18px;
+  gap: 1.125rem;
   text-align: center;
-  padding: 32px 12px 40px;
+  padding: 2rem 0.75rem 2.5rem;
 }
 
 .title {
@@ -24,25 +24,25 @@
 }
 
 .illustration {
-  width: 160px;
-  height: 160px;
+  width: 10rem;
+  height: 10rem;
   border-radius: tokens.radius(pill);
   background: tokens.color(brand-soft-bg);
-  border: 1.5px solid tokens.color(border-aqua);
+  border: 0.09375rem solid tokens.color(border-aqua);
   display: grid;
   place-items: center;
 }
 
 .icon {
-  width: 72px;
-  height: 72px;
+  width: 4.5rem;
+  height: 4.5rem;
   color: tokens.color(primary-legacy);
   opacity: 0.75;
 }
 
 .headline {
   margin: 0;
-  max-width: 480px;
+  max-width: 30rem;
   font-size: tokens.fs(lg);
   font-weight: 700;
   color: tokens.color(body-text);
@@ -51,7 +51,7 @@
 
 .description {
   margin: 0;
-  max-width: 480px;
+  max-width: 30rem;
   font-size: tokens.fs(md);
   color: tokens.color(text-soft);
   line-height: 1.55;
@@ -69,17 +69,17 @@
 
 @media (min-width: 768px) {
   .page {
-    padding-top: 40px;
-    gap: 22px;
+    padding-top: 2.5rem;
+    gap: 1.375rem;
   }
 
   .illustration {
-    width: 200px;
-    height: 200px;
+    width: 12.5rem;
+    height: 12.5rem;
   }
 
   .icon {
-    width: 90px;
-    height: 90px;
+    width: 5.625rem;
+    height: 5.625rem;
   }
 }

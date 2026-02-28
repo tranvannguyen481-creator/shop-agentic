@@ -1,14 +1,14 @@
 .rating {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .star {
   border: 0;
   background: transparent;
   color: #b8b8bf;
-  font-size: 20px;
+  font-size: 1.25rem;
   line-height: 1;
   padding: 0;
   cursor: pointer;

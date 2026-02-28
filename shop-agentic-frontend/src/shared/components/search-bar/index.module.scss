@@ -2,20 +2,20 @@
 
 .search {
   background: tokens.color(surface);
-  border: 1.5px solid tokens.color(border-input);
+  border: 0.09375rem solid tokens.color(border-input);
   border-radius: tokens.radius(lg);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   height: var(--ctrl-h);
-  padding: 0 14px;
+  padding: 0 0.875rem;
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease;
 
   &:focus-within {
     border-color: tokens.color(primary-legacy);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    box-shadow: 0 0 0 0.1875rem rgba(79, 70, 229, 0.1);
   }
 }
 
@@ -37,8 +37,8 @@
 
 .search-icon {
   color: tokens.color(primary-legacy);
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   stroke-width: 2;
   flex-shrink: 0;
   opacity: 0.7;

@@ -2,7 +2,7 @@
 
 .wrapper {
   overflow: auto;
-  border: 1px solid tokens.color(border-contrast);
+  border: 0.0625rem solid tokens.color(border-contrast);
   border-radius: tokens.radius(lg);
 }
 
@@ -13,9 +13,9 @@
 
   th,
   td {
-    border-bottom: 1px solid tokens.color(border-soft);
+    border-bottom: 0.0625rem solid tokens.color(border-soft);
     text-align: left;
-    padding: 10px;
+    padding: 0.625rem;
     font-size: tokens.fs(xs);
     color: tokens.color(text-subtle);
   }

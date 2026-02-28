@@ -5,7 +5,7 @@
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   background: tokens.color(surface-card);
-  min-height: 40px;
+  min-height: 2.5rem;
 }
 
 .tab {
@@ -15,11 +15,11 @@
   align-items: center;
   justify-content: center;
   color: tokens.color(text-neutral-6);
-  padding: 0 10px;
+  padding: 0 0.625rem;
   line-height: 1;
   height: 100%;
   box-sizing: border-box;
-  border-bottom: 3px solid transparent;
+  border-bottom: 0.1875rem solid transparent;
   transition:
     color 0.18s ease,
     background-color 0.18s ease,
@@ -40,9 +40,9 @@
   }
 
   &:focus-visible {
-    outline: 2px solid
+    outline: 0.125rem solid
       color-mix(in srgb, tokens.color(primary-legacy) 70%, transparent);
-    outline-offset: -2px;
+    outline-offset: -0.125rem;
   }
 }
 

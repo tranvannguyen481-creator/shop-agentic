@@ -3,9 +3,9 @@
 .emptyState {
   display: grid;
   justify-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   text-align: center;
-  padding: 6px 2px;
+  padding: 0.375rem 0.125rem;
 
   h3 {
     margin: 0;
@@ -19,13 +19,13 @@
     color: tokens.color(text-soft);
     font-size: tokens.fs(sm);
     line-height: 1.45;
-    max-width: 340px;
+    max-width: 21.25rem;
   }
 }
 
 .iconWrap {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: tokens.radius(pill);
   background: tokens.color(brand-soft-bg);
   color: tokens.color(brand-soft-text);
@@ -33,13 +33,13 @@
   place-items: center;
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
     stroke-width: 2;
   }
 }
 
 .actions {
   width: 100%;
-  margin-top: 4px;
+  margin-top: 0.25rem;
 }

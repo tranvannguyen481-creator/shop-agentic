@@ -8,32 +8,32 @@
   z-index: 90;
 
   background: tokens.color(surface);
-  border-top: 1px solid tokens.color(shell-border);
-  min-height: var(--app-footer-height, 60px);
-  box-shadow: 0 -1px 0 tokens.color(shell-border);
+  border-top: 0.0625rem solid tokens.color(shell-border);
+  min-height: var(--app-footer-height, 3.75rem);
+  box-shadow: 0 -0.0625rem 0 tokens.color(shell-border);
 
   // safe area for notched phones
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .nav-inner {
-  width: min(var(--app-max-width, 760px), 100%);
+  width: min(var(--app-max-width, 47.5rem), 100%);
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  min-height: var(--app-footer-height, 60px);
+  min-height: var(--app-footer-height, 3.75rem);
 }
 
 .nav-item {
   border: 0;
   background: transparent;
-  padding: 8px 4px 6px;
+  padding: 0.5rem 0.25rem 0.375rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: tokens.color(text-muted-2);
-  gap: 3px;
+  gap: 0.1875rem;
   transition:
     color 0.15s ease,
     background-color 0.15s ease;
@@ -48,20 +48,20 @@
   }
 
   &:focus-visible {
-    outline: 2px solid tokens.color(primary);
-    outline-offset: -2px;
+    outline: 0.125rem solid tokens.color(primary);
+    outline-offset: -0.125rem;
   }
 }
 
 .icon {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   stroke-width: 1.7;
   flex-shrink: 0;
 }
 
 .label {
-  font-size: 10px;
+  font-size: 0.625rem; // 10px
   font-weight: 500;
   line-height: 1;
   letter-spacing: 0.01em;
@@ -82,15 +82,15 @@
 
 @media (min-width: 576px) {
   .bottom-nav {
-    --app-footer-height: 64px;
+    --app-footer-height: 4rem; // 64px
   }
 
   .icon {
-    width: 22px;
-    height: 22px;
+    width: 1.375rem;
+    height: 1.375rem;
   }
 
   .label {
-    font-size: 11px;
+    font-size: 0.6875rem; // 11px
   }
 }

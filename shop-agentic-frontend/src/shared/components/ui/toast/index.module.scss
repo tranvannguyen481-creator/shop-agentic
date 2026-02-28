@@ -3,10 +3,10 @@
 .toast {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   border-radius: tokens.radius(pill);
   background: #323238;
   color: #ffffff;
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   font-size: tokens.fs(sm);
 }

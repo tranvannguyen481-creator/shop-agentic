@@ -1,30 +1,30 @@
 @use "../../../styles/tokens";
 
 .carousel {
-  border: 1px solid #d9d9dd;
+  border: 0.0625rem solid #d9d9dd;
   border-radius: tokens.radius(lg);
   overflow: hidden;
   background: #f7f7f7;
 }
 
 .viewport {
-  min-height: 120px;
-  padding: 12px;
+  min-height: 7.5rem;
+  padding: 0.75rem;
 }
 
 .controls {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
-  border-top: 1px solid #e1e1e5;
+  padding: 0.5rem 0.75rem;
+  border-top: 0.0625rem solid #e1e1e5;
 }
 
 .control-btn {
-  border: 1px solid #d2d2d6;
+  border: 0.0625rem solid #d2d2d6;
   background: #ffffff;
   border-radius: tokens.radius(sm);
-  padding: 4px 8px;
+  padding: 0.25rem 0.5rem;
 }
 
 .controls span {

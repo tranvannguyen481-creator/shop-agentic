@@ -2,14 +2,14 @@
 
 .summary {
   display: grid;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 
   h3,
   span {
@@ -31,8 +31,8 @@
 
 .lines {
   display: grid;
-  gap: 8px;
-  max-height: 280px;
+  gap: 0.5rem;
+  max-height: 17.5rem;
   overflow: auto;
 }
 
@@ -45,10 +45,10 @@
 .lineItem {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
-  border: 1px solid tokens.color(border-soft);
+  gap: 0.5rem;
+  border: 0.0625rem solid tokens.color(border-soft);
   border-radius: tokens.radius(sm);
-  padding: 8px;
+  padding: 0.5rem;
 }
 
 .productName,
@@ -70,7 +70,7 @@
 .rightCol {
   display: grid;
   justify-items: end;
-  gap: 4px;
+  gap: 0.25rem;
 
   strong {
     color: tokens.color(text-muted-1);
@@ -79,20 +79,20 @@
 }
 
 .removeBtn {
-  min-height: 24px;
+  min-height: 1.5rem;
   padding: 0;
   color: tokens.color(form-required);
 }
 
 .totalRows {
   display: grid;
-  gap: 4px;
+  gap: 0.25rem;
 
   p {
     margin: 0;
     display: flex;
     justify-content: space-between;
-    gap: 8px;
+    gap: 0.5rem;
 
     span,
     strong {

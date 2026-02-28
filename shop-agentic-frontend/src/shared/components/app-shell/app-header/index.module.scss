@@ -8,15 +8,15 @@
   z-index: 90;
 
   background: tokens.color(surface);
-  border-bottom: 1px solid tokens.color(shell-border);
-  padding: 0 16px;
-  height: var(--app-header-height, 52px);
+  border-bottom: 0.0625rem solid tokens.color(shell-border);
+  padding: 0 1rem;
+  height: var(--app-header-height, 3.25rem);
   box-sizing: border-box;
-  box-shadow: 0 1px 0 tokens.color(shell-border);
+  box-shadow: 0 0.0625rem 0 tokens.color(shell-border);
 }
 
 .header-inner {
-  width: min(var(--app-max-width, 760px), 100%);
+  width: min(var(--app-max-width, 47.5rem), 100%);
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -27,12 +27,12 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .brand-mark {
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: tokens.radius(md);
   background: linear-gradient(
     135deg,
@@ -46,7 +46,7 @@
   span {
     color: #fff;
     font-weight: 800;
-    font-size: 13px;
+    font-size: 0.8125rem; // 13px
     line-height: 1;
     letter-spacing: -0.02em;
   }
@@ -62,7 +62,7 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 0.125rem;
 }
 
 .icon-btn {
@@ -70,8 +70,8 @@
   background: transparent;
   color: tokens.color(text-muted-1);
   border-radius: tokens.radius(lg);
-  width: 34px;
-  height: 34px;
+  width: 2.125rem;
+  height: 2.125rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,17 +85,17 @@
   }
 
   .icon {
-    width: 16px;
-    height: 16px;
+    width: 1rem;
+    height: 1rem;
     stroke-width: 2;
   }
 }
 
 .avatar {
   border: 0;
-  padding: 2px;
-  width: 36px;
-  height: 36px;
+  padding: 0.125rem;
+  width: 2.25rem;
+  height: 2.25rem;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -109,14 +109,14 @@
 }
 
 .avatar-view {
-  border: 2px solid tokens.color(brand-soft-bg);
+  border: 0.125rem solid tokens.color(brand-soft-bg);
   font-size: tokens.fs(xs);
   font-weight: 700;
 }
 
 @media (min-width: 576px) {
   .app-header {
-    padding: 0 20px;
+    padding: 0 1.25rem;
   }
 
   .brand-name {
@@ -124,6 +124,6 @@
   }
 
   .header-actions {
-    gap: 4px;
+    gap: 0.25rem;
   }
 }

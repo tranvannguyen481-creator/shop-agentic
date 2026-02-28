@@ -1,9 +1,9 @@
 @use "../../styles/tokens";
 
 .app-page {
-  --app-max-width: 560px;
-  --app-header-height: 52px;
-  --app-footer-height: 60px;
+  --app-max-width: 35rem; // 560px
+  --app-header-height: 3.25rem; // 52px
+  --app-footer-height: 3.75rem; // 60px
 
   min-height: 100vh;
   background: tokens.color(body-bg);
@@ -14,37 +14,37 @@
 }
 
 .content {
-  width: min(var(--app-max-width), calc(100% - 16px));
+  width: min(var(--app-max-width), calc(100% - 1rem));
   margin: 0 auto;
-  padding-top: calc(var(--app-header-height) + 14px);
-  padding-bottom: calc(var(--app-footer-height) + 10px);
+  padding-top: calc(var(--app-header-height) + 0.875rem);
+  padding-bottom: calc(var(--app-footer-height) + 0.625rem);
   flex: 1;
   box-sizing: border-box;
 }
 
 @media (min-width: 576px) {
   .app-page {
-    --app-max-width: 600px;
-    --app-header-height: 56px;
-    --app-footer-height: 64px;
+    --app-max-width: 37.5rem; // 600px
+    --app-header-height: 3.5rem; // 56px
+    --app-footer-height: 4rem; // 64px
 
     font-size: tokens.fs(sm);
   }
 
   .content {
-    width: min(var(--app-max-width), calc(100% - 24px));
-    padding-top: calc(var(--app-header-height) + 16px);
+    width: min(var(--app-max-width), calc(100% - 1.5rem));
+    padding-top: calc(var(--app-header-height) + 1rem);
   }
 }
 
 @media (min-width: 768px) {
   .app-page {
-    --app-max-width: 640px;
+    --app-max-width: 40rem; // 640px
   }
 }
 
 @media (min-width: 992px) {
   .app-page {
-    --app-max-width: 680px;
+    --app-max-width: 42.5rem; // 680px
   }
 }

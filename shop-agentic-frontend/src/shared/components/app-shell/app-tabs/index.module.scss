@@ -2,18 +2,18 @@
 
 .shell {
   position: fixed;
-  top: var(--app-header-height, 64px);
+  top: var(--app-header-height, 3.25rem); // 52px fallback
   left: 0;
   right: 0;
   z-index: 85;
 
   background: tokens.color(surface);
-  height: var(--app-tabs-height, 40px);
-  border-bottom: 1px solid tokens.color(shell-border);
+  height: var(--app-tabs-height, 2.5rem);
+  border-bottom: 0.0625rem solid tokens.color(shell-border);
 }
 
 .tabs {
-  width: min(var(--app-max-width, 760px), 100%);
+  width: min(var(--app-max-width, 47.5rem), 100%);
   margin: 0 auto;
   height: 100%;
   display: grid;
@@ -30,11 +30,11 @@
   font-size: tokens.fs(xs);
   font-weight: 500;
   color: tokens.color(text-muted-1);
-  padding: 0 6px;
+  padding: 0 0.375rem;
   height: 100%;
   line-height: 1;
   box-sizing: border-box;
-  border-bottom: 2px solid transparent;
+  border-bottom: 0.125rem solid transparent;
   transition:
     color 0.15s ease,
     background-color 0.15s ease,
@@ -46,8 +46,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid tokens.color(primary);
-    outline-offset: -2px;
+    outline: 0.125rem solid tokens.color(primary);
+    outline-offset: -0.125rem;
   }
 }
 
@@ -61,6 +61,6 @@
 @media (min-width: 576px) {
   .tab {
     font-size: tokens.fs(sm);
-    padding: 0 8px;
+    padding: 0 0.5rem;
   }
 }

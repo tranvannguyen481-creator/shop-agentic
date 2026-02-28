@@ -2,17 +2,17 @@
 
 .pagination {
   display: inline-flex;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .page-btn {
-  border: 1px solid #d2d2d6;
+  border: 0.0625rem solid #d2d2d6;
   background: #f2f2f2;
   color: #67676e;
   border-radius: tokens.radius(sm);
-  min-width: 32px;
-  height: 32px;
-  padding: 0 8px;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
 }
 
 .active {

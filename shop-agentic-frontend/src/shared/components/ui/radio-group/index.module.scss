@@ -8,19 +8,19 @@
   legend {
     font-size: tokens.fs(sm);
     color: tokens.color(form-label);
-    margin-bottom: 4px;
+    margin-bottom: 0.25rem;
   }
 }
 
 .options {
   display: grid;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .option {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   color: tokens.color(form-input-text);
   cursor: pointer;
   width: fit-content;
@@ -32,14 +32,14 @@
   }
 
   &:hover input:not(:disabled) {
-    box-shadow: 0 0 0 2px
+    box-shadow: 0 0 0 0.125rem
       color-mix(in srgb, tokens.color(primary-legacy) 18%, transparent);
   }
 
   input:focus-visible {
-    outline: 2px solid
+    outline: 0.125rem solid
       color-mix(in srgb, tokens.color(primary-legacy) 56%, transparent);
-    outline-offset: 2px;
+    outline-offset: 0.125rem;
   }
 
   input:active:not(:disabled) {
