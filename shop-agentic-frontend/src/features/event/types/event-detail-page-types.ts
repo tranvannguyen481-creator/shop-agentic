@@ -15,8 +15,20 @@ export interface EventDetailProductItem {
   id: string;
   name: string;
   description: string;
+  /** Giá mua lẻ (VND) */
+  normalPrice: number;
   basePrice: number;
   price: string;
+  /** Giá mua nhóm cố định (nếu host nhập tay) */
+  groupPrice?: number;
+  /** % giảm thêm khi mua nhóm */
+  groupDiscountPercent?: number;
+  /** Ngưỡng qty toàn nhóm để kích hoạt groupDiscountPercent */
+  qtyThreshold?: number;
+  /** Tồn kho (0 = không giới hạn) */
+  stock?: number;
+  /** [Realtime] Tổng qty sản phẩm này đã được mua bởi toàn nhóm */
+  totalGroupQty: number;
   imagePreviewUrl: string;
   options: string[];
   optionGroups: EventDetailProductOptionGroup[];
@@ -58,13 +70,30 @@ export interface EventDetailPageViewModel {
   joinedCount: number;
   adminFeeText: string;
   status: string;
+  isClosed: boolean;
+  groupId: string;
+  groupName: string;
   products: EventDetailProductItem[];
   orderItemCount: number;
   canProceedCheckout: boolean;
   infoMessage: string | null;
   isLoading: boolean;
+  isReHosting: boolean;
   error: string | null;
+  /** VAT rate của event (mặc định 0.10 = 10%) */
+  vatRate: number;
+  /** Quy tắc giảm giá group buy */
+  discountRules: {
+    groupBuy: {
+      enabled: boolean;
+      minMembers: number;
+      extraDiscountPercent: number;
+    };
+  };
+  /** Số member hiện tại đã join event */
+  currentMembers: number;
   onAddToOrder: (payload: EventAddToOrderPayload) => void;
   onProceedCheckout: () => void;
   onBackToEvents: () => void;
+  onReHost: () => void;
 }

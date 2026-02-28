@@ -9,33 +9,37 @@
 
   background: tokens.color(surface);
   border-top: 1px solid tokens.color(shell-border);
-  min-height: var(--app-footer-height, 56px);
-  box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.06);
+  min-height: var(--app-footer-height, 60px);
+  box-shadow: 0 -1px 0 tokens.color(shell-border);
+
+  // safe area for notched phones
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .nav-inner {
   width: min(var(--app-max-width, 760px), 100%);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: var(--app-footer-height, 56px);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  min-height: var(--app-footer-height, 60px);
 }
 
 .nav-item {
   border: 0;
   background: transparent;
-  padding: 6px 8px;
-  display: grid;
-  place-items: center;
-  color: tokens.color(text-muted-1);
+  padding: 8px 4px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: tokens.color(text-muted-2);
   gap: 3px;
   transition:
-    color 0.18s ease,
-    background-color 0.18s ease,
-    transform 0.08s ease;
+    color 0.15s ease,
+    background-color 0.15s ease;
 
   &:hover {
-    color: tokens.color(primary-legacy);
+    color: tokens.color(primary);
     background: tokens.color(brand-soft-bg);
   }
 
@@ -47,47 +51,46 @@
     outline: 2px solid tokens.color(primary);
     outline-offset: -2px;
   }
+}
 
-  &:first-child {
-    border-right: 1px solid tokens.color(shell-border);
-  }
+.icon {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.7;
+  flex-shrink: 0;
+}
 
-  .icon {
-    width: 18px;
-    height: 18px;
-    stroke-width: 1.8;
-  }
-
-  small {
-    font-size: tokens.fs(2xs);
-    font-weight: 500;
-  }
+.label {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .active {
-  color: tokens.color(primary-legacy);
+  color: tokens.color(primary);
 
   .icon {
     stroke-width: 2.2;
   }
 
-  small {
+  .label {
     font-weight: 700;
   }
 }
 
 @media (min-width: 576px) {
-  .nav-item {
-    padding: 8px 10px;
-    gap: 4px;
+  .bottom-nav {
+    --app-footer-height: 64px;
+  }
 
-    .icon {
-      width: 20px;
-      height: 20px;
-    }
+  .icon {
+    width: 22px;
+    height: 22px;
+  }
 
-    small {
-      font-size: tokens.fs(xs);
-    }
+  .label {
+    font-size: 11px;
   }
 }

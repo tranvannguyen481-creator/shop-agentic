@@ -98,58 +98,62 @@ function ListMyGroupsView({ viewModel }: ListMyGroupsViewProps) {
                 }
               }}
             >
-              <div className={styles.groupMain}>
-                <div className={styles.titleRow}>
-                  <h3>{group.name}</h3>
-                  <div className={styles.badges}>
-                    <Badge
-                      tone={group.status === "active" ? "success" : "warning"}
-                    >
-                      {group.status}
-                    </Badge>
-                    <Badge
-                      tone={group.role === "owner" ? "default" : "warning"}
-                    >
-                      {group.role}
-                    </Badge>
-                  </div>
+              <div className={styles.groupHeader}>
+                <h3 className={styles.groupTitle}>{group.name}</h3>
+                <div className={styles.badges}>
+                  <Badge
+                    tone={group.status === "active" ? "success" : "warning"}
+                  >
+                    {group.status}
+                  </Badge>
+                  <Badge tone={group.role === "owner" ? "default" : "warning"}>
+                    {group.role}
+                  </Badge>
                 </div>
-                <p>{group.description}</p>
-                <p className={styles.meta}>Members: {group.memberCount}</p>
+              </div>
+
+              <p className={styles.groupDesc}>{group.description}</p>
+
+              <div className={styles.groupMeta}>
+                <Users size={12} />
+                <span>{group.memberCount} members</span>
               </div>
 
               <div className={styles.actions}>
                 <Button
                   type="button"
                   variant="outline"
+                  className={styles["action-btn"]}
                   onClick={(event) => {
                     event.stopPropagation();
                     viewModel.onOpenSettingsModal(group.id);
                   }}
                 >
-                  <Settings size={16} />
-                  <span>Setting group</span>
+                  <Settings size={13} />
+                  <span>Settings</span>
                 </Button>
                 <Button
                   type="button"
                   variant="secondary"
+                  className={styles["action-btn"]}
                   onClick={(event) => {
                     event.stopPropagation();
                     viewModel.onOpenAddMemberModal(group.id);
                   }}
                 >
-                  <UserPlus size={16} />
-                  <span>Add member</span>
+                  <UserPlus size={13} />
+                  <span>Add</span>
                 </Button>
                 <Button
                   type="button"
+                  className={styles["action-btn"]}
                   onClick={(event) => {
                     event.stopPropagation();
                     viewModel.onOpenShareLinkModal(group.id);
                   }}
                 >
-                  <Share2 size={16} />
-                  <span>Share link group</span>
+                  <Share2 size={13} />
+                  <span>Share</span>
                 </Button>
               </div>
             </SectionCard>

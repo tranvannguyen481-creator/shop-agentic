@@ -137,7 +137,18 @@ const mapEventPayload = (data = {}, actor = null) => {
     requestDeliveryDetails: Boolean(createEventDraft.requestDeliveryDetails),
     groupId,
     yearMonth: toYearMonth(createEventDraft.closingDate, now),
-    items: Array.isArray(createItemsDraft.items) ? createItemsDraft.items : [],
+    items: (Array.isArray(createItemsDraft.items)
+      ? createItemsDraft.items
+      : []
+    ).map((item) => ({
+      ...item,
+      // Đảm bảo mỗi item có ID ổn định (dùng Firestore doc ID nếu chưa có).
+      // db.collection().doc().id chỉ sinh chuỗi, không tạo document thật.
+      id:
+        typeof item.id === "string" && item.id.trim()
+          ? item.id.trim()
+          : db.collection("_").doc().id,
+    })),
     bannerPreviewUrls: Array.isArray(createItemsDraft.bannerPreviewUrls)
       ? createItemsDraft.bannerPreviewUrls
       : [],
@@ -152,6 +163,30 @@ const mapEventPayload = (data = {}, actor = null) => {
       actor?.name ?? actor?.displayName ?? data.hostDisplayName ?? "",
     createdAt: data.createdAt ?? now,
     updatedAt: now,
+    // ── Pricing: thuế & group discount rules ──────────────────────────────
+    // VAT 10% theo Luật Thuế GTGT VN 2024 & Thông tư 219/2013
+    vatRate: typeof data.vatRate === "number" ? data.vatRate : 0.1,
+    discountRules:
+      data.discountRules && typeof data.discountRules === "object"
+        ? {
+            groupBuy: {
+              enabled: Boolean(data.discountRules.groupBuy?.enabled ?? false),
+              minMembers: toNumber(data.discountRules.groupBuy?.minMembers, 0),
+              extraDiscountPercent: toNumber(
+                data.discountRules.groupBuy?.extraDiscountPercent,
+                0,
+              ),
+            },
+          }
+        : {
+            groupBuy: {
+              enabled: false,
+              minMembers: 0,
+              extraDiscountPercent: 0,
+            },
+          },
+    // Tổng qty theo product đã được đặt dưới dạng group buy (cập nhật realtime)
+    productGroupQty: data.productGroupQty || {},
   };
 };
 
@@ -173,7 +208,25 @@ const mapEventListItem = (id, source = {}) => ({
   updatedAt: source.updatedAt ?? null,
 });
 
-const mapEventProductItem = (item = {}, index = 0) => {
+const mapGroupEventListItem = (id, source = {}) => ({
+  id,
+  title: source.title ?? "",
+  description: source.description ?? "",
+  closingDate: source.closingDate ?? "",
+  collectionDate: source.collectionDate ?? "",
+  closingInText: source.closingInText ?? "closing in 2 hours",
+  deliveryInText: source.deliveryInText ?? "Delivery in 6 days",
+  buyCount: toNumber(source.buyCount, 0),
+  totalPurchase: source.totalPurchase ?? "$0.00",
+  adminFee: source.adminFee ?? "$0.00",
+  status: source.status ?? EVENT_STATUS.ACTIVE,
+  groupId: source.groupId ?? "",
+  groupName: source.groupName ?? "",
+  hostDisplayName: source.hostDisplayName ?? "",
+  updatedAt: source.updatedAt ?? null,
+});
+
+const mapEventProductItem = (item = {}, index = 0, productGroupQtyMap = {}) => {
   const itemName = typeof item.name === "string" ? item.name.trim() : "";
   const itemDescription =
     typeof item.description === "string" ? item.description.trim() : "";
@@ -277,14 +330,33 @@ const mapEventProductItem = (item = {}, index = 0) => {
     .slice(0, 6);
 
   return {
+    // ID ổn định: với event mới luôn có (từ mapEventPayload);
+    // fallback item-${n} chỉ còn cho event cũ trong Firestore chưa migrate.
     id:
       typeof item.id === "string" && item.id.trim()
         ? item.id.trim()
         : `item-${index + 1}`,
     name: itemName || `Item ${index + 1}`,
     description: itemDescription,
+    // Giá cơ bản (mua lẻ)
+    normalPrice: basePrice,
     basePrice,
     price: `$${basePrice.toFixed(2)}`,
+    // Giá nhóm: nhà host có thể nhập tay một giá cố định
+    groupPrice: toPriceNumber(item.groupPrice),
+    // % giảm giá khi mua nhóm (áp dụng khi không có groupPrice)
+    groupDiscountPercent: toPriceNumber(item.groupDiscountPercent),
+    // Ngưỡng số lượng toàn nhóm để kích hoạt groupDiscountPercent
+    qtyThreshold: Number.isFinite(Number(item.qtyThreshold))
+      ? Number(item.qtyThreshold)
+      : 0,
+    // Tồn kho (0 = không giới hạn)
+    stock: Number.isFinite(Number(item.stock)) ? Number(item.stock) : 0,
+    // Tổng số lượng sản phẩm này đã được mua bởi toàn nhóm (dùng để tính qtyThreshold)
+    totalGroupQty:
+      typeof item.id === "string" && item.id.trim()
+        ? toNumber(productGroupQtyMap[item.id.trim()], 0)
+        : 0,
     imagePreviewUrl:
       typeof item.imagePreviewUrl === "string" ? item.imagePreviewUrl : "",
     options: fallbackOptionChipValues,
@@ -564,7 +636,7 @@ async function getManageOrdersData(eventId) {
   };
 }
 
-async function getEventDetail(eventId) {
+async function getEventDetail(eventId, actor) {
   const eventSnapshot = await db
     .collection(EVENTS_COLLECTION)
     .doc(eventId)
@@ -577,6 +649,32 @@ async function getEventDetail(eventId) {
   }
 
   const eventData = eventSnapshot.data() || {};
+
+  // Permission check: if event belongs to a group, actor must be a member
+  if (actor?.uid && eventData.groupId) {
+    try {
+      await getGroupForCreate(eventData.groupId, actor);
+    } catch {
+      const error = new Error("You do not have permission to view this event");
+      error.statusCode = 403;
+      throw error;
+    }
+  }
+
+  // Auto-close if closingDate has passed
+  const nowMs = Date.now();
+  let resolvedStatus = eventData.status ?? EVENT_STATUS.ACTIVE;
+  if (resolvedStatus !== EVENT_STATUS.CLOSED && eventData.closingDate) {
+    const closingMs = new Date(eventData.closingDate).getTime();
+    if (Number.isFinite(closingMs) && closingMs < nowMs) {
+      resolvedStatus = EVENT_STATUS.CLOSED;
+      await db
+        .collection(EVENTS_COLLECTION)
+        .doc(eventId)
+        .update({ status: EVENT_STATUS.CLOSED, updatedAt: nowMs });
+    }
+  }
+
   const rawItems = Array.isArray(eventData.items) ? eventData.items : [];
 
   return {
@@ -598,18 +696,254 @@ async function getEventDetail(eventId) {
         : "",
     hostDisplayName: eventData.hostDisplayName ?? "",
     buyCount: toNumber(eventData.buyCount, 0),
+    currentCount: toNumber(eventData.currentCount, 0),
     adminFee: eventData.adminFee ?? "$0.00",
-    status: eventData.status ?? EVENT_STATUS.ACTIVE,
-    products: rawItems.map((item, index) => mapEventProductItem(item, index)),
+    status: resolvedStatus,
+    groupId: eventData.groupId ?? "",
+    groupName: eventData.groupName ?? "",
+    // ── Pricing info ──────────────────────────────────────────────────────
+    vatRate: toNumber(eventData.vatRate, 0.1),
+    discountRules: eventData.discountRules || {
+      groupBuy: { enabled: false, minMembers: 0, extraDiscountPercent: 0 },
+    },
+    productGroupQty: eventData.productGroupQty || {},
+    products: rawItems.map((item, index) =>
+      mapEventProductItem(item, index, eventData.productGroupQty || {}),
+    ),
+  };
+}
+
+async function listGroupEvents(
+  actor,
+  { page = 1, pageSize = 20, search = "" } = {},
+) {
+  assertActor(actor);
+
+  const actorUid = actor.uid;
+  const actorEmail = normalizeEmail(actor.email || "");
+  const normalizedPage = Math.max(1, toNumber(page, 1));
+  const normalizedPageSize = Math.max(1, Math.min(toNumber(pageSize, 20), 100));
+  const normalizedSearch =
+    typeof search === "string" ? search.trim().toLowerCase() : "";
+
+  // Step 1: find all groups the user belongs to
+  const groupQueryTasks = [
+    db
+      .collection(GROUPS_COLLECTION)
+      .where("ownerUid", "==", actorUid)
+      .limit(200)
+      .get(),
+  ];
+
+  if (actorEmail) {
+    groupQueryTasks.push(
+      db
+        .collection(GROUPS_COLLECTION)
+        .where("memberEmails", "array-contains", actorEmail)
+        .limit(200)
+        .get(),
+    );
+  }
+
+  const groupSnapshots = await Promise.all(groupQueryTasks);
+  const groupIds = new Set();
+
+  groupSnapshots.forEach((snapshot) => {
+    snapshot.docs.forEach((doc) => {
+      groupIds.add(doc.id);
+    });
+  });
+
+  if (groupIds.size === 0) {
+    return { items: [], total: 0 };
+  }
+
+  // Step 2: query events belonging to those groups
+  // Firestore `in` supports up to 30 values per query
+  const groupIdArray = Array.from(groupIds);
+  const CHUNK_SIZE = 30;
+  const chunks = [];
+
+  for (let i = 0; i < groupIdArray.length; i += CHUNK_SIZE) {
+    chunks.push(groupIdArray.slice(i, i + CHUNK_SIZE));
+  }
+
+  const eventQueryTasks = chunks.map((chunk) =>
+    db
+      .collection(EVENTS_COLLECTION)
+      .where("groupId", "in", chunk)
+      .limit(200)
+      .get(),
+  );
+
+  const eventSnapshots = await Promise.all(eventQueryTasks);
+  const mergedById = new Map();
+
+  eventSnapshots.forEach((snapshot) => {
+    snapshot.docs.forEach((doc) => {
+      mergedById.set(doc.id, mapGroupEventListItem(doc.id, doc.data() || {}));
+    });
+  });
+
+  let allItems = Array.from(mergedById.values()).sort(
+    (a, b) => toNumber(b.updatedAt, 0) - toNumber(a.updatedAt, 0),
+  );
+
+  // Auto-close events whose closingDate has passed
+  const now = Date.now();
+  const toAutoClose = allItems.filter((item) => {
+    if (item.status === EVENT_STATUS.CLOSED) return false;
+    if (!item.closingDate) return false;
+    const t = new Date(item.closingDate).getTime();
+    return Number.isFinite(t) && t < now;
+  });
+
+  if (toAutoClose.length > 0) {
+    const batch = db.batch();
+    toAutoClose.forEach(({ id }) => {
+      batch.update(db.collection(EVENTS_COLLECTION).doc(id), {
+        status: EVENT_STATUS.CLOSED,
+        updatedAt: now,
+      });
+    });
+    await batch.commit();
+    const closedIds = new Set(toAutoClose.map((i) => i.id));
+    allItems = allItems.map((item) =>
+      closedIds.has(item.id) ? { ...item, status: EVENT_STATUS.CLOSED } : item,
+    );
+  }
+
+  if (normalizedSearch) {
+    allItems = allItems.filter(
+      (item) =>
+        item.title.toLowerCase().includes(normalizedSearch) ||
+        item.groupName.toLowerCase().includes(normalizedSearch) ||
+        item.description.toLowerCase().includes(normalizedSearch),
+    );
+  }
+
+  const start = (normalizedPage - 1) * normalizedPageSize;
+  const items = allItems.slice(start, start + normalizedPageSize);
+
+  return { items, total: allItems.length };
+}
+
+async function reHostEvent(sourceEventId, actor) {
+  assertActor(actor);
+
+  const sourceSnap = await db
+    .collection(EVENTS_COLLECTION)
+    .doc(sourceEventId)
+    .get();
+
+  if (!sourceSnap.exists) {
+    const error = new Error("Source event not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const source = sourceSnap.data() || {};
+
+  // Verify actor belongs to the same group
+  if (source.groupId) {
+    await getGroupForCreate(source.groupId, actor);
+  }
+
+  const now = Date.now();
+  const newEventRef = db.collection(EVENTS_COLLECTION).doc();
+
+  const payload = {
+    title: source.title ?? "",
+    description: source.description ?? "",
+    mode: source.mode ?? "group-buy",
+    pickupLocation: source.pickupLocation ?? "",
+    paymentAfterClosing: Boolean(source.paymentAfterClosing),
+    payTogether: Boolean(source.payTogether),
+    adminFee: source.adminFee ?? "0",
+    addImportantNotes: Boolean(source.addImportantNotes),
+    importantNotes: Array.isArray(source.importantNotes)
+      ? source.importantNotes
+      : [],
+    addExternalUrl: Boolean(source.addExternalUrl),
+    externalUrlFieldName: source.externalUrlFieldName ?? "",
+    externalUrl: source.externalUrl ?? "",
+    addDeliveryOptions: Boolean(source.addDeliveryOptions),
+    deliveryFees: Array.isArray(source.deliveryFees) ? source.deliveryFees : [],
+    requestDeliveryDetails: Boolean(source.requestDeliveryDetails),
+    items: (Array.isArray(source.items) ? source.items : []).map((item) => ({
+      ...item,
+      // Kế thừa ID gốc nếu có; không có thì sinh mới (đảm bảo backward compat)
+      id:
+        typeof item.id === "string" && item.id.trim()
+          ? item.id.trim()
+          : db.collection("_").doc().id,
+    })),
+    bannerPreviewUrls: Array.isArray(source.bannerPreviewUrls)
+      ? source.bannerPreviewUrls
+      : [],
+    groupId: source.groupId ?? "",
+    groupName: source.groupName ?? "",
+    // Clear scheduling fields — host must set new dates
+    closingDate: "",
+    collectionDate: "",
+    collectionTime: "",
+    deliveryScheduleDate: "",
+    deliveryTimeFrom: "",
+    deliveryTimeTo: "",
+    currentCount: 0,
+    buyCount: 0,
+    totalPurchase: "$0.00",
+    yearMonth: "",
+    status: EVENT_STATUS.ACTIVE,
+    sourceEventId,
+    hostUid: actor.uid,
+    userId: actor.uid,
+    hostEmail: actor.email ?? source.hostEmail ?? "",
+    hostDisplayName:
+      actor.name ?? actor.displayName ?? source.hostDisplayName ?? "",
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  const hostedEventRef = db
+    .collection(USER_HOSTED_EVENTS_COLLECTION)
+    .doc(`${actor.uid}_${newEventRef.id}`);
+
+  const hostedEventPayload = {
+    eventId: newEventRef.id,
+    hostUid: actor.uid,
+    userId: actor.uid,
+    groupId: payload.groupId,
+    status: payload.status,
+    buyCount: 0,
+    totalPurchase: "$0.00",
+    yearMonth: "",
+    title: payload.title,
+    closingDate: "",
+    sourceEventId,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  const batch = db.batch();
+  batch.set(newEventRef, payload);
+  batch.set(hostedEventRef, hostedEventPayload);
+  await batch.commit();
+
+  return {
+    eventId: newEventRef.id,
+    groupId: payload.groupId,
   };
 }
 
 module.exports = {
   createEvent,
   listEvents,
+  listGroupEvents,
   listHostedEvents,
   joinEvent,
   getEventEditDraft,
   getManageOrdersData,
   getEventDetail,
+  reHostEvent,
 };

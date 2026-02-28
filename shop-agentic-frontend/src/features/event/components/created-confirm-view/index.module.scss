@@ -43,19 +43,6 @@
   justify-items: end;
   align-content: start;
   gap: 4px;
-
-  small {
-    color: tokens.color(form-required);
-    font-size: tokens.fs(xs);
-    font-weight: 600;
-  }
-}
-
-.buyChip {
-  min-height: 24px;
-  padding: 0 8px;
-  font-size: tokens.fs(xs);
-  border-radius: tokens.radius(sm);
 }
 
 .eventTitle {
@@ -68,27 +55,32 @@
 .metaList {
   margin: 0;
   display: grid;
-  gap: 3px;
+  gap: 5px;
 
   div {
     display: grid;
-    grid-template-columns: 74px 1fr;
+    grid-template-columns: 90px 1fr;
     gap: 4px;
+    align-items: baseline;
   }
 
   dt,
   dd {
     margin: 0;
     font-size: tokens.fs(xs);
-    line-height: 1.15;
+    line-height: 1.3;
   }
 
   dt {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     color: tokens.color(text-muted-1);
   }
 
   dd {
     color: tokens.color(text-brand-cool);
+    font-weight: 600;
   }
 }
 
@@ -108,43 +100,26 @@
   gap: 10px;
 }
 
+.itemInfo {
+  flex: 1;
+  min-width: 0;
+}
+
 .itemName {
   margin: 0;
   color: tokens.color(text-brand-cool);
   font-size: tokens.fs(sm);
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .itemPrice {
-  margin: 2px 0 0;
-  color: tokens.color(text-brand-cool);
-  font-size: tokens.fs(xs);
-}
-
-.qtyWrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  border-left: 1px solid tokens.color(border-soft);
-  padding-left: 10px;
-
-  strong {
-    min-width: 16px;
-    text-align: center;
-    color: tokens.color(text-brand-cool);
-    font-size: tokens.fs(md);
-  }
-}
-
-.qtyBtn {
-  color: tokens.color(text-soft);
-  padding: 0;
-  min-height: 24px;
-  min-width: 24px;
-
-  &:hover {
-    color: tokens.color(text-brand-cool);
-  }
+  flex-shrink: 0;
+  color: tokens.color(body-text);
+  font-size: tokens.fs(sm);
+  font-weight: 700;
 }
 
 .totalPanel {
@@ -156,21 +131,27 @@
     tokens.color(brand-soft-bg) 70%,
     tokens.color(surface)
   );
-  text-align: center;
-  padding: 12px 10px;
+  padding: 10px 14px;
+  display: grid;
+  gap: 6px;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.totalLabel {
+  font-size: tokens.fs(xs);
+  color: tokens.color(text-soft);
 }
 
 .totalValue {
-  margin: 0;
-  color: tokens.color(text-brand-cool);
-  font-size: clamp(20px, 2.2vw, 24px);
-  font-weight: 700;
-}
-
-.feeText {
-  margin: 4px 0 0;
-  color: tokens.color(text-soft);
   font-size: tokens.fs(sm);
+  font-weight: 700;
+  color: tokens.color(text-brand-cool);
 }
 
 .actions {

@@ -27,7 +27,11 @@ export const useGroupDetailPage = () => {
   const groupId = params.groupId?.trim() ?? "";
   const [mode, setMode] = useState<GroupDashboardMode>("admin-mobile");
 
-  const { data: group, isLoading, error } = useQuery({
+  const {
+    data: group,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["groupDetail", groupId],
     queryFn: () => fetchGroupDetail(groupId),
     enabled: !!groupId,
@@ -53,7 +57,7 @@ export const useGroupDetailPage = () => {
     if (!canUsePremiumLayout && mode === "premium") {
       setMode("admin-mobile");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canUsePremiumLayout]);
 
   const dashboardCards = useMemo(
@@ -105,6 +109,15 @@ export const useGroupDetailPage = () => {
     groupName: String(group?.name ?? "Group"),
     description: String(group?.description ?? "No description"),
     ownerDisplayName: String(group?.ownerDisplayName ?? "-"),
+    ownerEmail: String((group as Record<string, unknown>)?.ownerEmail ?? "-"),
+    createdAtText: toReadableDate(
+      (group as Record<string, unknown>)?.createdAt,
+    ),
+    updatedAtText: toReadableDate(group?.updatedAt),
+    status: String(group?.status ?? "active"),
+    memberCount: String(Number(group?.memberCount ?? 0)),
+    inviteCode: String(group?.inviteCode ?? "-"),
+    isPremiumMode: mode === "premium",
     isLoading,
     error: error
       ? error instanceof Error
@@ -117,5 +130,6 @@ export const useGroupDetailPage = () => {
     premiumCards,
     onSelectMode,
     onBack: () => navigate(APP_PATHS.listMyGroups),
+    onBackToGroups: () => navigate(APP_PATHS.listMyGroups),
   };
 };

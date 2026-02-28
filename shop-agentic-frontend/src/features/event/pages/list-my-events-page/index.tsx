@@ -1,4 +1,4 @@
-import { CalendarDays, ShoppingBag, Truck } from "lucide-react";
+import { CalendarDays, Pencil, Share2 } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import SearchBar from "../../../../shared/components/search-bar";
 import {
@@ -90,71 +90,57 @@ function ListMyEventsPage() {
                       }}
                     >
                       <SectionCard className={styles["event-item"]}>
-                        <div className={styles["event-main"]}>
-                          <div className={styles["title-wrap"]}>
-                            <h3>{String(event.title ?? "Untitled Event")}</h3>
-                            <Badge tone={toStatusTone(event.status)}>
-                              {String(event.status ?? "active")}
-                            </Badge>
-                          </div>
-
-                          <p className={styles.description}>
-                            {String(event.description ?? "No description")}
-                          </p>
-
-                          <div className={styles.pills}>
-                            <span className={styles["closing-pill"]}>
-                              {String(event.closingInText ?? "closing soon")}
-                            </span>
-                            <span className={styles["delivery-pill"]}>
-                              {String(
-                                event.deliveryInText ?? "delivery schedule",
-                              )}
-                            </span>
-                          </div>
+                        <div className={styles["event-header"]}>
+                          <h3 className={styles.title}>
+                            {String(event.title ?? "Untitled Event")}
+                          </h3>
+                          <Badge tone={toStatusTone(event.status)}>
+                            {String(event.status ?? "active")}
+                          </Badge>
                         </div>
 
-                        <div className={styles["event-meta"]}>
-                          <p>
-                            <CalendarDays size={14} />
-                            <span>
-                              Closing {String(event.closingDate ?? "-")} |
-                              Collection {String(event.collectionDate ?? "-")}
-                            </span>
-                          </p>
-                          <p>
-                            <ShoppingBag size={14} />
-                            <span>Buy {Number(event.buyCount ?? 0)}</span>
-                          </p>
-                          <p>
-                            <Truck size={14} />
-                            <span>
-                              Admin fee {String(event.adminFee ?? "0")}
-                            </span>
-                          </p>
+                        <p className={styles.description}>
+                          {String(event.description ?? "No description")}
+                        </p>
+
+                        <div className={styles.pills}>
+                          <span className={styles["closing-pill"]}>
+                            <CalendarDays size={11} />
+                            {String(event.closingInText ?? "closing soon")}
+                          </span>
+                          <span className={styles["delivery-pill"]}>
+                            {String(
+                              event.deliveryInText ?? "delivery schedule",
+                            )}
+                          </span>
                         </div>
 
                         <div className={styles.actions}>
                           <Button
                             type="button"
                             variant="outline"
+                            className={styles["action-btn"]}
                             onClick={() => viewModel.onEditEvent(event.id)}
                           >
-                            Edit
+                            <Pencil size={13} />
+                            <span>Edit</span>
                           </Button>
                           <Button
                             type="button"
                             variant="secondary"
+                            className={styles["action-btn"]}
                             onClick={() => viewModel.onViewDetail(event.id)}
                           >
-                            View Detail
+                            View
                           </Button>
                           <Button
                             type="button"
                             variant="primary"
+                            className={styles["action-btn"]}
                             onClick={() => viewModel.onShareEvent(event.id)}
                           >
-                            Share
+                            <Share2 size={13} />
+                            <span>Share</span>
                           </Button>
                         </div>
                       </SectionCard>

@@ -1,4 +1,4 @@
-import { ManageOrdersData } from "../utils/fetch-manage-orders-data";
+import { ManageOrdersData } from "../../../shared/services/event-api";
 
 export interface ManageOrdersViewModel {
   eventId: string;

@@ -1,18 +1,18 @@
 @use "../../../styles/tokens";
 
-.home-header {
+.app-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 90;
 
-  background: tokens.color(primary-legacy);
-  color: tokens.color(text-on-dark);
+  background: tokens.color(surface);
+  border-bottom: 1px solid tokens.color(shell-border);
   padding: 0 16px;
-  height: var(--app-header-height, 64px);
+  height: var(--app-header-height, 52px);
   box-sizing: border-box;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 0 tokens.color(shell-border);
 }
 
 .header-inner {
@@ -25,65 +25,77 @@
 }
 
 .brand {
-  h1 {
-    margin: 0;
-    font-size: tokens.fs(md);
-    letter-spacing: -0.01em;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: tokens.color(text-on-dark);
-  }
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-  p {
-    margin: 1px 0 0;
-    font-size: tokens.fs(2xs);
-    color: rgba(255, 255, 255, 0.65);
-    font-weight: 400;
-    letter-spacing: 0.01em;
-  }
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: tokens.radius(md);
+  background: linear-gradient(
+    135deg,
+    tokens.color(primary) 0%,
+    tokens.color(secondary) 100%
+  );
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
 
   span {
-    font-size: tokens.fs(sm);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
     line-height: 1;
-    font-weight: 700;
-    text-transform: lowercase;
+    letter-spacing: -0.02em;
   }
+}
+
+.brand-name {
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  color: tokens.color(body-text);
+  letter-spacing: -0.02em;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .icon-btn {
   border: 0;
-  background: rgba(255, 255, 255, 0.1);
-  color: tokens.color(text-on-dark);
+  background: transparent;
+  color: tokens.color(text-muted-1);
   border-radius: tokens.radius(lg);
   width: 34px;
   height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: tokens.color(surface-soft);
+    color: tokens.color(body-text);
   }
 
   .icon {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     stroke-width: 2;
   }
 }
 
 .avatar {
   border: 0;
-  padding: 0;
-  width: 34px;
-  height: 34px;
+  padding: 2px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -97,39 +109,21 @@
 }
 
 .avatar-view {
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.2);
-  color: tokens.color(text-on-dark);
+  border: 2px solid tokens.color(brand-soft-bg);
   font-size: tokens.fs(xs);
   font-weight: 700;
 }
 
 @media (min-width: 576px) {
-  .home-header {
+  .app-header {
     padding: 0 20px;
   }
 
-  .brand {
-    h1 {
-      font-size: tokens.fs(lg);
-    }
-
-    span {
-      font-size: tokens.fs(md);
-    }
+  .brand-name {
+    font-size: tokens.fs(md);
   }
 
   .header-actions {
-    gap: 6px;
-  }
-
-  .icon-btn .icon {
-    width: 17px;
-    height: 17px;
-  }
-
-  .avatar {
-    width: 36px;
-    height: 36px;
+    gap: 4px;
   }
 }

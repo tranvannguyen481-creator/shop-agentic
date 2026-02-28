@@ -50,6 +50,52 @@ export const fetchEventDetail = async (
   return event;
 };
 
+export interface GroupEventItem {
+  id: string;
+  title?: string;
+  description?: string;
+  closingDate?: string;
+  collectionDate?: string;
+  buyCount?: number;
+  adminFee?: string;
+  status?: string;
+  closingInText?: string;
+  deliveryInText?: string;
+  groupId?: string;
+  groupName?: string;
+  hostDisplayName?: string;
+  [key: string]: unknown;
+}
+
+export interface GroupEventsResult {
+  items: GroupEventItem[];
+  total: number;
+}
+
+export const fetchGroupEvents = async (
+  page: number,
+  pageSize: number,
+  search = "",
+): Promise<GroupEventsResult> => {
+  const response = await api.get("/events/my-feed", {
+    params: { page, pageSize, search },
+  });
+
+  const items = (response.data?.data?.items ?? []) as GroupEventItem[];
+  const total = Number(response.data?.data?.total ?? items.length);
+
+  return { items, total };
+};
+
+export const reHostEvent = async (
+  eventId: string,
+): Promise<{ eventId: string; groupId: string }> => {
+  const response = await api.post(
+    `/events/${encodeURIComponent(eventId)}/re-host`,
+  );
+  return response.data?.data as { eventId: string; groupId: string };
+};
+
 export interface ManageOrdersData {
   title: string;
   closingDate: string;

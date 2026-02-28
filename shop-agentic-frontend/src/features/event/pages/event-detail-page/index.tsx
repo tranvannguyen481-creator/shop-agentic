@@ -1,4 +1,13 @@
-import { PackageOpen } from "lucide-react";
+import {
+  CalendarDays,
+  ClockAlert,
+  MapPin,
+  PackageOpen,
+  RefreshCw,
+  ShoppingCart,
+  Truck,
+  Users,
+} from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import {
   Alert,
@@ -17,134 +26,220 @@ import styles from "./index.module.scss";
 export const routePath = APP_PATHS.eventDetail;
 
 function EventDetailPage() {
-  const viewModel = useEventDetailPage();
+  const vm = useEventDetailPage();
 
   return (
     <AppLayout>
-      <section className={styles.page} data-event-id={viewModel.eventId}>
-        <section className={styles.mainColumn}>
-          <header className={styles.header}>
-            {viewModel.bannerPreviewUrl ? (
-              <img
-                src={viewModel.bannerPreviewUrl}
-                alt={viewModel.title}
-                className={styles.banner}
-              />
-            ) : null}
+      <div className={styles.page} data-event-id={vm.eventId}>
 
-            <SectionCard className={styles.headerCard}>
-              <div className={styles.titleRow}>
-                <h2>{viewModel.title}</h2>
-                <Badge tone="default">{viewModel.status}</Badge>
-              </div>
+        {/* ── Banner / Hero ───────────────────────────────────────── */}
+        <div className={styles.hero}>
+          {vm.bannerPreviewUrl ? (
+            <img src={vm.bannerPreviewUrl} alt={vm.title} className={styles.heroBg} />
+          ) : (
+            <div className={styles.heroBgFallback} />
+          )}
+          <div className={styles.heroOverlay} />
+          <div className={styles.heroContent}>
+            {vm.isLoading ? (
+              <>
+                <Skeleton height={22} width="60%" />
+                <Skeleton height={16} width="30%" />
+              </>
+            ) : (
+              <>
+                <h1 className={styles.heroTitle}>{vm.title}</h1>
+                <div className={styles.heroBadgeRow}>
+                  <Badge tone={vm.isClosed ? "danger" : "success"}>
+                    {vm.status}
+                  </Badge>
+                  {vm.groupName ? (
+                    <span className={styles.groupPill}>
+                      <Users size={11} />
+                      {vm.groupName}
+                    </span>
+                  ) : null}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
 
-              <p>{viewModel.description || "No description"}</p>
+        {/* ── Closed notice ───────────────────────────────────────── */}
+        {vm.isClosed && !vm.isLoading ? (
+          <div className={styles.closedStrip}>
+            <ClockAlert size={15} />
+            <span>This event has closed — orders are no longer accepted</span>
+          </div>
+        ) : null}
 
-              <div className={styles.countdown}>{viewModel.closingInText}</div>
+        {/* ── Alerts ──────────────────────────────────────────────── */}
+        {vm.error ? <Alert tone="error">{vm.error}</Alert> : null}
+        {vm.infoMessage ? <Alert tone="success">{vm.infoMessage}</Alert> : null}
 
-              <div className={styles.metaRow}>
-                <span>Closing: {viewModel.closingDate}</span>
-                <span>
-                  Collection: {viewModel.collectionDate}{" "}
-                  {viewModel.collectionTime}
+        {/* ── Host + join count ───────────────────────────────────── */}
+        {!vm.isLoading ? (
+          <SectionCard className={styles.hostCard}>
+            <div className={styles.hostRow}>
+              <Avatar name={vm.hostDisplayName} size={38} />
+              <div className={styles.hostInfo}>
+                <span className={styles.hostName}>{vm.hostDisplayName}</span>
+                <span className={styles.hostMeta}>
+                  {vm.joinedCount} {vm.joinedCount === 1 ? "person" : "people"} joined
                 </span>
-                <span>Pickup: {viewModel.pickupLocation}</span>
               </div>
-
-              <div className={styles.hostRow}>
-                <Avatar name={viewModel.hostDisplayName} size={36} />
-                <div>
-                  <p>{viewModel.hostDisplayName}</p>
-                  <small>{viewModel.joinedCount} people joined</small>
-                </div>
-              </div>
-
-              {viewModel.importantNotes.length > 0 ? (
-                <ul className={styles.notes}>
-                  {viewModel.importantNotes.map((note, index) => (
-                    <li key={`${note}-${index}`}>{note}</li>
-                  ))}
-                </ul>
-              ) : null}
-            </SectionCard>
-          </header>
-
-          {viewModel.error ? (
-            <Alert tone="error">{viewModel.error}</Alert>
-          ) : null}
-          {viewModel.infoMessage ? (
-            <Alert tone="success">{viewModel.infoMessage}</Alert>
-          ) : null}
-
-          {viewModel.isLoading ? (
-            <div className={styles.loadingList}>
-              <SectionCard className={styles.loadingCard}>
-                <Skeleton height={20} width="48%" />
-                <Skeleton height={14} width="86%" />
-                <Skeleton height={14} width="68%" />
-              </SectionCard>
-              <SectionCard className={styles.loadingCard}>
-                <Skeleton height={20} width="42%" />
-                <Skeleton height={14} width="80%" />
-                <Skeleton height={14} width="72%" />
-              </SectionCard>
+              <span className={styles.adminFee}>
+                Fee&nbsp;
+                <strong>{vm.adminFeeText}</strong>
+              </span>
             </div>
-          ) : null}
+          </SectionCard>
+        ) : null}
 
-          {!viewModel.isLoading ? (
-            <>
-              {viewModel.products.length === 0 ? (
-                <SectionCard>
-                  <EmptyState
-                    icon={<PackageOpen />}
-                    title="Chưa có sản phẩm nào"
-                    description="Event này chưa đăng sản phẩm để buyer đặt hàng."
-                    actions={
-                      <Button type="button" variant="secondary">
-                        Invite friends
-                      </Button>
-                    }
-                  />
+        {/* ── Key info chips ──────────────────────────────────────── */}
+        {!vm.isLoading ? (
+          <div className={styles.metaGrid}>
+            <div className={[styles.metaChip, vm.isClosed ? styles.metaChipClosed : styles.metaChipCountdown].join(" ")}>
+              <CalendarDays size={14} />
+              <div>
+                <span className={styles.metaLabel}>
+                  {vm.isClosed ? "Closed" : "Closes"}
+                </span>
+                <span className={styles.metaValue}>{vm.closingDate !== "-" ? vm.closingDate : vm.closingInText}</span>
+              </div>
+            </div>
+            <div className={styles.metaChip}>
+              <Truck size={14} />
+              <div>
+                <span className={styles.metaLabel}>Collection</span>
+                <span className={styles.metaValue}>
+                  {vm.collectionDate !== "-" ? vm.collectionDate : "TBA"}
+                  {vm.collectionTime && vm.collectionTime !== "-" ? " · " + vm.collectionTime : ""}
+                </span>
+              </div>
+            </div>
+            <div className={styles.metaChip}>
+              <MapPin size={14} />
+              <div>
+                <span className={styles.metaLabel}>Pickup</span>
+                <span className={styles.metaValue}>
+                  {vm.pickupLocation !== "-" ? vm.pickupLocation : "TBA"}
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {/* ── Description ─────────────────────────────────────────── */}
+        {!vm.isLoading && vm.description ? (
+          <SectionCard className={styles.descCard}>
+            <p className={styles.descText}>{vm.description}</p>
+          </SectionCard>
+        ) : null}
+
+        {/* ── Important notes ─────────────────────────────────────── */}
+        {!vm.isLoading && vm.importantNotes.length > 0 ? (
+          <SectionCard className={styles.notesCard}>
+            <h4 className={styles.sectionLabel}>Important notes</h4>
+            <ul className={styles.notesList}>
+              {vm.importantNotes.map((note, i) => (
+                <li key={i}>{note}</li>
+              ))}
+            </ul>
+          </SectionCard>
+        ) : null}
+
+        {/* ── Products ────────────────────────────────────────────── */}
+        <div className={styles.productsSection}>
+          <h4 className={styles.sectionLabel}>Products</h4>
+
+          {vm.isLoading ? (
+            <div className={styles.productLoadingGrid}>
+              {[0, 1].map((i) => (
+                <SectionCard key={i} className={styles.loadingCard}>
+                  <Skeleton height={18} width="52%" />
+                  <Skeleton height={14} width="85%" />
+                  <Skeleton height={14} width="65%" />
+                  <Skeleton height={32} width="45%" />
                 </SectionCard>
-              ) : (
-                <div className={styles.productList}>
-                  {viewModel.products.map((product) => (
-                    <EventDetailProductCard
-                      key={product.id}
-                      product={product}
-                      onAddToOrder={viewModel.onAddToOrder}
-                    />
-                  ))}
-                </div>
-              )}
-            </>
+              ))}
+            </div>
           ) : null}
 
-          <section className={styles.checkoutBar}>
-            <Button
-              type="button"
-              variant="secondary"
-              className={styles.backBtn}
-              onClick={viewModel.onBackToEvents}
-            >
-              Back to my events
-            </Button>
+          {!vm.isLoading && vm.products.length === 0 ? (
+            <SectionCard>
+              <EmptyState
+                icon={<PackageOpen />}
+                title="No products yet"
+                description="The host hasn't added any products to this event."
+              />
+            </SectionCard>
+          ) : null}
 
-            <div>
-              <p>{viewModel.orderItemCount} items</p>
-              <strong>Selected for checkout</strong>
+          {!vm.isLoading && vm.products.length > 0 ? (
+            <div
+              className={[
+                styles.productGrid,
+                vm.isClosed ? styles.productGridClosed : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+            >
+              {vm.products.map((product) => (
+                <EventDetailProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToOrder={vm.onAddToOrder}
+                />
+              ))}
             </div>
+          ) : null}
+        </div>
+
+        {/* ── Sticky checkout bar ─────────────────────────────────── */}
+        <div className={styles.checkoutBar}>
+          <Button
+            type="button"
+            variant="secondary"
+            className={styles.backBtn}
+            onClick={vm.onBackToEvents}
+          >
+            Back
+          </Button>
+
+          {vm.isClosed ? (
             <Button
               type="button"
               variant="primary"
-              disabled={!viewModel.canProceedCheckout}
-              onClick={viewModel.onProceedCheckout}
+              className={styles.rehostBtn}
+              disabled={vm.isReHosting}
+              onClick={vm.onReHost}
             >
-              Checkout
+              <RefreshCw size={14} />
+              {vm.isReHosting ? "Creating..." : "Re-host event"}
             </Button>
-          </section>
-        </section>
-      </section>
+          ) : (
+            <button
+              type="button"
+              className={[
+                styles.cartBtn,
+                vm.canProceedCheckout ? styles.cartBtnActive : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              disabled={!vm.canProceedCheckout}
+              onClick={vm.onProceedCheckout}
+            >
+              <ShoppingCart size={16} />
+              <span className={styles.cartLabel}>
+                {vm.orderItemCount > 0
+                  ? `Checkout (${vm.orderItemCount})`
+                  : "Add items to checkout"}
+              </span>
+            </button>
+          )}
+        </div>
+      </div>
     </AppLayout>
   );
 }

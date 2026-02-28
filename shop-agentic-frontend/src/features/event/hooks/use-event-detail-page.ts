@@ -1,8 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { APP_PATHS } from "../../../app/route-config";
-import { fetchEventDetail } from "../../../shared/services/event-api";
+import {
+  fetchEventDetail,
+  reHostEvent,
+} from "../../../shared/services/event-api";
+import { EVENT_QUERY_KEYS } from "../constants/event-query-keys";
 import {
   EventAddToOrderPayload,
   EventDetailCartLineItem,
@@ -80,7 +84,9 @@ const toProductItem = (
       Boolean(optionGroup),
     );
 
-  const basePriceRaw = Number(item.basePrice ?? item.price ?? 0);
+  const basePriceRaw = Number(
+    item.basePrice ?? item.normalPrice ?? item.price ?? 0,
+  );
   const basePrice = Number.isFinite(basePriceRaw) ? basePriceRaw : 0;
   const priceText =
     typeof item.price === "string" && item.price.trim()
@@ -97,8 +103,14 @@ const toProductItem = (
         ? item.name
         : `Item ${index + 1}`,
     description: typeof item.description === "string" ? item.description : "",
+    normalPrice: Number(item.normalPrice ?? basePrice) || basePrice,
     basePrice,
     price: priceText,
+    groupPrice: Number(item.groupPrice ?? 0) || undefined,
+    groupDiscountPercent: Number(item.groupDiscountPercent ?? 0) || undefined,
+    qtyThreshold: Number(item.qtyThreshold ?? 0) || undefined,
+    stock: Number(item.stock ?? 0) || undefined,
+    totalGroupQty: Number(item.totalGroupQty ?? 0),
     imagePreviewUrl:
       typeof item.imagePreviewUrl === "string" ? item.imagePreviewUrl : "",
     options: rawOptions
@@ -125,13 +137,28 @@ const toAdminFeeValue = (value: unknown) => {
 
 export const useEventDetailPage = (): EventDetailPageViewModel => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const params = useParams<{ eventId: string }>();
   const eventId = params.eventId?.trim() ?? "";
 
-  const { data: event, isLoading, error } = useQuery({
-    queryKey: ["eventDetail", eventId],
+  const {
+    data: event,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: EVENT_QUERY_KEYS.detail(eventId),
     queryFn: () => fetchEventDetail(eventId),
     enabled: !!eventId,
+  });
+
+  const reHostMutation = useMutation({
+    mutationFn: () => reHostEvent(eventId),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ["groupEvents"] });
+      navigate(
+        APP_PATHS.updateEvent + "?id=" + encodeURIComponent(result.eventId),
+      );
+    },
   });
 
   const [orderLines, setOrderLines] = useState<EventDetailCartLineItem[]>([]);
@@ -235,6 +262,10 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
     ? rawImportantNotes
     : [];
 
+  const resolvedStatus =
+    typeof event?.status === "string" ? event.status : "active";
+  const isClosed = resolvedStatus.toLowerCase() === "closed";
+
   return {
     eventId,
     title: typeof event?.title === "string" ? event.title : "Event detail",
@@ -261,20 +292,30 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
         : "Host",
     joinedCount: Number(event?.buyCount ?? 0),
     adminFeeText: toCurrency(adminFeeValue),
-    status: typeof event?.status === "string" ? event.status : "active",
+    status: resolvedStatus,
+    isClosed,
+    groupId: typeof event?.groupId === "string" ? event.groupId : "",
+    groupName: typeof event?.groupName === "string" ? event.groupName : "",
     products,
     orderItemCount,
-    canProceedCheckout: orderLines.length > 0,
+    canProceedCheckout: !isClosed && orderLines.length > 0,
     infoMessage,
     isLoading,
+    isReHosting: reHostMutation.isPending,
     error: error
       ? error instanceof Error
         ? error.message
         : "Failed to fetch event detail"
       : null,
+    vatRate: Number(event?.vatRate ?? 0.1),
+    discountRules:
+      (event?.discountRules as EventDetailPageViewModel["discountRules"]) ?? {
+        groupBuy: { enabled: false, minMembers: 0, extraDiscountPercent: 0 },
+      },
+    currentMembers: Number(event?.currentCount ?? event?.buyCount ?? 0),
     onAddToOrder: onAddOrderLine,
     onProceedCheckout: () => {
-      if (orderLines.length === 0) {
+      if (orderLines.length === 0 || isClosed) {
         return;
       }
 
@@ -288,6 +329,8 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
             price: line.unitPrice,
             selectedChoices: line.selectedChoices.map((choice) => choice.name),
             basePrice: product?.basePrice ?? line.unitPrice,
+            normalPrice:
+              product?.normalPrice ?? product?.basePrice ?? line.unitPrice,
           };
         })
         .filter(Boolean);
@@ -299,5 +342,6 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
       navigate(APP_PATHS.eventCheckout.replace(":eventId", eventId));
     },
     onBackToEvents: () => navigate(APP_PATHS.listMyEvents),
+    onReHost: () => reHostMutation.mutate(),
   };
 };

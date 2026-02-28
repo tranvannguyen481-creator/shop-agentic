@@ -1,10 +1,9 @@
 @use "../../styles/tokens";
 
-.home-page {
+.app-page {
   --app-max-width: 560px;
-  --app-header-height: 58px;
-  --app-tabs-height: 40px;
-  --app-footer-height: 56px;
+  --app-header-height: 52px;
+  --app-footer-height: 60px;
 
   min-height: 100vh;
   background: tokens.color(body-bg);
@@ -17,41 +16,35 @@
 .content {
   width: min(var(--app-max-width), calc(100% - 16px));
   margin: 0 auto;
-  padding-top: calc(var(--app-header-height) + var(--app-tabs-height) + 14px);
-  padding-bottom: calc(var(--app-footer-height) + 8px);
+  padding-top: calc(var(--app-header-height) + 14px);
+  padding-bottom: calc(var(--app-footer-height) + 10px);
   flex: 1;
   box-sizing: border-box;
 }
 
 @media (min-width: 576px) {
-  .home-page {
+  .app-page {
     --app-max-width: 600px;
-    --app-header-height: 62px;
-    --app-tabs-height: 42px;
-    --app-footer-height: 58px;
+    --app-header-height: 56px;
+    --app-footer-height: 64px;
 
     font-size: tokens.fs(sm);
   }
 
   .content {
     width: min(var(--app-max-width), calc(100% - 24px));
-    padding-top: calc(var(--app-header-height) + var(--app-tabs-height) + 16px);
+    padding-top: calc(var(--app-header-height) + 16px);
   }
 }
 
 @media (min-width: 768px) {
-  .home-page {
+  .app-page {
     --app-max-width: 640px;
-    --app-header-height: 64px;
-  }
-
-  .content {
-    padding-top: calc(var(--app-header-height) + var(--app-tabs-height) + 20px);
   }
 }
 
 @media (min-width: 992px) {
-  .home-page {
+  .app-page {
     --app-max-width: 680px;
   }
 }

@@ -1,7 +1,6 @@
 import { ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { APP_PATHS } from "../../../../app/route-config";
-import { APP_TABS } from "../../../../shared/components/app-shell/app-tabs";
 import SearchBar from "../../../../shared/components/search-bar";
 import {
   Button,
@@ -18,7 +17,7 @@ function ListMyPurchasesPage() {
   const handleSearchChange = (value: string) => setSearch(value);
 
   return (
-    <AppLayout activeTab={APP_TABS.purchase}>
+    <AppLayout>
       <SearchBar value={search} onValueChange={handleSearchChange} />
 
       <SectionCard className={styles.panel}>

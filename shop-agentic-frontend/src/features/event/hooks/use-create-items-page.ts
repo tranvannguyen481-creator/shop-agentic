@@ -62,6 +62,12 @@ const toPersistedDraft = (
     options: item.options.map((option) => ({
       value: option.value ?? "",
     })),
+    optionGroups: Array.isArray(item.optionGroups)
+      ? item.optionGroups.map((group) => ({
+          ...group,
+          choices: Array.isArray(group.choices) ? group.choices : [],
+        }))
+      : [],
   })),
   bannerPreviewUrls,
 });
@@ -116,6 +122,19 @@ const getStoredCreateItemsDraft = (): CreateItemsDraftState => {
           options: Array.isArray(item.options)
             ? item.options.map((option) => ({
                 value: option?.value ?? "",
+              }))
+            : [],
+          optionGroups: Array.isArray(item.optionGroups)
+            ? item.optionGroups.map((group) => ({
+                name: group?.name ?? "",
+                required: Boolean(group?.required),
+                choices: Array.isArray(group?.choices)
+                  ? group.choices.map((c) => ({
+                      id: c?.id ?? "",
+                      name: c?.name ?? "",
+                      price: Number(c?.price ?? 0),
+                    }))
+                  : [],
               }))
             : [],
         })),

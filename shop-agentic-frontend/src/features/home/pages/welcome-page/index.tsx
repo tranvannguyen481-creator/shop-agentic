@@ -1,6 +1,5 @@
 import { Building2 } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
-import { APP_TABS } from "../../../../shared/components/app-shell/app-tabs";
 import AppLayout from "../../../../shared/layouts/app-layout";
 import styles from "./index.module.scss";
 
@@ -8,7 +7,7 @@ export const routePath = APP_PATHS.welcome;
 
 function WelcomePage() {
   return (
-    <AppLayout activeTab={APP_TABS.all}>
+    <AppLayout>
       <section className={styles.page}>
         <h2 className={styles.title}>Welcome to Shop Agentic</h2>
 

@@ -35,6 +35,23 @@ async function createEvent(req, res) {
   });
 }
 
+async function listGroupEvents(req, res) {
+  const { page, pageSize } = listEventsQuerySchema.parse(req.query || {});
+  const search = typeof req.query.search === "string" ? req.query.search : "";
+  const actor = req.user;
+  const result = await eventService.listGroupEvents(actor, {
+    page,
+    pageSize,
+    search,
+  });
+
+  return res.status(200).json({
+    success: true,
+    data: result,
+    message: "Success",
+  });
+}
+
 async function listMyHostedEvents(req, res) {
   const { page, pageSize } = listEventsQuerySchema.parse(req.query || {});
   const actor = req.user || null;
@@ -89,7 +106,8 @@ async function getManageOrdersData(req, res) {
 
 async function getEventDetail(req, res) {
   const { eventId } = eventIdParamsSchema.parse(req.params || {});
-  const result = await eventService.getEventDetail(eventId);
+  const actor = req.user || null;
+  const result = await eventService.getEventDetail(eventId, actor);
 
   return res.status(200).json({
     success: true,
@@ -98,12 +116,26 @@ async function getEventDetail(req, res) {
   });
 }
 
+async function reHostEvent(req, res) {
+  const { eventId } = eventIdParamsSchema.parse(req.params || {});
+  const actor = req.user;
+  const result = await eventService.reHostEvent(eventId, actor);
+
+  return res.status(201).json({
+    success: true,
+    data: result,
+    message: "New event created from re-host",
+  });
+}
+
 module.exports = {
   listEvents,
+  listGroupEvents,
   createEvent,
   listMyHostedEvents,
   joinEvent,
   getEventEditDraft,
   getManageOrdersData,
   getEventDetail,
+  reHostEvent,
 };

@@ -1,11 +1,14 @@
 import { isAxiosError } from "axios";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { APP_PATHS } from "../../../app/route-config";
 import api from "../../../shared/services/api";
 import { CREATE_EVENT_DRAFT_STORAGE_KEY } from "../constants/create-event-constants";
 import { CREATE_ITEMS_DRAFT_STORAGE_KEY } from "../constants/create-items-constants";
-import { CreatedConfirmViewModel } from "../types/created-confirm-types";
+import {
+  ConfirmItemRow,
+  CreatedConfirmViewModel,
+} from "../types/created-confirm-types";
 
 const isDataUrl = (value: unknown): value is string =>
   typeof value === "string" && value.startsWith("data:");
@@ -79,6 +82,41 @@ export const useCreatedConfirm = (): CreatedConfirmViewModel => {
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
+
+  // ── Read draft data from localStorage on mount ──────────────────────────
+  const draft = useMemo(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const raw = window.localStorage.getItem(CREATE_EVENT_DRAFT_STORAGE_KEY);
+      return raw ? (JSON.parse(raw) as Record<string, unknown>) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const itemsDraft = useMemo(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const raw = window.localStorage.getItem(CREATE_ITEMS_DRAFT_STORAGE_KEY);
+      return raw ? (JSON.parse(raw) as Record<string, unknown>) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const confirmItems = useMemo((): ConfirmItemRow[] => {
+    const rawItems = Array.isArray(itemsDraft?.items) ? itemsDraft.items : [];
+    return (rawItems as Array<Record<string, unknown>>).map((item) => ({
+      name:
+        typeof item.name === "string" && item.name.trim()
+          ? item.name
+          : "Untitled item",
+      price:
+        typeof item.price === "string" && item.price.trim()
+          ? item.price
+          : "$0.00",
+    }));
+  }, [itemsDraft]);
 
   const handleOpenPublishModal = useCallback(() => {
     setPublishError(null);
@@ -178,6 +216,30 @@ export const useCreatedConfirm = (): CreatedConfirmViewModel => {
   ]);
 
   return {
+    // draft data
+    title:
+      typeof draft?.title === "string" && draft.title.trim()
+        ? draft.title
+        : "(No title)",
+    closingDate:
+      typeof draft?.closingDate === "string" ? draft.closingDate : "",
+    collectionDate:
+      typeof draft?.collectionDate === "string" ? draft.collectionDate : "",
+    collectionTime:
+      typeof draft?.collectionTime === "string" ? draft.collectionTime : "",
+    pickupLocation:
+      typeof draft?.pickupLocation === "string" ? draft.pickupLocation : "",
+    adminFee:
+      typeof draft?.adminFee === "string" && draft.adminFee.trim()
+        ? draft.adminFee
+        : "0",
+    mode:
+      typeof draft?.mode === "string" && draft.mode.trim()
+        ? draft.mode
+        : "group-buy",
+    items: confirmItems,
+    hasDraft: draft !== null,
+    // publish modal
     isPublishModalOpen,
     isPublishing,
     publishError,

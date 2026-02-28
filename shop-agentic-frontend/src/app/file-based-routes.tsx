@@ -21,19 +21,9 @@ const PUBLIC_PATHS = new Set<string>([
   APP_PATHS.test,
 ]);
 
-interface RequireContext {
-  keys(): string[];
-  <T>(id: string): T;
-}
-
-interface RequireWithContext {
-  context(path: string, deep?: boolean, filter?: RegExp): RequireContext;
-}
-
-const routeContext = (require as NodeRequire & RequireWithContext).context(
-  "../features",
-  true,
-  /\/pages\/.*\/index\.tsx$/,
+const routeModules = import.meta.glob<RouteModule>(
+  "../features/**/pages/**/index.tsx",
+  { eager: true },
 );
 
 const trimSlashes = (value: string) => value.replace(/^\/+|\/+$/g, "");
@@ -52,8 +42,7 @@ const normalizePath = (value: string) => {
 };
 
 const derivePathFromFile = (fileKey: string) => {
-  const normalizedKey = fileKey.replace(/^\.\//, "");
-  const pageMatch = normalizedKey.match(/pages\/(.+)\/index\.tsx$/);
+  const pageMatch = fileKey.match(/pages\/(.+)\/index\.tsx$/);
   const pagePath = pageMatch?.[1] ?? "";
 
   const segments = trimSlashes(pagePath)
@@ -66,12 +55,12 @@ const derivePathFromFile = (fileKey: string) => {
 };
 
 const getGeneratedRoutes = (): GeneratedRoute[] => {
-  const routeKeys = routeContext.keys().sort();
+  const routeKeys = Object.keys(routeModules).sort();
   const seenPaths = new Set<string>();
 
   return routeKeys
     .map((routeKey) => {
-      const routeModule = routeContext<RouteModule>(routeKey);
+      const routeModule = routeModules[routeKey];
       const configuredPath = routeModule.routePath?.trim() ?? "";
       const path = normalizePath(
         configuredPath || derivePathFromFile(routeKey),

@@ -7,17 +7,22 @@
 
 .headerActions {
   display: grid;
-  gap: 10px;
+  gap: 8px;
+
+  @media (min-width: 480px) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
 }
 
 .groupList {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .loadingBlock {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .loadingCard {
@@ -28,68 +33,80 @@
 .loadingActions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
 }
 
 .groupCard {
   display: grid;
-  gap: 10px;
+  gap: 6px;
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid tokens.color(primary-legacy);
+    outline: 2px solid tokens.color(primary);
     outline-offset: 2px;
   }
 }
 
-.groupMain {
-  display: grid;
-  gap: 6px;
-
-  h3,
-  p {
-    margin: 0;
-  }
-
-  h3 {
-    color: tokens.color(primary-legacy);
-    font-size: tokens.fs(lg);
-    font-weight: 700;
-  }
-
-  p {
-    color: tokens.color(text-soft);
-    font-size: tokens.fs(sm);
-    line-height: 1.5;
-  }
+.groupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
 }
 
-.titleRow {
-  display: grid;
-  gap: 8px;
+.groupTitle {
+  margin: 0;
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  color: tokens.color(body-text);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .badges {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
-.meta {
-  color: tokens.color(text-muted-1) !important;
-  font-size: tokens.fs(xs) !important;
+.groupDesc {
+  margin: 0;
+  color: tokens.color(text-muted-1);
+  font-size: tokens.fs(xs);
+  line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.groupMeta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: tokens.color(text-muted-2);
+  font-size: 11px;
 }
 
 .actions {
-  display: grid;
-  gap: 8px;
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
 
-  button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
+.action-btn {
+  flex: 1;
+  font-size: tokens.fs(xs) !important;
+  padding: 5px 6px !important;
+  min-height: 30px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .modalBody {
@@ -112,30 +129,8 @@
   width: min(92vw, 520px);
   display: flex;
   justify-content: center;
-}
 
-@media (min-width: 768px) {
-  .headerActions {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-  }
-
-  .groupCard {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .titleRow {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-  }
-
-  .actions {
-    width: 220px;
-  }
-
-  .toastWrap {
+  @media (min-width: 768px) {
     bottom: 18px;
   }
 }

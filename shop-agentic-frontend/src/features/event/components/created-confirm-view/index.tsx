@@ -1,89 +1,136 @@
-import { CircleMinus, CirclePlus } from "lucide-react";
+import { CalendarDays, MapPin, Truck } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import {
   Alert,
   Avatar,
+  Badge,
   Button,
   Modal,
   SectionCard,
 } from "../../../../shared/components/ui";
+import { useCurrentUserQuery } from "../../../../shared/hooks/use-current-user-query";
 import { useCreatedConfirm } from "../../hooks/use-created-confirm";
 import EventStepNavigation from "../event-step-navigation";
 import styles from "./index.module.scss";
 
+const formatDate = (isoOrDisplay: string): string => {
+  if (!isoOrDisplay) return "—";
+  // already formatted (e.g. DD-MM-YYYY)
+  if (/^\d{2}-\d{2}-\d{4}$/.test(isoOrDisplay)) return isoOrDisplay;
+  // try to parse ISO (YYYY-MM-DD)
+  const d = new Date(isoOrDisplay);
+  if (Number.isNaN(d.getTime())) return isoOrDisplay;
+  return d.toLocaleDateString("en-AU", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const modeLabel: Record<string, string> = {
+  "group-buy": "GroupBuy",
+};
+
 function CreatedConfirmView() {
-  const viewModel = useCreatedConfirm();
+  const vm = useCreatedConfirm();
+  const { data: currentUser } = useCurrentUserQuery();
+  const hostName =
+    currentUser?.displayName ?? currentUser?.email ?? "You";
 
   return (
     <section className={styles.page}>
+
+      {/* ── Event header card ─────────────────────────────────────── */}
       <SectionCard className={styles.eventCard}>
         <div className={styles.eventHead}>
           <div className={styles.sellerWrap}>
-            <Avatar name="Truong Thanh Trung" size={40} />
+            <Avatar name={hostName} size={40} />
             <div>
-              <p className={styles.sellerName}>Truong Thanh Trung</p>
-              <p className={styles.sellerMeta}>Shop Agentic GroupBuy</p>
+              <p className={styles.sellerName}>{hostName}</p>
+              <p className={styles.sellerMeta}>
+                {modeLabel[vm.mode] ?? vm.mode}
+              </p>
             </div>
           </div>
           <div className={styles.buyWrap}>
-            <small>2 hours left</small>
-            <Button type="button" className={styles.buyChip}>
-              0 BUY
-            </Button>
+            <Badge tone="success">Draft</Badge>
           </div>
         </div>
 
-        <h2 className={styles.eventTitle}>test</h2>
+        <h2 className={styles.eventTitle}>{vm.title}</h2>
 
         <dl className={styles.metaList}>
-          <div>
-            <dt>Closing:</dt>
-            <dd>27-02-2026</dd>
-          </div>
-          <div>
-            <dt>Collection:</dt>
-            <dd>05-03-2026</dd>
-          </div>
-          <div>
-            <dt>Address:</dt>
-            <dd>-</dd>
-          </div>
+          {vm.closingDate ? (
+            <div>
+              <dt>
+                <CalendarDays size={13} />
+                Closing
+              </dt>
+              <dd>{formatDate(vm.closingDate)}</dd>
+            </div>
+          ) : null}
+          {vm.collectionDate ? (
+            <div>
+              <dt>
+                <Truck size={13} />
+                Collection
+              </dt>
+              <dd>
+                {formatDate(vm.collectionDate)}
+                {vm.collectionTime ? " · " + vm.collectionTime : ""}
+              </dd>
+            </div>
+          ) : null}
+          {vm.pickupLocation ? (
+            <div>
+              <dt>
+                <MapPin size={13} />
+                Pickup
+              </dt>
+              <dd>{vm.pickupLocation}</dd>
+            </div>
+          ) : null}
         </dl>
       </SectionCard>
 
-      <div className={styles.itemList}>
-        <SectionCard className={styles.itemRow}>
-          <div>
-            <p className={styles.itemName}>test</p>
-            <p className={styles.itemPrice}>$0</p>
-          </div>
+      {/* ── Items ─────────────────────────────────────────────────── */}
+      {vm.items.length > 0 ? (
+        <div className={styles.itemList}>
+          {vm.items.map((item, i) => (
+            <SectionCard key={i} className={styles.itemRow}>
+              <div className={styles.itemInfo}>
+                <p className={styles.itemName}>{item.name}</p>
+              </div>
+              <span className={styles.itemPrice}>{item.price}</span>
+            </SectionCard>
+          ))}
+        </div>
+      ) : null}
 
-          <div className={styles.qtyWrap}>
-            <Button type="button" variant="text" className={styles.qtyBtn}>
-              <CircleMinus size={20} />
-            </Button>
-            <strong>0</strong>
-            <Button type="button" variant="text" className={styles.qtyBtn}>
-              <CirclePlus size={20} />
-            </Button>
-          </div>
-        </SectionCard>
-      </div>
-
-      <section className={styles.totalPanel}>
-        <p className={styles.totalValue}>$0.00</p>
-        <p className={styles.feeText}>Admin Fee: $0.00</p>
-      </section>
+      {/* ── Summary ───────────────────────────────────────────────── */}
+      <SectionCard className={styles.totalPanel}>
+        <div className={styles.totalRow}>
+          <span className={styles.totalLabel}>Admin fee per order</span>
+          <span className={styles.totalValue}>
+            {vm.adminFee && vm.adminFee !== "0" ? `$${vm.adminFee}` : "None"}
+          </span>
+        </div>
+        <div className={styles.totalRow}>
+          <span className={styles.totalLabel}>Items</span>
+          <span className={styles.totalValue}>{vm.items.length}</span>
+        </div>
+      </SectionCard>
 
       <EventStepNavigation
         currentPath={APP_PATHS.createdConfirm}
         className={styles.actions}
-        onNextClick={viewModel.handleOpenPublishModal}
+        onNextClick={vm.handleOpenPublishModal}
       />
 
+      {/* ── Publish modal ─────────────────────────────────────────── */}
       <Modal
-        open={viewModel.isPublishModalOpen}
-        onClose={viewModel.handleClosePublishModal}
+        open={vm.isPublishModalOpen}
+        onClose={vm.handleClosePublishModal}
         title="Publish Event"
         bodyClassName={styles.publishModalBody}
         footer={
@@ -91,17 +138,17 @@ function CreatedConfirmView() {
             <Button
               type="button"
               variant="outline"
-              onClick={viewModel.handleClosePublishModal}
-              disabled={viewModel.isPublishing}
+              onClick={vm.handleClosePublishModal}
+              disabled={vm.isPublishing}
             >
               Cancel
             </Button>
             <Button
               type="button"
-              onClick={viewModel.handlePublish}
-              disabled={viewModel.isPublishing}
+              onClick={vm.handlePublish}
+              disabled={vm.isPublishing}
             >
-              {viewModel.isPublishing ? "Publishing..." : "Publish"}
+              {vm.isPublishing ? "Publishing..." : "Publish"}
             </Button>
           </div>
         }
@@ -111,9 +158,9 @@ function CreatedConfirmView() {
           process.
         </p>
 
-        {viewModel.publishError ? (
+        {vm.publishError ? (
           <Alert tone="error" className={styles.publishError}>
-            {viewModel.publishError}
+            {vm.publishError}
           </Alert>
         ) : null}
       </Modal>

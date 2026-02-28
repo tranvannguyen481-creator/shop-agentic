@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { APP_PATHS } from "../../../../app/route-config";
 import { Avatar, Button } from "../../ui";
@@ -8,23 +8,23 @@ function AppHeader() {
   const navigate = useNavigate();
 
   return (
-    <header className={styles["home-header"]}>
+    <header className={styles["app-header"]}>
       <div className={styles["header-inner"]}>
         <div className={styles.brand}>
-          <h1>SHOP AGENTIC GROUPBUY</h1>
-          <p>
-            Powered by <span>shop-agentic</span>
-          </p>
+          <div className={styles["brand-mark"]} aria-hidden="true">
+            <span>S</span>
+          </div>
+          <span className={styles["brand-name"]}>ShopAgentic</span>
         </div>
 
         <div className={styles["header-actions"]}>
           <Button
             type="button"
             variant="text"
-            aria-label="Messages"
+            aria-label="Notifications"
             className={styles["icon-btn"]}
           >
-            <Mail className={styles.icon} aria-hidden="true" />
+            <Bell className={styles.icon} aria-hidden="true" />
           </Button>
           <Button
             type="button"
@@ -35,7 +35,7 @@ function AppHeader() {
           >
             <Avatar
               name="Trung Tran"
-              size={34}
+              size={32}
               className={styles["avatar-view"]}
             />
           </Button>

@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { CREATE_EVENT_TEMPLATE_FIELDS } from "../constants/create-event-template-constants";
+import { CREATE_ITEMS_DRAFT_STORAGE_KEY } from "../constants/create-items-constants";
 import { CreateEventFormValues } from "../types/create-event-types";
+import { ItemFormValue } from "../types/create-items-types";
 import {
   buildTemplateCsvText,
   parseTemplateUpload,
@@ -12,6 +14,21 @@ interface UseCreateEventTemplateResult {
   handleDownloadTemplate: () => void;
   handleTemplateUpload: (files: FileList | null) => void;
 }
+
+const saveItemsDraftFromTemplate = (items: ItemFormValue[]) => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(
+      CREATE_ITEMS_DRAFT_STORAGE_KEY,
+      JSON.stringify({ items, bannerPreviewUrls: [] }),
+    );
+  } catch {
+    // Ignore storage write failures.
+  }
+};
 
 export const useCreateEventTemplate = (
   form: UseFormReturn<CreateEventFormValues>,
@@ -78,9 +95,17 @@ export const useCreateEventTemplate = (
           }
         });
 
-        setTemplateMessage(
-          "Template uploaded. Required fields have been filled.",
-        );
+        if (parsedResult.items && parsedResult.items.length > 0) {
+          saveItemsDraftFromTemplate(parsedResult.items);
+          const itemCount = parsedResult.items.length;
+          setTemplateMessage(
+            `Template uploaded. Event info and ${itemCount} item${itemCount > 1 ? "s" : ""} have been filled.`,
+          );
+        } else {
+          setTemplateMessage(
+            "Template uploaded. Required fields have been filled.",
+          );
+        }
       });
     },
     [form],

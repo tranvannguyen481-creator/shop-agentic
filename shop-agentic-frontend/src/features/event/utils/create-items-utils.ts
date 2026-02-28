@@ -7,4 +7,5 @@ export const createDefaultItem = (): ItemFormValue => ({
   description: "",
   price: "0",
   options: [],
+  optionGroups: [],
 });

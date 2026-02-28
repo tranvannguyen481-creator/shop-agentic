@@ -14,6 +14,22 @@ export const createItemsSchema = z.object({
             value: z.string().optional().default(""),
           }),
         ),
+        optionGroups: z
+          .array(
+            z.object({
+              name: z.string().optional().default(""),
+              required: z.boolean().optional().default(false),
+              choices: z.array(
+                z.object({
+                  id: z.string().optional().default(""),
+                  name: z.string().optional().default(""),
+                  price: z.number().optional().default(0),
+                }),
+              ),
+            }),
+          )
+          .optional()
+          .default([]),
       }),
     )
     .min(1),
