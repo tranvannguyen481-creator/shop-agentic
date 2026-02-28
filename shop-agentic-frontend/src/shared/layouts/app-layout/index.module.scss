@@ -3,12 +3,12 @@
 .home-page {
   --app-max-width: 560px;
   --app-header-height: 58px;
-  --app-tabs-height: 38px;
-  --app-footer-height: 54px;
+  --app-tabs-height: 40px;
+  --app-footer-height: 56px;
 
   min-height: 100vh;
-  background: tokens.color(surface);
-  color: tokens.color(text-soft);
+  background: tokens.color(body-bg);
+  color: tokens.color(body-text);
   display: flex;
   flex-direction: column;
   font-size: tokens.fs(xs);
@@ -17,8 +17,8 @@
 .content {
   width: min(var(--app-max-width), calc(100% - 16px));
   margin: 0 auto;
-  padding-top: calc(var(--app-header-height) + var(--app-tabs-height) + 12px);
-  padding-bottom: calc(var(--app-footer-height));
+  padding-top: calc(var(--app-header-height) + var(--app-tabs-height) + 14px);
+  padding-bottom: calc(var(--app-footer-height) + 8px);
   flex: 1;
   box-sizing: border-box;
 }
@@ -27,8 +27,8 @@
   .home-page {
     --app-max-width: 600px;
     --app-header-height: 62px;
-    --app-tabs-height: 40px;
-    --app-footer-height: 56px;
+    --app-tabs-height: 42px;
+    --app-footer-height: 58px;
 
     font-size: tokens.fs(sm);
   }

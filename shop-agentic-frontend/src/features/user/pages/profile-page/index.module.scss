@@ -11,16 +11,13 @@
 
 .profileHeader {
   border-color: tokens.color(border-soft);
-  background: color-mix(
-    in srgb,
-    tokens.color(brand-soft-bg) 48%,
-    tokens.color(surface)
-  );
+  background: tokens.color(brand-soft-bg);
   display: grid;
   justify-items: center;
   text-align: center;
   gap: 6px;
-  padding: 20px 14px;
+  padding: 24px 16px;
+  border-radius: tokens.radius(3xl);
 }
 
 .avatar {
@@ -29,9 +26,10 @@
 
 .name {
   margin: 0;
-  color: tokens.color(text-brand-cool);
+  color: tokens.color(primary-legacy);
   font-size: tokens.fs(xl);
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 .memberSince {
@@ -47,34 +45,33 @@
 }
 
 .actionItem {
-  border: 1px solid tokens.color(border-soft);
-  border-radius: tokens.radius(md);
+  border: 1.5px solid tokens.color(border-soft);
+  border-radius: tokens.radius(xl);
   background: tokens.color(surface);
   display: grid;
   justify-items: center;
   gap: 8px;
-  padding: 14px 10px;
-  color: tokens.color(text-brand-cool);
+  padding: 16px 12px;
+  color: tokens.color(primary-legacy);
   transition:
-    transform 0.16s ease,
-    box-shadow 0.16s ease,
-    border-color 0.16s ease;
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 
   &:hover {
-    transform: scale(1.02);
-    border-color: tokens.color(border-mid);
-    box-shadow: 0 6px 14px
-      color-mix(in srgb, tokens.color(text-brand-cool) 12%, transparent);
+    transform: translateY(-2px);
+    border-color: tokens.color(primary-legacy);
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.12);
   }
 
   .icon {
-    width: 20px;
-    height: 20px;
-    stroke-width: 2;
+    width: 22px;
+    height: 22px;
+    stroke-width: 1.8;
   }
 
   small {
-    font-size: tokens.fs(sm);
+    font-size: tokens.fs(xs);
     color: tokens.color(text-muted-1);
     font-weight: 600;
   }
@@ -89,11 +86,11 @@
 
 .notificationHead {
   border-bottom: 1px solid tokens.color(border-soft);
-  padding-bottom: 8px;
+  padding-bottom: 10px;
 
   h3 {
     margin: 0;
-    color: tokens.color(text-brand-cool);
+    color: tokens.color(primary-legacy);
     font-size: tokens.fs(md);
     font-weight: 700;
   }
@@ -133,9 +130,13 @@
   }
 
   a {
-    color: tokens.color(link-primary);
+    color: tokens.color(primary-legacy);
     text-decoration: none;
     font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
@@ -147,24 +148,39 @@
 
 .feedbackBtn,
 .logoutBtn {
-  border-radius: tokens.radius(pill);
+  border-radius: tokens.radius(lg);
   min-height: 44px;
-  padding: 8px 14px;
+  padding: 10px 16px;
   font-size: tokens.fs(sm);
   font-weight: 700;
+  transition:
+    background-color 0.15s ease,
+    transform 0.08s ease,
+    box-shadow 0.15s ease;
 }
 
 .feedbackBtn {
   border: 0;
-  background: tokens.color(primary-legacy-strong);
+  background: tokens.color(primary-legacy);
   color: tokens.color(text-on-dark);
+
+  &:hover:not(:disabled) {
+    background: tokens.color(primary-legacy-strong);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    transform: translateY(-1px);
+  }
 }
 
 .logoutBtn {
-  border-width: 1px;
-  border-color: tokens.color(warning-strong);
-  color: tokens.color(warning-strong);
+  border-width: 1.5px;
+  border-color: tokens.color(form-required);
+  color: tokens.color(form-required);
   text-transform: none;
+  background: transparent;
+
+  &:hover:not(:disabled) {
+    background: tokens.color(surface-error-soft);
+  }
 }
 
 @media (min-width: 576px) {
@@ -174,7 +190,7 @@
   }
 
   .profileHeader {
-    padding: 24px 16px;
+    padding: 28px 20px;
   }
 
   .actionsGrid {

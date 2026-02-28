@@ -9,9 +9,10 @@
 
   background: tokens.color(primary-legacy);
   color: tokens.color(text-on-dark);
-  padding: 6px 10px 4px;
+  padding: 0 16px;
   height: var(--app-header-height, 64px);
   box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .header-inner {
@@ -27,14 +28,18 @@
   h1 {
     margin: 0;
     font-size: tokens.fs(md);
-    letter-spacing: 0.02em;
-    font-weight: 700;
+    letter-spacing: -0.01em;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: tokens.color(text-on-dark);
   }
 
   p {
-    margin: 2px 0 0;
+    margin: 1px 0 0;
     font-size: tokens.fs(2xs);
-    color: rgba(20, 114, 121, 0.95);
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 400;
+    letter-spacing: 0.01em;
   }
 
   span {
@@ -48,42 +53,60 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .icon-btn {
   border: 0;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
   color: tokens.color(text-on-dark);
+  border-radius: tokens.radius(lg);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
 
   .icon {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2.2;
+    width: 15px;
+    height: 15px;
+    stroke-width: 2;
   }
 }
 
 .avatar {
   border: 0;
   padding: 0;
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: grid;
   place-items: center;
   cursor: pointer;
+  background: transparent;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.85;
+  }
 }
 
 .avatar-view {
-  border: 2px solid tokens.color(border-aqua);
+  border: 2px solid rgba(255, 255, 255, 0.4);
   background: rgba(255, 255, 255, 0.2);
-  color: tokens.color(text-on-brand-dark);
+  color: tokens.color(text-on-dark);
   font-size: tokens.fs(xs);
+  font-weight: 700;
 }
 
 @media (min-width: 576px) {
   .home-header {
-    padding: 6px 12px 4px;
+    padding: 0 20px;
   }
 
   .brand {
@@ -97,16 +120,16 @@
   }
 
   .header-actions {
-    gap: 8px;
+    gap: 6px;
   }
 
   .icon-btn .icon {
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
   }
 
   .avatar {
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
   }
 }

@@ -10,7 +10,7 @@ $dark: tokens.color(dark);
 $body-bg: tokens.color(body-bg);
 $body-color: tokens.color(body-text);
 $font-family-sans-serif:
-  "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
 @import "bootstrap/scss/bootstrap";
 
@@ -36,9 +36,12 @@ $font-family-sans-serif:
 body {
   margin: 0;
   font-size: tokens.fs(md);
+  font-family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: tokens.color(body-bg);
+  color: tokens.color(body-text);
 }
 
 * {
@@ -47,8 +50,8 @@ body {
 }
 
 *::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 *::-webkit-scrollbar-track {
@@ -58,7 +61,7 @@ body {
 *::-webkit-scrollbar-thumb {
   background: tokens.color(text-muted-3);
   border-radius: tokens.radius(pill);
-  border: 2px solid tokens.color(shell-bg);
+  border: 1px solid tokens.color(shell-bg);
 }
 
 *::-webkit-scrollbar-thumb:hover {

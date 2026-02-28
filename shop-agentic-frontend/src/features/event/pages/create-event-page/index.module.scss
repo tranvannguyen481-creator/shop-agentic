@@ -48,8 +48,8 @@
       opacity 0.18s ease;
 
     &:hover {
-      color: tokens.color(text-brand-cool);
-      opacity: 0.92;
+      color: tokens.color(primary-legacy);
+      opacity: 0.9;
     }
 
     &:focus-visible {
