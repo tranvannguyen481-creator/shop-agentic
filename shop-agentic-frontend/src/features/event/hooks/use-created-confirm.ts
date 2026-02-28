@@ -10,8 +10,8 @@ import {
   CreatedConfirmViewModel,
 } from "../types/created-confirm-types";
 
-const isDataUrl = (value: unknown): value is string =>
-  typeof value === "string" && value.startsWith("data:");
+const isBlobUrl = (value: unknown): value is string =>
+  typeof value === "string" && value.startsWith("blob:");
 
 interface PublishDraftItem {
   imagePreviewUrl?: unknown;
@@ -37,7 +37,7 @@ const sanitizePublishPayload = (payload: PublishPayload): PublishPayload => {
   const sanitizedItems = Array.isArray(createItemsDraft.items)
     ? createItemsDraft.items.map((item: PublishDraftItem) => ({
         ...item,
-        imagePreviewUrl: isDataUrl(item?.imagePreviewUrl)
+        imagePreviewUrl: isBlobUrl(item?.imagePreviewUrl)
           ? null
           : item?.imagePreviewUrl || null,
         imageFile: null,
@@ -49,7 +49,7 @@ const sanitizePublishPayload = (payload: PublishPayload): PublishPayload => {
   )
     ? createItemsDraft.bannerPreviewUrls.filter(
         (previewUrl) =>
-          typeof previewUrl === "string" && !isDataUrl(previewUrl),
+          typeof previewUrl === "string" && !isBlobUrl(previewUrl),
       )
     : [];
 

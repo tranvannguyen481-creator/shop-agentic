@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { APP_PATHS } from "../../../app/route-config";
 import { useSmartForm } from "../../../shared/components/form";
-import { fetchMyGroups } from "../../../shared/services/group-api";
 import { useWizard } from "../../../shared/contexts";
+import { fetchMyGroups } from "../../../shared/services/group-api";
 import {
   CREATE_EVENT_DEFAULT_VALUES,
   CREATE_EVENT_DRAFT_STORAGE_KEY,
@@ -66,7 +66,7 @@ export const useCreateEventPage = (
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { wizard } = useWizard();
-  const hydratedEventIdRef = useRef<string | null>(null);
+  const appliedDraftIdRef = useRef<string | null>(null);
 
   const isEditMode =
     options?.mode === "edit" ||
@@ -84,12 +84,14 @@ export const useCreateEventPage = (
   const [isDeliveryOptionsModalOpen, setIsDeliveryOptionsModalOpen] =
     useState(false);
 
-  const { data: groupsData, isLoading: isGroupsLoading, error: groupsError } =
-    useQuery({
-      queryKey: ["myGroups", GROUP_GATE_PAGE, GROUP_GATE_PAGE_SIZE],
-      queryFn: () => fetchMyGroups(GROUP_GATE_PAGE, GROUP_GATE_PAGE_SIZE),
-      enabled: !isEditMode,
-    });
+  const {
+    data: groupsData,
+    isLoading: isGroupsLoading,
+    error: groupsError,
+  } = useQuery({
+    queryKey: ["myGroups", GROUP_GATE_PAGE, GROUP_GATE_PAGE_SIZE],
+    queryFn: () => fetchMyGroups(GROUP_GATE_PAGE, GROUP_GATE_PAGE_SIZE),
+  });
 
   const groupOptions = useMemo(
     () =>
@@ -145,68 +147,51 @@ export const useCreateEventPage = (
     return () => subscription.unsubscribe();
   }, [form]);
 
+  const { data: editDraftData } = useQuery({
+    queryKey: ["eventEditDraft", editEventId],
+    queryFn: () => fetchEventEditDraft(editEventId),
+    enabled: isEditMode && !!editEventId,
+    staleTime: Infinity,
+    retry: false,
+  });
+
   useEffect(() => {
-    if (!isEditMode || !editEventId) {
+    if (!editDraftData || !editEventId) {
       return;
     }
 
-    if (hydratedEventIdRef.current === editEventId) {
+    if (appliedDraftIdRef.current === editEventId) {
       return;
     }
 
-    hydratedEventIdRef.current = editEventId;
+    appliedDraftIdRef.current = editEventId;
 
-    let disposed = false;
+    const nextValues: CreateEventFormValues = {
+      ...CREATE_EVENT_DEFAULT_VALUES,
+      ...editDraftData.createEventDraft,
+      uploadExcel: null,
+    };
 
-    const hydrateEditDraft = async () => {
-      let fetchedDraft = null;
+    form.reset(nextValues);
 
+    if (typeof window !== "undefined") {
       try {
-        fetchedDraft = await fetchEventEditDraft(editEventId);
-      } catch {
-        hydratedEventIdRef.current = null;
-        return;
-      }
+        window.localStorage.setItem(
+          CREATE_EVENT_DRAFT_STORAGE_KEY,
+          JSON.stringify(toPersistedDraft(nextValues)),
+        );
 
-      if (disposed || !fetchedDraft) {
-        return;
-      }
-
-      const nextValues: CreateEventFormValues = {
-        ...CREATE_EVENT_DEFAULT_VALUES,
-        ...fetchedDraft.createEventDraft,
-        uploadExcel: null,
-      };
-
-      form.reset(nextValues);
-
-      if (typeof window !== "undefined") {
-        try {
+        if (editDraftData.createItemsDraft) {
           window.localStorage.setItem(
-            CREATE_EVENT_DRAFT_STORAGE_KEY,
-            JSON.stringify(toPersistedDraft(nextValues)),
+            CREATE_ITEMS_DRAFT_STORAGE_KEY,
+            JSON.stringify(editDraftData.createItemsDraft),
           );
-
-          if (fetchedDraft.createItemsDraft) {
-            window.localStorage.setItem(
-              CREATE_ITEMS_DRAFT_STORAGE_KEY,
-              JSON.stringify(fetchedDraft.createItemsDraft),
-            );
-          }
-        } catch {
-          return;
         }
+      } catch {
+        // Ignore storage write failures.
       }
-
-      hydratedEventIdRef.current = editEventId;
-    };
-
-    hydrateEditDraft();
-
-    return () => {
-      disposed = true;
-    };
-  }, [editEventId, form, isEditMode]);
+    }
+  }, [editDraftData, editEventId, form]);
 
   const stepMeta = getEventStepMeta(APP_PATHS.createEvent);
   const { templateMessage, handleDownloadTemplate, handleTemplateUpload } =
@@ -293,10 +278,7 @@ export const useCreateEventPage = (
   };
 
   const isGroupGateBlocking =
-    !isEditMode &&
-    !isGroupsLoading &&
-    !groupsError &&
-    userGroupCount === 0;
+    !isEditMode && !isGroupsLoading && !groupsError && userGroupCount === 0;
 
   return {
     form,

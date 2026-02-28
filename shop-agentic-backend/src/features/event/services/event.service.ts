@@ -741,6 +741,7 @@ export async function getEventEditDraft(
 
   return {
     createEventDraft: {
+      groupId: eventData["groupId"] ?? "",
       mode: eventData["mode"] ?? "group-buy",
       title: eventData["title"] ?? "",
       description: eventData["description"] ?? "",

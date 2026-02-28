@@ -15,17 +15,11 @@ const inFlightDraftRequests = new Map<
   Promise<EventEditDraftPayload | null>
 >();
 
-const draftCache = new Map<string, EventEditDraftPayload | null>();
-
 export const fetchEventEditDraft = async (
   eventId: string,
 ): Promise<EventEditDraftPayload | null> => {
   if (!eventId) {
     return null;
-  }
-
-  if (draftCache.has(eventId)) {
-    return draftCache.get(eventId) ?? null;
   }
 
   const inFlightRequest = inFlightDraftRequests.get(eventId);
@@ -39,10 +33,6 @@ export const fetchEventEditDraft = async (
       (response) =>
         (response.data?.data ?? null) as EventEditDraftPayload | null,
     )
-    .then((payload) => {
-      draftCache.set(eventId, payload);
-      return payload;
-    })
     .finally(() => {
       inFlightDraftRequests.delete(eventId);
     });
