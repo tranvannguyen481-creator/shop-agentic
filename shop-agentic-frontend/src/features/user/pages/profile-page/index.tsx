@@ -1,4 +1,14 @@
-import { Bell, Camera, LockKeyhole, MapPin, SquarePen } from "lucide-react";
+import {
+  Bell,
+  Camera,
+  LockKeyhole,
+  LogOut,
+  MapPin,
+  MessageSquare,
+  Save,
+  SquarePen,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 import { APP_PATHS } from "../../../../app/route-config";
 import { Form, FormInput } from "../../../../shared/components/form";
@@ -151,6 +161,7 @@ function ProfilePage() {
 
         <section className={styles.actionRow}>
           <Button type="button" className={styles.feedbackBtn} fullWidth>
+            <MessageSquare size={16} />
             FEEDBACK
           </Button>
           <Button
@@ -161,6 +172,7 @@ function ProfilePage() {
             onClick={onSignOut}
             disabled={isSubmitting}
           >
+            <LogOut size={16} />
             {isSubmitting ? "Logging out..." : "Logout"}
           </Button>
         </section>
@@ -204,6 +216,7 @@ function ProfilePage() {
               onClick={() => setIsEditModalOpen(false)}
               disabled={isSaving}
             >
+              <X size={16} />
               Cancel
             </Button>
             <Button type="submit" disabled={isSaving}>
@@ -213,7 +226,10 @@ function ProfilePage() {
                   Saving...
                 </span>
               ) : (
-                "Save"
+                <>
+                  <Save size={16} />
+                  Save
+                </>
               )}
             </Button>
           </div>

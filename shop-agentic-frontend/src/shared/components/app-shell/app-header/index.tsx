@@ -25,6 +25,7 @@ function AppHeader() {
             className={styles["icon-btn"]}
           >
             <Bell className={styles.icon} aria-hidden="true" />
+            <span className="visually-hidden">Notifications</span>
           </Button>
           <Button
             type="button"
@@ -38,6 +39,7 @@ function AppHeader() {
               size={32}
               className={styles["avatar-view"]}
             />
+            <span className="visually-hidden">Profile</span>
           </Button>
         </div>
       </div>

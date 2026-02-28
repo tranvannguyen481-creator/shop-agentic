@@ -1,7 +1,7 @@
 @use "../../../styles/tokens";
 
 .button {
-  border-radius: tokens.radius(lg);
+  border-radius: tokens.radius(md);
   height: var(--ctrl-h);
   padding: 0 1rem;
   display: inline-flex;

@@ -1,3 +1,4 @@
+import { ChevronLeft, Crown, Monitor } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import {
   Alert,
@@ -35,6 +36,7 @@ function GroupDetailPage() {
               }
               onClick={() => viewModel.onSelectMode("admin-mobile")}
             >
+              <Monitor size={16} />
               Admin mobile
             </Button>
             <Button
@@ -43,6 +45,7 @@ function GroupDetailPage() {
               onClick={() => viewModel.onSelectMode("premium")}
               disabled={!viewModel.canUsePremiumLayout}
             >
+              <Crown size={16} />
               Premium
             </Button>
           </div>
@@ -150,6 +153,7 @@ function GroupDetailPage() {
             variant="secondary"
             onClick={viewModel.onBackToGroups}
           >
+            <ChevronLeft size={16} />
             Back to my groups
           </Button>
         </div>

@@ -12,7 +12,7 @@
 
   select {
     border: 0.0625rem solid tokens.color(border-input);
-    border-radius: tokens.radius(sm);
+    border-radius: tokens.radius(md);
     background: tokens.color(surface);
     color: tokens.color(form-input-text);
     font-size: tokens.fs(sm);

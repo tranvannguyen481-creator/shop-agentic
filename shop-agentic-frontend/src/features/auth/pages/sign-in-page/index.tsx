@@ -1,4 +1,4 @@
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Globe, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import { APP_PATHS } from "../../../../app/route-config";
 import { Form, FormInput } from "../../../../shared/components/form";
@@ -86,7 +86,10 @@ function SignInPage() {
                   LOGGING IN...
                 </span>
               ) : (
-                "LOGIN"
+                <>
+                  <LogIn size={16} />
+                  LOGIN
+                </>
               )}
             </Button>
 
@@ -113,7 +116,10 @@ function SignInPage() {
                 CONNECTING...
               </span>
             ) : (
-              "G Google"
+              <>
+                <Globe size={16} />
+                Continue with Google
+              </>
             )}
           </Button>
 

@@ -1,3 +1,4 @@
+import { Minus, Plus, ShoppingCart } from "lucide-react";
 import { FormError } from "../../../../shared/components/form";
 import {
   Button,
@@ -117,7 +118,7 @@ function EventDetailProductCard({
               variant="outline"
               onClick={viewModel.onDecreaseQuantity}
             >
-              −
+              <Minus size={14} /> <span>−</span>
             </Button>
             <span>{viewModel.quantity}</span>
             <Button
@@ -125,7 +126,7 @@ function EventDetailProductCard({
               variant="outline"
               onClick={viewModel.onIncreaseQuantity}
             >
-              +
+              <Plus size={14} /> <span>+</span>
             </Button>
           </div>
 
@@ -134,7 +135,7 @@ function EventDetailProductCard({
             variant="primary"
             onClick={viewModel.onAddToOrder}
           >
-            Add to Order
+            <ShoppingCart size={16} /> Add to Order
           </Button>
         </div>
       </div>

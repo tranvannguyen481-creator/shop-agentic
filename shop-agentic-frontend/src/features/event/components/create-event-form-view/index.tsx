@@ -1,3 +1,4 @@
+import { Download } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import {
   Form,
@@ -55,6 +56,7 @@ function CreateEventFormView({ viewModel }: CreateEventFormViewProps) {
             className={styles["template-link"]}
             onClick={viewModel.handleDownloadTemplate}
           >
+            <Download size={14} />
             Download template
           </button>
           {viewModel.templateMessage ? (

@@ -1,5 +1,6 @@
 import {
   CalendarDays,
+  ChevronLeft,
   ClockAlert,
   MapPin,
   PackageOpen,
@@ -31,11 +32,14 @@ function EventDetailPage() {
   return (
     <AppLayout>
       <div className={styles.page} data-event-id={vm.eventId}>
-
         {}
         <div className={styles.hero}>
           {vm.bannerPreviewUrl ? (
-            <img src={vm.bannerPreviewUrl} alt={vm.title} className={styles.heroBg} />
+            <img
+              src={vm.bannerPreviewUrl}
+              alt={vm.title}
+              className={styles.heroBg}
+            />
           ) : (
             <div className={styles.heroBgFallback} />
           )}
@@ -85,7 +89,8 @@ function EventDetailPage() {
               <div className={styles.hostInfo}>
                 <span className={styles.hostName}>{vm.hostDisplayName}</span>
                 <span className={styles.hostMeta}>
-                  {vm.joinedCount} {vm.joinedCount === 1 ? "person" : "people"} joined
+                  {vm.joinedCount} {vm.joinedCount === 1 ? "person" : "people"}{" "}
+                  joined
                 </span>
               </div>
               <span className={styles.adminFee}>
@@ -99,13 +104,20 @@ function EventDetailPage() {
         {}
         {!vm.isLoading ? (
           <div className={styles.metaGrid}>
-            <div className={[styles.metaChip, vm.isClosed ? styles.metaChipClosed : styles.metaChipCountdown].join(" ")}>
+            <div
+              className={[
+                styles.metaChip,
+                vm.isClosed ? styles.metaChipClosed : styles.metaChipCountdown,
+              ].join(" ")}
+            >
               <CalendarDays size={14} />
               <div>
                 <span className={styles.metaLabel}>
                   {vm.isClosed ? "Closed" : "Closes"}
                 </span>
-                <span className={styles.metaValue}>{vm.closingDate !== "-" ? vm.closingDate : vm.closingInText}</span>
+                <span className={styles.metaValue}>
+                  {vm.closingDate !== "-" ? vm.closingDate : vm.closingInText}
+                </span>
               </div>
             </div>
             <div className={styles.metaChip}>
@@ -114,7 +126,9 @@ function EventDetailPage() {
                 <span className={styles.metaLabel}>Collection</span>
                 <span className={styles.metaValue}>
                   {vm.collectionDate !== "-" ? vm.collectionDate : "TBA"}
-                  {vm.collectionTime && vm.collectionTime !== "-" ? " · " + vm.collectionTime : ""}
+                  {vm.collectionTime && vm.collectionTime !== "-"
+                    ? " · " + vm.collectionTime
+                    : ""}
                 </span>
               </div>
             </div>
@@ -204,6 +218,7 @@ function EventDetailPage() {
             className={styles.backBtn}
             onClick={vm.onBackToEvents}
           >
+            <ChevronLeft size={14} />
             Back
           </Button>
 

@@ -1,4 +1,4 @@
-import { CalendarDays, Pencil, Share2 } from "lucide-react";
+import { CalendarDays, Eye, Pencil, Plus, Share2 } from "lucide-react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Autoplay, Pagination } from "swiper/modules";
@@ -162,7 +162,8 @@ function ListMyEventsPage() {
                             className={styles["action-btn"]}
                             onClick={() => viewModel.onViewDetail(event.id)}
                           >
-                            View
+                            <Eye size={13} />
+                            <span>View</span>
                           </Button>
                           <Button
                             type="button"
@@ -189,6 +190,7 @@ function ListMyEventsPage() {
                   fullWidth
                   onClick={viewModel.onCreateFirstEvent}
                 >
+                  <Plus size={16} />
                   Create first event
                 </Button>
               </>

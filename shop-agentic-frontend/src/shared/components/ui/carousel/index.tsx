@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ReactNode, useState } from "react";
 import Button from "../button";
 import styles from "./index.module.scss";
@@ -37,7 +38,7 @@ function Carousel({ items, className }: CarouselProps) {
             className={styles["control-btn"]}
             onClick={handlePrev}
           >
-            Prev
+            <ChevronLeft size={16} /> Prev
           </Button>
           <span>
             {activeIndex + 1}/{items.length}
@@ -48,7 +49,7 @@ function Carousel({ items, className }: CarouselProps) {
             className={styles["control-btn"]}
             onClick={handleNext}
           >
-            Next
+            <ChevronRight size={16} /> Next
           </Button>
         </div>
       )}

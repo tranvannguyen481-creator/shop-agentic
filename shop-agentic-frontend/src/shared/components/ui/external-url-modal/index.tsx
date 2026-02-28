@@ -1,3 +1,4 @@
+import { Link, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button, Input, Modal } from "..";
 import styles from "./index.module.scss";
@@ -39,10 +40,10 @@ function ExternalUrlModal({
       footer={
         <div className={styles.actions}>
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            <X size={16} /> Cancel
           </Button>
           <Button type="button" onClick={handleSave} disabled={!url.trim()}>
-            Save Link
+            <Link size={16} /> Save Link
           </Button>
         </div>
       }

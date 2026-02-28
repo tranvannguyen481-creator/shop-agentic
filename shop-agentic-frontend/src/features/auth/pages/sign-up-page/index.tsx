@@ -1,3 +1,4 @@
+import { ArrowRight, Globe, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { APP_PATHS } from "../../../../app/route-config";
 import { Form, FormInput } from "../../../../shared/components/form";
@@ -92,7 +93,10 @@ function SignUpPage() {
                       SAVING...
                     </span>
                   ) : (
-                    "NEXT"
+                    <>
+                      <ArrowRight size={16} />
+                      NEXT
+                    </>
                   )}
                 </Button>
               </Form>
@@ -122,7 +126,10 @@ function SignUpPage() {
                       CONNECTING...
                     </span>
                   ) : (
-                    "G Google"
+                    <>
+                      <Globe size={16} />
+                      Continue with Google
+                    </>
                   )}
                 </Button>
 
@@ -134,7 +141,8 @@ function SignUpPage() {
                   onClick={onEmailSignUp}
                   disabled={isSubmitting}
                 >
-                  Sign-Up with Mobile / Email
+                  <Mail size={16} />
+                  Sign Up with Email
                 </Button>
               </div>
 

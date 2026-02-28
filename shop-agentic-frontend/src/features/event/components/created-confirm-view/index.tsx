@@ -1,4 +1,4 @@
-import { CalendarDays, MapPin, Truck } from "lucide-react";
+import { CalendarDays, Globe, MapPin, Truck, X } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import {
   Alert,
@@ -200,6 +200,7 @@ function CreatedConfirmView() {
               onClick={vm.handleClosePublishModal}
               disabled={vm.isPublishing}
             >
+              <X size={16} />
               Cancel
             </Button>
             <Button
@@ -207,6 +208,7 @@ function CreatedConfirmView() {
               onClick={vm.handlePublish}
               disabled={vm.isPublishing}
             >
+              <Globe size={16} />
               {vm.isPublishing ? "Publishing..." : "Publish"}
             </Button>
           </div>

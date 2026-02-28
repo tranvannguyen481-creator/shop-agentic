@@ -1,4 +1,14 @@
-import { Plus, Settings, Share2, UserPlus, Users } from "lucide-react";
+import {
+  Link2,
+  Plus,
+  RotateCcw,
+  Save,
+  Settings,
+  Share2,
+  UserPlus,
+  Users,
+  X,
+} from "lucide-react";
 import SearchBar from "../../../../shared/components/search-bar";
 import {
   Alert,
@@ -75,6 +85,7 @@ function ListMyGroupsView({ viewModel }: ListMyGroupsViewProps) {
             description="Try a different keyword or create a new group to start inviting members."
             actions={
               <Button type="button" onClick={viewModel.onOpenCreateModal}>
+                <Plus size={16} />
                 Create group
               </Button>
             }
@@ -172,17 +183,17 @@ function ListMyGroupsView({ viewModel }: ListMyGroupsViewProps) {
               variant="outline"
               onClick={viewModel.onResetGroupCode}
             >
-              Reset code
+              <RotateCcw size={16} /> Reset code
             </Button>
             <Button
               type="button"
               variant="text"
               onClick={viewModel.onCloseModal}
             >
-              Cancel
+              <X size={16} /> Cancel
             </Button>
             <Button type="button" onClick={viewModel.onCreateGroup}>
-              Create
+              <Plus size={16} /> Create
             </Button>
           </div>
         }
@@ -221,10 +232,10 @@ function ListMyGroupsView({ viewModel }: ListMyGroupsViewProps) {
               variant="text"
               onClick={viewModel.onCloseModal}
             >
-              Cancel
+              <X size={16} /> Cancel
             </Button>
             <Button type="button" onClick={viewModel.onSaveSettings}>
-              Save settings
+              <Save size={16} /> Save settings
             </Button>
           </div>
         }
@@ -259,10 +270,10 @@ function ListMyGroupsView({ viewModel }: ListMyGroupsViewProps) {
               variant="text"
               onClick={viewModel.onCloseModal}
             >
-              Cancel
+              <X size={16} /> Cancel
             </Button>
             <Button type="button" onClick={viewModel.onAddMember}>
-              Send invite
+              <UserPlus size={16} /> Send invite
             </Button>
           </div>
         }
@@ -295,10 +306,10 @@ function ListMyGroupsView({ viewModel }: ListMyGroupsViewProps) {
               variant="text"
               onClick={viewModel.onCloseModal}
             >
-              Close
+              <X size={16} /> Close
             </Button>
             <Button type="button" onClick={viewModel.onCopyShareLink}>
-              Copy link
+              <Link2 size={16} /> Copy link
             </Button>
           </div>
         }
@@ -322,7 +333,7 @@ function ListMyGroupsView({ viewModel }: ListMyGroupsViewProps) {
                 variant="text"
                 onClick={viewModel.onToastDismiss}
               >
-                Close
+                <X size={16} /> Close
               </Button>
             }
           />

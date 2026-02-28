@@ -13,7 +13,7 @@
 .modal {
   width: min(32.5rem, calc(100% - 1.5rem));
   max-height: min(86vh, 45rem);
-  border-radius: tokens.radius(xl);
+  border-radius: tokens.radius(2xl);
   background: #f7f7f7;
   overflow: hidden;
   display: flex;

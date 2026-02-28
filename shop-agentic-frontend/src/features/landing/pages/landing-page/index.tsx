@@ -1,3 +1,4 @@
+import { Megaphone, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { APP_PATHS } from "../../../../app/route-config";
 import { Button, SectionCard } from "../../../../shared/components/ui";
@@ -45,9 +46,11 @@ function LandingPage() {
               variant="outline"
               className={`${styles["cta-button"]} ${styles["cta-button-outline"]}`}
             >
+              <Users size={16} />
               Join as member
             </Button>
             <Button type="button" className={styles["cta-button"]}>
+              <Megaphone size={16} />
               Join as Host
             </Button>
           </div>

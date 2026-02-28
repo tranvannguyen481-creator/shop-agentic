@@ -1,4 +1,11 @@
-import { ChevronDown, ChevronUp, Copy, ImagePlus, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  ImagePlus,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import {
   Form,
@@ -28,13 +35,9 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
       <section className={styles["create-items-page"]}>
         <div className={styles.banner}>
           <p className={styles["section-name"]}>Banner</p>
-          <Button
-            type="button"
-            variant="text"
-            className={styles["photo-limit"]}
-          >
+          <span className={styles["photo-limit"]}>
             Remain ({viewModel.bannerPhotosLeft} photos left)
-          </Button>
+          </span>
           <div className={styles["banner-media"]}>
             {viewModel.bannerPreviewUrls.length > 0 ? (
               <div className={styles["banner-gallery"]}>
@@ -57,6 +60,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                       }
                     >
                       <Trash2 size={14} strokeWidth={2.2} />
+                      <span>Remove</span>
                     </Button>
                   </article>
                 ))}
@@ -108,6 +112,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                               }
                             >
                               <Trash2 size={14} strokeWidth={2.2} />
+                              <span className="visually-hidden">Remove</span>
                             </Button>
                           </div>
                         </div>
@@ -154,6 +159,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                       disabled={itemIndex === 0}
                     >
                       <ChevronUp size={18} strokeWidth={2.2} />
+                      <span className="visually-hidden">Up</span>
                     </Button>
                     <Button
                       type="button"
@@ -163,6 +169,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                       disabled={itemIndex === viewModel.itemFields.length - 1}
                     >
                       <ChevronDown size={18} strokeWidth={2.2} />
+                      <span className="visually-hidden">Down</span>
                     </Button>
                   </div>
                 </div>
@@ -180,6 +187,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                       onClick={() => viewModel.handleDuplicateItem(itemIndex)}
                     >
                       <Copy size={16} strokeWidth={2.2} />
+                      <span className="visually-hidden">Copy</span>
                     </Button>
                     <Button
                       type="button"
@@ -189,6 +197,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                       disabled={viewModel.itemFields.length === 1}
                     >
                       <Trash2 size={16} strokeWidth={2.2} />
+                      <span className="visually-hidden">Delete</span>
                     </Button>
                   </div>
                 </div>
@@ -216,6 +225,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                           }
                         >
                           <Trash2 size={14} strokeWidth={2.2} />
+                          <span className="visually-hidden">Remove</span>
                         </Button>
                       </div>
                     ))}
@@ -251,6 +261,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                             }
                           >
                             <Trash2 size={14} strokeWidth={2.2} />
+                            <span className="visually-hidden">Remove</span>
                           </Button>
                         </div>
                         <div className={styles["option-group-choices"]}>
@@ -282,6 +293,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                                 }
                               >
                                 <Trash2 size={11} strokeWidth={2.2} />
+                                <span className="visually-hidden">Remove</span>
                               </Button>
                             </span>
                           ))}
@@ -297,6 +309,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                   className={styles["add-options"]}
                   onClick={() => viewModel.handleAddOption(itemIndex)}
                 >
+                  <Plus size={16} />
                   Add Options
                 </Button>
 
@@ -307,6 +320,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                   onClick={() => viewModel.handleRemoveItem(itemIndex)}
                   disabled={viewModel.itemFields.length === 1}
                 >
+                  <Trash2 size={14} />
                   Remove Item
                 </Button>
               </SectionCard>

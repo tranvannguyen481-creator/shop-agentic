@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../../../shared/components/ui";
@@ -45,6 +46,7 @@ function EventStepNavigation({
         fullWidth
         onClick={handleLeftAction}
       >
+        <ChevronLeft size={16} />
         {stepMeta.leftLabel}
       </Button>
       <Button
@@ -52,6 +54,7 @@ function EventStepNavigation({
         fullWidth
         onClick={nextType === "button" ? handleNextAction : undefined}
       >
+        <ChevronRight size={16} />
         {stepMeta.rightLabel}
       </Button>
     </div>

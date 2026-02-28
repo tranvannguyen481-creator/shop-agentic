@@ -1,4 +1,15 @@
-import { Bell, ClipboardList, Link2, Megaphone, Trash2 } from "lucide-react";
+import {
+  Bell,
+  ClipboardList,
+  Download,
+  Link2,
+  LogOut,
+  Megaphone,
+  Pencil,
+  ShoppingCart,
+  Trash2,
+  X,
+} from "lucide-react";
 import SearchBar from "../../../../shared/components/search-bar";
 import {
   Alert,
@@ -42,6 +53,7 @@ function ManageOrdersView({ viewModel }: ManageOrdersViewProps) {
           <p className={styles.eventTime}>{closingInText}</p>
           <p className={styles.eventTime}>{deliveryInText}</p>
           <Button type="button" className={styles.buyChip}>
+            <ShoppingCart size={14} />
             {buyCount} BUY
           </Button>
           <p className={styles.hostActions}>RE-HOST&nbsp;&nbsp;SHARE</p>
@@ -59,6 +71,7 @@ function ManageOrdersView({ viewModel }: ManageOrdersViewProps) {
           className={styles.actionChip}
           onClick={viewModel.handleEditEvent}
         >
+          <Pencil size={14} />
           Edit Event
         </Button>
         <Button
@@ -67,6 +80,7 @@ function ManageOrdersView({ viewModel }: ManageOrdersViewProps) {
           className={styles.actionChip}
           onClick={viewModel.handleBroadcast}
         >
+          <Megaphone size={14} />
           Broadcast
         </Button>
         <Button
@@ -75,6 +89,7 @@ function ManageOrdersView({ viewModel }: ManageOrdersViewProps) {
           className={styles.actionChip}
           onClick={viewModel.handleOpenCloseOrderModal}
         >
+          <X size={14} />
           Close Order
         </Button>
         <Button
@@ -83,6 +98,7 @@ function ManageOrdersView({ viewModel }: ManageOrdersViewProps) {
           className={styles.actionChip}
           onClick={viewModel.handleExportOrders}
         >
+          <Download size={14} />
           Export Orders
         </Button>
       </div>
@@ -133,6 +149,7 @@ function ManageOrdersView({ viewModel }: ManageOrdersViewProps) {
       )}
 
       <Button type="button" variant="outline" className={styles.exitButton}>
+        <LogOut size={14} />
         Exit
       </Button>
 
@@ -157,6 +174,7 @@ function ManageOrdersView({ viewModel }: ManageOrdersViewProps) {
               variant="outline"
               onClick={viewModel.handleCloseCloseOrderModal}
             >
+              <X size={14} />
               Cancel
             </Button>
             <Button
@@ -187,6 +205,7 @@ function ManageOrdersView({ viewModel }: ManageOrdersViewProps) {
               variant="outline"
               onClick={viewModel.handleCloseDeleteModal}
             >
+              <X size={14} />
               Cancel
             </Button>
             <Button

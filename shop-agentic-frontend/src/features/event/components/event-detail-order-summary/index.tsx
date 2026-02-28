@@ -1,3 +1,4 @@
+import { ShoppingCart, Trash2 } from "lucide-react";
 import { Button, SectionCard } from "../../../../shared/components/ui";
 import { EventDetailCartLineItem } from "../../types/event-detail-page-types";
 import styles from "./index.module.scss";
@@ -56,7 +57,7 @@ function EventDetailOrderSummary({
                   className={styles.removeBtn}
                   onClick={() => onRemoveOrderLine(line.lineId)}
                 >
-                  Remove
+                  <Trash2 size={14} /> Remove
                 </Button>
               </div>
             </article>
@@ -86,7 +87,7 @@ function EventDetailOrderSummary({
         disabled={!canProceedCheckout}
         onClick={onProceedCheckout}
       >
-        Proceed to Checkout
+        <ShoppingCart size={16} /> Proceed to Checkout
       </Button>
     </SectionCard>
   );

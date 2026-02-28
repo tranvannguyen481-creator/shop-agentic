@@ -1,3 +1,4 @@
+import { Users } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import {
   Alert,
@@ -46,6 +47,7 @@ function CreateEventPage() {
               create your group first.
             </p>
             <Button type="button" onClick={viewModel.onGoToCreateGroup}>
+              <Users size={16} />
               Go to create group
             </Button>
           </SectionCard>

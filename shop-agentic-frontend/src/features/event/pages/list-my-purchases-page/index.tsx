@@ -1,4 +1,4 @@
-import { ShoppingCart } from "lucide-react";
+import { Search, ShoppingCart } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import SearchBar from "../../../../shared/components/search-bar";
 import {
@@ -26,6 +26,7 @@ function ListMyPurchasesPage() {
           description="You haven’t placed any orders yet. Explore events and start your first purchase."
           actions={
             <Button type="button" variant="outline" fullWidth>
+              <Search size={16} />
               Explore events
             </Button>
           }

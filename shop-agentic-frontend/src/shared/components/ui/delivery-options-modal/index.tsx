@@ -1,4 +1,4 @@
-import { CalendarDays, Clock3, Plus, Trash2 } from "lucide-react";
+import { CalendarDays, Clock3, Plus, Save, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button, DateTimePicker, Input, Modal } from "..";
 import styles from "./index.module.scss";
@@ -130,7 +130,7 @@ function DeliveryOptionsModal({
       footer={
         <div className={styles.actions}>
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            <X size={16} /> Cancel
           </Button>
           <Button
             type="button"
@@ -138,7 +138,7 @@ function DeliveryOptionsModal({
             className={styles.okBtn}
             disabled={isSaveDisabled}
           >
-            Save Delivery Options
+            <Save size={16} /> Save Delivery Options
           </Button>
         </div>
       }
@@ -235,7 +235,7 @@ function DeliveryOptionsModal({
                   onClick={() => handleRemoveFee(index)}
                   aria-label={`Remove delivery option ${index + 1}`}
                 >
-                  <Trash2 aria-hidden="true" />
+                  <Trash2 aria-hidden="true" /> <span>Remove</span>
                 </Button>
               </div>
             ))}

@@ -1,3 +1,4 @@
+import { ChevronLeft, CreditCard } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import {
   Alert,
@@ -27,7 +28,7 @@ function EventCheckoutPage() {
             className="p-0 d-flex align-items-center gap-1"
             onClick={vm.onBackToDetail}
           >
-            <span aria-hidden="true">←</span> Quay lại
+            <ChevronLeft size={16} /> Quay lại
           </Button>
           <div className="vr" style={{ height: 24 }} />
           <div>
@@ -55,6 +56,7 @@ function EventCheckoutPage() {
               </Alert>
             )}
             <Button variant="outline" onClick={vm.onBackToDetail}>
+              <ChevronLeft size={16} />
               Quay lại event
             </Button>
           </div>
@@ -69,6 +71,7 @@ function EventCheckoutPage() {
                 variant="primary"
                 onClick={vm.onBackToDetail}
               >
+                <ChevronLeft size={16} />
                 Quay lại event
               </Button>
             }
@@ -163,6 +166,7 @@ function EventCheckoutPage() {
               disabled={vm.isPlacingOrder || vm.isCalculating}
               onClick={vm.onPlaceOrder}
             >
+              <CreditCard size={16} />
               {vm.isPlacingOrder ? "Đang xử lý..." : "Đặt hàng ngay"}
             </Button>
           </div>

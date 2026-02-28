@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { ReactNode } from "react";
 import Button from "../button";
 import styles from "./index.module.scss";
@@ -20,7 +21,8 @@ function Chip({ children, onRemove, className }: ChipProps) {
           onClick={onRemove}
           aria-label="Remove chip"
         >
-          ×
+          <X size={12} />
+          <span>Remove</span>
         </Button>
       )}
     </span>

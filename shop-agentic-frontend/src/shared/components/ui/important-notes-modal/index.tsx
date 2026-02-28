@@ -1,3 +1,4 @@
+import { Plus, Save, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button, Modal, Textarea } from "..";
 import styles from "./index.module.scss";
@@ -58,10 +59,10 @@ function ImportantNotesModal({
       footer={
         <div className={styles.actions}>
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancel
+            <X size={16} /> Cancel
           </Button>
           <Button type="button" onClick={handleSave}>
-            Save Notes
+            <Save size={16} /> Save Notes
           </Button>
         </div>
       }
@@ -83,7 +84,7 @@ function ImportantNotesModal({
                 disabled={notes.length === 1}
                 aria-label={`Remove note ${index + 1}`}
               >
-                Remove
+                <Trash2 size={14} /> Remove
               </Button>
             </div>
 
@@ -104,7 +105,7 @@ function ImportantNotesModal({
           className={styles.addBtn}
           onClick={handleAdd}
         >
-          + Add another note
+          <Plus size={16} /> Add another note
         </Button>
       </div>
     </Modal>
