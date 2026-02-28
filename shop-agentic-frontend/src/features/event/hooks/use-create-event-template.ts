@@ -66,10 +66,15 @@ export const useCreateEventTemplate = (
       }
 
       const isCsvFile =
-        file.type === "text/csv" || file.name.toLowerCase().endsWith(".csv");
+        file.type === "text/csv" ||
+        file.type === "text/plain" ||
+        file.name.toLowerCase().endsWith(".csv") ||
+        file.name.toLowerCase().endsWith(".txt");
 
       if (!isCsvFile) {
-        setTemplateMessage("Please upload a .csv file from the template.");
+        setTemplateMessage(
+          "Please upload the .csv file downloaded from the template.",
+        );
         return;
       }
 
@@ -99,11 +104,11 @@ export const useCreateEventTemplate = (
           saveItemsDraftFromTemplate(parsedResult.items);
           const itemCount = parsedResult.items.length;
           setTemplateMessage(
-            `Template uploaded. Event info and ${itemCount} item${itemCount > 1 ? "s" : ""} have been filled.`,
+            `Template uploaded successfully. Event info has been filled and ${itemCount} item${itemCount > 1 ? "s" : ""} with options have been loaded. Submit this form to proceed to the items step.`,
           );
         } else {
           setTemplateMessage(
-            "Template uploaded. Required fields have been filled.",
+            "Template uploaded successfully. Event info has been filled. Submit this form to continue.",
           );
         }
       });

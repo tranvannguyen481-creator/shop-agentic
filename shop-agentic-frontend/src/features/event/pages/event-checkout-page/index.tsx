@@ -7,9 +7,9 @@ import {
   Switch,
 } from "../../../../shared/components/ui";
 import AppLayout from "../../../../shared/layouts/app-layout";
+import { toVND } from "../../../../shared/utils/price-utils";
 import OrderPricingBreakdown from "../../components/order-pricing-breakdown";
 import { useEventCheckoutPage } from "../../hooks/use-event-checkout-page";
-import { toVND } from "../../utils/price-utils";
 
 export const routePath = APP_PATHS.eventCheckout;
 
@@ -21,13 +21,14 @@ function EventCheckoutPage() {
       <div className="container py-4" style={{ maxWidth: 640 }}>
         {/* ── Header ── */}
         <div className="d-flex align-items-center gap-3 mb-4">
-          <button
+          <Button
             type="button"
-            className="btn btn-link p-0 text-decoration-none text-body d-flex align-items-center gap-1"
+            variant="text"
+            className="p-0 d-flex align-items-center gap-1"
             onClick={vm.onBackToDetail}
           >
             <span aria-hidden="true">←</span> Quay lại
-          </button>
+          </Button>
           <div className="vr" style={{ height: 24 }} />
           <div>
             <h5 className="mb-0 fw-bold">Xác nhận đơn hàng</h5>
