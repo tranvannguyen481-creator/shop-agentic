@@ -1,0 +1,223 @@
+@use "../../../../shared/styles/tokens";
+
+.sign-up-page {
+  height: 100vh;
+  background: tokens.color(primary-legacy-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: clamp(8px, 1.6vw, 14px) clamp(10px, 1.8vw, 16px);
+  font-size: tokens.fs(sm);
+}
+
+.sign-up-container {
+  width: min(900px, 100%);
+}
+
+.sign-up-header {
+  display: grid;
+  justify-items: center;
+  gap: clamp(4px, 0.8vw, 8px);
+  margin-bottom: clamp(8px, 1.2vw, 12px);
+
+  h1 {
+    margin: 0;
+    color: tokens.color(text-on-dark);
+    line-height: 1;
+    font-size: clamp(2rem, 1.8rem + 0.9vw, 2.6rem);
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    color: tokens.color(text-aqua-soft);
+    font-size: clamp(0.8rem, 0.76rem + 0.16vw, 0.9rem);
+    font-weight: 600;
+  }
+}
+
+.card {
+  margin: 0 auto;
+  width: min(700px, 100%);
+  background: tokens.color(surface);
+  border-radius: tokens.radius(4xl);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.14);
+  padding: clamp(12px, 1.8vw, 18px);
+
+  h2 {
+    margin: 0;
+    color: tokens.color(warning-soft);
+    font-size: clamp(1.08rem, 0.98rem + 0.5vw, 1.35rem);
+    line-height: 1.2;
+    font-weight: 700;
+    text-align: center;
+  }
+}
+
+.actions-group {
+  margin-top: clamp(8px, 1.2vw, 12px);
+  display: grid;
+  gap: 8px;
+}
+
+.profile-title {
+  text-align: left;
+  line-height: 1.25;
+  font-size: clamp(1.02rem, 0.96rem + 0.28vw, 1.24rem) !important;
+  font-weight: 600 !important;
+}
+
+.profile-avatar-wrap {
+  margin: clamp(8px, 1.2vw, 12px) 0;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-form {
+  display: grid;
+  gap: 8px;
+}
+
+.profile-field {
+  > div:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  > div:first-child span {
+    display: inline;
+    margin-bottom: 0;
+  }
+
+  span {
+    display: block;
+    color: tokens.color(text-neutral-6);
+    font-size: clamp(0.82rem, 0.78rem + 0.12vw, 0.9rem);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  input {
+    border-radius: 999px;
+    border-color: tokens.color(border-soft);
+    background: tokens.color(surface-muted);
+    font-size: clamp(0.88rem, 0.84rem + 0.14vw, 0.95rem);
+    padding: 10px 14px;
+  }
+}
+
+.next-btn {
+  margin-top: 2px;
+  min-height: 38px;
+}
+
+.google-btn,
+.email-btn {
+  border-radius: tokens.radius(pill);
+  text-transform: none;
+  min-height: 40px;
+  font-size: clamp(0.84rem, 0.8rem + 0.14vw, 0.92rem);
+  font-weight: 700;
+}
+
+.google-btn {
+  color: tokens.color(primary-legacy-strong);
+}
+
+.email-btn {
+  background: tokens.color(primary-legacy);
+  border-color: tokens.color(primary-legacy);
+  color: tokens.color(text-on-dark);
+}
+
+.button-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.button-spinner {
+  border-color: rgba(255, 255, 255, 0.45);
+  border-top-color: tokens.color(text-on-dark);
+}
+
+.terms-section {
+  margin-top: clamp(10px, 1.4vw, 12px);
+}
+
+.checkbox {
+  :global(.wrapper) {
+    gap: 8px;
+  }
+
+  :global(.row) {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  :global(.row input[type="checkbox"]) {
+    margin-top: 3px;
+    width: 18px;
+    height: 18px;
+  }
+
+  :global(.row span) {
+    color: tokens.color(text-neutral-7);
+    font-size: clamp(0.88rem, 0.84rem + 0.14vw, 0.95rem);
+    line-height: 1.35;
+  }
+}
+
+.agreement-error,
+.submit-error {
+  margin-top: 8px;
+  border-radius: tokens.radius(2xl);
+  font-size: clamp(0.82rem, 0.79rem + 0.15vw, 0.92rem);
+}
+
+.policy {
+  margin: 8px 0 0;
+  color: tokens.color(text-neutral-6);
+  font-size: clamp(0.86rem, 0.82rem + 0.18vw, 0.95rem);
+  line-height: 1.3;
+  text-align: center;
+
+  a {
+    color: tokens.color(text-brand-soft);
+    text-decoration: underline;
+    font-weight: 600;
+  }
+}
+
+.footer-link {
+  margin: 8px 0 0;
+  text-align: center;
+  color: tokens.color(text-brand-dark);
+  font-size: clamp(0.86rem, 0.82rem + 0.18vw, 0.95rem);
+
+  a {
+    color: tokens.color(text-brand-dark);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+}
+
+@media (max-width: 768px) {
+  .sign-up-page {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+    align-items: flex-start;
+  }
+
+  .card h2 {
+    font-size: clamp(1.38rem, 1.2rem + 0.65vw, 1.7rem);
+  }
+
+  .profile-title {
+    font-size: clamp(0.98rem, 0.92rem + 0.24vw, 1.08rem) !important;
+  }
+}

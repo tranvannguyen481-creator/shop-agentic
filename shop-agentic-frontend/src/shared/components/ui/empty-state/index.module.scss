@@ -1,0 +1,45 @@
+@use "../../../styles/tokens";
+
+.emptyState {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: 6px 2px;
+
+  h3 {
+    margin: 0;
+    color: tokens.color(text-emphasis);
+    font-size: tokens.fs(md);
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: tokens.color(text-soft);
+    font-size: tokens.fs(sm);
+    line-height: 1.45;
+    max-width: 340px;
+  }
+}
+
+.iconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: tokens.radius(pill);
+  background: tokens.color(brand-soft-bg);
+  color: tokens.color(brand-soft-text);
+  display: grid;
+  place-items: center;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+  }
+}
+
+.actions {
+  width: 100%;
+  margin-top: 4px;
+}

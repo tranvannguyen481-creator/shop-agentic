@@ -1,0 +1,56 @@
+@use "../../../styles/tokens";
+
+.group {
+  border: 0;
+  margin: 0;
+  padding: 0;
+
+  legend {
+    font-size: tokens.fs(sm);
+    color: tokens.color(form-label);
+    margin-bottom: 4px;
+  }
+}
+
+.options {
+  display: grid;
+  gap: 6px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: tokens.color(form-input-text);
+  cursor: pointer;
+  width: fit-content;
+
+  input {
+    margin: 0;
+    accent-color: tokens.color(primary-legacy);
+    cursor: pointer;
+  }
+
+  &:hover input:not(:disabled) {
+    box-shadow: 0 0 0 2px
+      color-mix(in srgb, tokens.color(primary-legacy) 18%, transparent);
+  }
+
+  input:focus-visible {
+    outline: 2px solid
+      color-mix(in srgb, tokens.color(primary-legacy) 56%, transparent);
+    outline-offset: 2px;
+  }
+
+  input:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  input:disabled {
+    cursor: not-allowed;
+  }
+
+  input:disabled + span {
+    color: tokens.color(text-muted-2);
+  }
+}

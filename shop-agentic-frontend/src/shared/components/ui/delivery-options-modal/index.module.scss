@@ -1,0 +1,200 @@
+@use "../../../styles/tokens";
+
+.modalBody {
+  max-height: min(70vh, 560px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+  overscroll-behavior: contain;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: tokens.color(text-muted-3);
+    border-radius: tokens.radius(pill);
+  }
+}
+
+.modalHeader {
+  display: grid;
+  gap: 2px;
+
+  h3 {
+    margin: 0;
+    text-align: center;
+    color: tokens.color(text-emphasis);
+    font-size: tokens.fs(lg);
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    text-align: center;
+    color: tokens.color(text-soft);
+    font-size: tokens.fs(xs);
+    font-weight: 400;
+    line-height: 1.35;
+  }
+}
+
+.container {
+  display: grid;
+  gap: 12px;
+}
+
+.scheduleSection {
+  display: grid;
+  gap: 8px;
+}
+
+.sectionTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: tokens.color(text-emphasis);
+  font-size: tokens.fs(sm);
+  font-weight: 600;
+
+  svg {
+    width: 15px;
+    height: 15px;
+    color: tokens.color(text-brand-cool);
+  }
+}
+
+.dateField,
+.timeField,
+.feeName,
+.feeValue {
+  margin: 0;
+
+  span {
+    color: tokens.color(text-muted-1);
+  }
+}
+
+.dateField {
+  span {
+    display: none;
+  }
+}
+
+.timeRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: end;
+}
+
+.separator {
+  color: tokens.color(text-soft);
+  padding-bottom: 8px;
+  font-size: tokens.fs(xs);
+}
+
+.validationText,
+.helperText {
+  margin: 0;
+  color: tokens.color(text-muted-1);
+  font-size: tokens.fs(xs);
+}
+
+.validationText {
+  color: tokens.color(warning-strong);
+}
+
+.feesBox {
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(lg);
+  background: tokens.color(surface);
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+
+  h4 {
+    margin: 0;
+    font-size: tokens.fs(sm);
+    color: tokens.color(text-emphasis);
+    font-weight: 600;
+  }
+}
+
+.feesList {
+  display: grid;
+  gap: 8px;
+}
+
+.feeRow {
+  display: grid;
+  grid-template-columns: auto minmax(120px, 1fr) auto 92px auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.index,
+.currency {
+  color: tokens.color(text-soft);
+  padding-bottom: 8px;
+  font-size: tokens.fs(xs);
+}
+
+.index {
+  width: 16px;
+  text-align: right;
+}
+
+.feeName,
+.feeValue {
+  span {
+    display: none;
+  }
+
+  input {
+    border: 0;
+    border-bottom: 1px solid tokens.color(border-mid);
+    border-radius: 0;
+    padding: 6px 0;
+  }
+}
+
+.removeBtn,
+.addBtn {
+  color: tokens.color(text-brand-cool);
+  text-transform: none;
+  font-size: tokens.fs(sm);
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.removeBtn {
+  padding: 2px;
+  margin-bottom: 8px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.addBtn {
+  padding: 0;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.okBtn {
+  min-width: 160px;
+}

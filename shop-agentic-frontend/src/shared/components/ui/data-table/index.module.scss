@@ -1,0 +1,28 @@
+@use "../../../styles/tokens";
+
+.wrapper {
+  overflow: auto;
+  border: 1px solid tokens.color(border-contrast);
+  border-radius: tokens.radius(lg);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: tokens.color(surface-muted);
+
+  th,
+  td {
+    border-bottom: 1px solid tokens.color(border-soft);
+    text-align: left;
+    padding: 10px;
+    font-size: tokens.fs(xs);
+    color: tokens.color(text-subtle);
+  }
+
+  th {
+    background: tokens.color(surface-soft);
+    color: tokens.color(text-emphasis);
+    font-weight: 600;
+  }
+}

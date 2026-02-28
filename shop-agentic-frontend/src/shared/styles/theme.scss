@@ -1,0 +1,66 @@
+@use "./tokens";
+
+$primary: tokens.color(primary);
+$secondary: tokens.color(secondary);
+$success: tokens.color(success);
+$warning: tokens.color(warning);
+$light: tokens.color(light);
+$dark: tokens.color(dark);
+
+$body-bg: tokens.color(body-bg);
+$body-color: tokens.color(body-text);
+$font-family-sans-serif:
+  "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+@import "bootstrap/scss/bootstrap";
+
+:root {
+  --bs-border-radius: #{tokens.radius(lg)};
+  --bs-border-radius-lg: #{tokens.radius(3xl)};
+  --bs-body-bg: #{tokens.color(body-bg)};
+  --bs-body-color: #{tokens.color(body-text)};
+
+  @each $token, $value in tokens.$color-tokens {
+    --color-#{$token}: #{$value};
+  }
+
+  @each $token, $value in tokens.$radius-tokens {
+    --radius-#{$token}: #{$value};
+  }
+
+  @each $token, $value in tokens.$font-size-tokens {
+    --fs-#{$token}: #{$value};
+  }
+}
+
+body {
+  margin: 0;
+  font-size: tokens.fs(md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: tokens.color(text-muted-3) tokens.color(shell-bg);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: tokens.color(shell-bg);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: tokens.color(text-muted-3);
+  border-radius: tokens.radius(pill);
+  border: 2px solid tokens.color(shell-bg);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: tokens.color(text-muted-2);
+}

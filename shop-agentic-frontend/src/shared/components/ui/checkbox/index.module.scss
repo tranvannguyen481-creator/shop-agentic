@@ -1,0 +1,51 @@
+@use "../../../styles/tokens";
+
+.wrapper {
+  color: tokens.color(text-neutral-5);
+
+  p {
+    margin: 6px 0 0;
+    font-size: tokens.fs(xs);
+    line-height: 1.35;
+    color: tokens.color(text-dim);
+  }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  width: fit-content;
+
+  input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: tokens.color(form-checkbox-accent);
+    cursor: pointer;
+  }
+
+  &:hover input:not(:disabled) {
+    box-shadow: 0 0 0 2px
+      color-mix(in srgb, tokens.color(form-checkbox-accent) 18%, transparent);
+  }
+
+  input:focus-visible {
+    outline: 2px solid
+      color-mix(in srgb, tokens.color(form-checkbox-accent) 52%, transparent);
+    outline-offset: 2px;
+  }
+
+  input:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  input:disabled {
+    cursor: not-allowed;
+  }
+
+  input:disabled + span {
+    color: tokens.color(text-muted-2);
+  }
+}

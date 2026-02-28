@@ -1,0 +1,27 @@
+@use "../../../styles/tokens";
+
+.field {
+  display: grid;
+  gap: 6px;
+
+  input {
+    accent-color: #23bfc1;
+    width: 100%;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  span {
+    font-size: tokens.fs(sm);
+    color: #86868d;
+  }
+
+  strong {
+    font-size: tokens.fs(sm);
+    color: #66666c;
+  }
+}

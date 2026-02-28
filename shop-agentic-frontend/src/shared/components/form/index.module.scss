@@ -1,0 +1,15 @@
+@use "../../styles/tokens";
+
+.fieldGroup {
+  display: grid;
+  align-content: start;
+}
+
+.error {
+  margin: 4px 0 0;
+  color: tokens.color(form-required);
+  font-size: tokens.fs(xs);
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}

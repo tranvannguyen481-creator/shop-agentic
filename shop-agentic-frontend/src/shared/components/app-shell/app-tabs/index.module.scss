@@ -1,0 +1,74 @@
+@use "../../../styles/tokens";
+
+.shell {
+  position: fixed;
+  top: var(--app-header-height, 64px);
+  left: 0;
+  right: 0;
+  z-index: 85;
+
+  background: tokens.color(shell-bg);
+  height: var(--app-tabs-height, 40px);
+  border-bottom: 1px solid tokens.color(shell-border);
+}
+
+.tabs {
+  width: min(var(--app-max-width, 760px), 100%);
+  margin: 0 auto;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background-color: tokens.color(shell-bg);
+}
+
+.tab {
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: tokens.fs(xs);
+  color: tokens.color(text-neutral-6);
+  padding: 0 6px;
+  height: 100%;
+  line-height: 1;
+  box-sizing: border-box;
+  border-bottom: 2px solid transparent;
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.08s ease;
+
+  &:hover {
+    color: tokens.color(text-emphasis);
+    background: color-mix(
+      in srgb,
+      tokens.color(surface-card-2) 60%,
+      tokens.color(shell-bg)
+    );
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid
+      color-mix(in srgb, tokens.color(primary-legacy) 70%, transparent);
+    outline-offset: -2px;
+  }
+}
+
+.active {
+  color: tokens.color(warning-strong);
+  border-bottom-color: tokens.color(warning-strong);
+  font-weight: 600;
+}
+
+@media (min-width: 576px) {
+  .tab {
+    font-size: tokens.fs(sm);
+    padding: 0 8px;
+  }
+}

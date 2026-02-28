@@ -1,0 +1,7 @@
+const NOTIFICATIONS_COLLECTION = "notifications";
+const USER_NOTIFICATIONS_COLLECTION = "userNotifications";
+
+module.exports = {
+  NOTIFICATIONS_COLLECTION,
+  USER_NOTIFICATIONS_COLLECTION,
+};

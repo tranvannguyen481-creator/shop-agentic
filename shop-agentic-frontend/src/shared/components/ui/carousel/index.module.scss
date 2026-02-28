@@ -1,0 +1,33 @@
+@use "../../../styles/tokens";
+
+.carousel {
+  border: 1px solid #d9d9dd;
+  border-radius: tokens.radius(lg);
+  overflow: hidden;
+  background: #f7f7f7;
+}
+
+.viewport {
+  min-height: 120px;
+  padding: 12px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-top: 1px solid #e1e1e5;
+}
+
+.control-btn {
+  border: 1px solid #d2d2d6;
+  background: #ffffff;
+  border-radius: tokens.radius(sm);
+  padding: 4px 8px;
+}
+
+.controls span {
+  color: #6d6d73;
+  font-size: tokens.fs(xs);
+}

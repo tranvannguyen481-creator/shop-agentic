@@ -1,0 +1,57 @@
+@use "../../styles/tokens";
+
+.home-page {
+  --app-max-width: 560px;
+  --app-header-height: 58px;
+  --app-tabs-height: 38px;
+  --app-footer-height: 54px;
+
+  min-height: 100vh;
+  background: tokens.color(surface);
+  color: tokens.color(text-soft);
+  display: flex;
+  flex-direction: column;
+  font-size: tokens.fs(xs);
+}
+
+.content {
+  width: min(var(--app-max-width), calc(100% - 16px));
+  margin: 0 auto;
+  padding-top: calc(var(--app-header-height) + var(--app-tabs-height) + 12px);
+  padding-bottom: calc(var(--app-footer-height));
+  flex: 1;
+  box-sizing: border-box;
+}
+
+@media (min-width: 576px) {
+  .home-page {
+    --app-max-width: 600px;
+    --app-header-height: 62px;
+    --app-tabs-height: 40px;
+    --app-footer-height: 56px;
+
+    font-size: tokens.fs(sm);
+  }
+
+  .content {
+    width: min(var(--app-max-width), calc(100% - 24px));
+    padding-top: calc(var(--app-header-height) + var(--app-tabs-height) + 16px);
+  }
+}
+
+@media (min-width: 768px) {
+  .home-page {
+    --app-max-width: 640px;
+    --app-header-height: 64px;
+  }
+
+  .content {
+    padding-top: calc(var(--app-header-height) + var(--app-tabs-height) + 20px);
+  }
+}
+
+@media (min-width: 992px) {
+  .home-page {
+    --app-max-width: 680px;
+  }
+}

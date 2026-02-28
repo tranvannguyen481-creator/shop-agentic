@@ -1,0 +1,65 @@
+@use "../../../styles/tokens";
+
+.container {
+  display: grid;
+  gap: 12px;
+}
+
+.helper {
+  margin: 0;
+  color: tokens.color(text-soft);
+  font-size: tokens.fs(sm);
+}
+
+.noteBlock {
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(md);
+  background: tokens.color(surface);
+  padding: 10px;
+}
+
+.noteField {
+  margin: 0;
+
+  span {
+    display: none;
+  }
+
+  textarea {
+    min-height: 86px;
+  }
+}
+
+.noteHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+
+  strong {
+    color: tokens.color(text-emphasis);
+    font-size: tokens.fs(md);
+  }
+}
+
+.removeBtn,
+.addBtn {
+  color: tokens.color(primary-legacy);
+  font-size: tokens.fs(sm);
+  font-weight: 600;
+  text-transform: none;
+}
+
+.removeBtn:disabled {
+  color: tokens.color(text-muted-2);
+}
+
+.addBtn {
+  justify-self: end;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

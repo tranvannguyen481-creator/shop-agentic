@@ -1,0 +1,12 @@
+@use "../../../styles/tokens";
+
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: tokens.radius(pill);
+  background: #323238;
+  color: #ffffff;
+  padding: 8px 12px;
+  font-size: tokens.fs(sm);
+}

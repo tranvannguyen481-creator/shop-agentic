@@ -1,0 +1,22 @@
+@use "../../../styles/tokens";
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: tokens.radius(pill);
+  padding: 4px 10px;
+  background: tokens.color(brand-soft-bg);
+  color: tokens.color(brand-soft-text);
+  font-size: tokens.fs(xs);
+}
+
+.remove {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+}

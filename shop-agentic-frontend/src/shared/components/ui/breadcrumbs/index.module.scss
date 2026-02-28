@@ -1,0 +1,30 @@
+@use "../../../styles/tokens";
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: tokens.fs(xs);
+  color: #6f6f76;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  a {
+    color: #23bfc1;
+    text-decoration: none;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  em {
+    font-style: normal;
+    color: #9b9ba1;
+  }
+}

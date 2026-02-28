@@ -1,0 +1,187 @@
+@use "../../../../shared/styles/tokens";
+
+.page {
+  width: 100%;
+  max-width: min(var(--app-max-width, 760px), 100%);
+  margin: 0 auto;
+  padding: 18px 10px 112px;
+  display: grid;
+  gap: 12px;
+}
+
+.eventSummary {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.eventLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.eventTitle {
+  margin: 0;
+  color: tokens.color(text-brand-cool);
+  font-size: tokens.fs(md);
+  font-weight: 700;
+}
+
+.eventMeta {
+  margin: 2px 0 0;
+  color: tokens.color(text-muted-1);
+  font-size: tokens.fs(sm);
+  font-weight: 500;
+}
+
+.eventRight {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+}
+
+.eventTime {
+  margin: 0;
+  color: tokens.color(form-required);
+  font-size: tokens.fs(sm);
+}
+
+.buyChip {
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: tokens.radius(sm);
+  font-size: tokens.fs(sm);
+}
+
+.hostActions {
+  margin: 2px 0 0;
+  color: tokens.color(text-muted-1);
+  font-size: tokens.fs(sm);
+  font-weight: 600;
+}
+
+.topActions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.actionChip {
+  min-height: 36px;
+  border-radius: tokens.radius(pill);
+}
+
+.helper {
+  margin: 0;
+  color: tokens.color(text-muted-1);
+  font-size: tokens.fs(sm);
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.loadingText {
+  margin: 0;
+  color: tokens.color(text-soft);
+  font-size: tokens.fs(sm);
+}
+
+.loadingCard {
+  display: grid;
+  gap: 8px;
+}
+
+.loadingActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.totalPanel {
+  background: color-mix(
+    in srgb,
+    tokens.color(brand-soft-bg) 72%,
+    tokens.color(surface)
+  );
+  border-color: tokens.color(border-soft);
+  text-align: right;
+  display: grid;
+  gap: 2px;
+
+  p {
+    margin: 0;
+    color: tokens.color(text-muted-1);
+    font-size: tokens.fs(lg);
+    line-height: 1.2;
+  }
+}
+
+.emptyPanel {
+  border-color: tokens.color(border-soft);
+  background: tokens.color(surface);
+}
+
+.exitButton {
+  width: min(100%, 320px);
+  margin: 8px auto 0;
+  min-height: 34px;
+  border-radius: tokens.radius(pill);
+}
+
+.deleteButton {
+  width: fit-content;
+  margin: 4px 0 0;
+  justify-self: start;
+  min-height: 32px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: tokens.color(form-required);
+  font-size: tokens.fs(sm);
+  font-weight: 600;
+}
+
+.modalText {
+  margin: 0;
+  color: tokens.color(text-muted-1);
+  font-size: tokens.fs(sm);
+  line-height: 1.45;
+}
+
+.modalActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (min-width: 576px) {
+  .page {
+    padding: 20px 12px 118px;
+    gap: 14px;
+  }
+
+  .eventSummary {
+    grid-template-columns: 1fr auto;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .eventRight {
+    justify-items: end;
+  }
+
+  .topActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (min-width: 992px) {
+  .topActions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

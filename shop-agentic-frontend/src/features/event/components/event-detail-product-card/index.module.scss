@@ -1,0 +1,119 @@
+@use "../../../../shared/styles/tokens";
+
+.card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: tokens.radius(sm);
+}
+
+.content {
+  display: grid;
+  gap: 10px;
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+
+  h3,
+  strong {
+    margin: 0;
+  }
+
+  h3 {
+    color: tokens.color(text-brand-cool);
+    font-size: tokens.fs(md);
+    font-weight: 700;
+  }
+
+  strong {
+    color: tokens.color(text-muted-1);
+    font-size: tokens.fs(sm);
+  }
+}
+
+.description {
+  margin: 0;
+  color: tokens.color(text-soft);
+  font-size: tokens.fs(sm);
+}
+
+.optionGroup {
+  display: grid;
+  gap: 6px;
+}
+
+.optionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+
+  h4,
+  span {
+    margin: 0;
+  }
+
+  h4 {
+    color: tokens.color(text-muted-1);
+    font-size: tokens.fs(sm);
+    font-weight: 700;
+  }
+
+  span {
+    color: tokens.color(form-required);
+    font-size: tokens.fs(xs);
+    font-weight: 600;
+  }
+}
+
+.radioWrap {
+  padding: 8px;
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(sm);
+}
+
+.checkboxList {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(sm);
+}
+
+.actionRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.quantityRow {
+  display: inline-grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  justify-self: start;
+
+  span {
+    min-width: 36px;
+    text-align: center;
+    color: tokens.color(text-muted-1);
+    font-size: tokens.fs(sm);
+    font-weight: 700;
+  }
+}
+
+@media (min-width: 576px) {
+  .actionRow {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+  }
+}

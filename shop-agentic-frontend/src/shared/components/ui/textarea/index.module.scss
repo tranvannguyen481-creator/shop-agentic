@@ -1,0 +1,65 @@
+@use "../../../styles/tokens";
+
+.field {
+  display: grid;
+  gap: 4px;
+
+  span {
+    font-size: tokens.fs(sm);
+    color: tokens.color(form-label);
+  }
+
+  textarea {
+    border: 1px solid tokens.color(border-input);
+    border-radius: tokens.radius(sm);
+    background: tokens.color(surface);
+    width: 100%;
+    box-sizing: border-box;
+    color: tokens.color(form-input-text);
+    font-size: tokens.fs(sm);
+    padding: 7px 9px;
+    outline: 0;
+    resize: vertical;
+    min-height: 44px;
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      background-color 0.18s ease;
+
+    &:hover:not(:disabled) {
+      border-color: tokens.color(border-mid);
+    }
+
+    &:focus {
+      border-color: tokens.color(border-input-focus);
+      background: tokens.color(surface);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px
+        color-mix(in srgb, tokens.color(border-input-focus) 34%, transparent);
+    }
+
+    &[aria-invalid="true"] {
+      border-color: tokens.color(form-required);
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, tokens.color(form-required) 22%, transparent);
+    }
+
+    &[aria-invalid="true"]:focus {
+      border-color: tokens.color(form-required);
+    }
+
+    &:disabled {
+      color: tokens.color(text-muted-2);
+      background-color: tokens.color(surface-muted);
+      cursor: not-allowed;
+    }
+  }
+}
+
+.required {
+  margin-left: 1px;
+  color: tokens.color(form-required);
+  font-style: normal;
+}

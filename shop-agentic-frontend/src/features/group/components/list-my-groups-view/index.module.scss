@@ -1,0 +1,140 @@
+@use "../../../../shared/styles/tokens";
+
+.page {
+  display: grid;
+  gap: 12px;
+}
+
+.headerActions {
+  display: grid;
+  gap: 10px;
+}
+
+.groupList {
+  display: grid;
+  gap: 10px;
+}
+
+.loadingBlock {
+  display: grid;
+  gap: 10px;
+}
+
+.loadingCard {
+  display: grid;
+  gap: 8px;
+}
+
+.loadingActions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.groupCard {
+  display: grid;
+  gap: 10px;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid tokens.color(border-input-focus);
+    outline-offset: 2px;
+  }
+}
+
+.groupMain {
+  display: grid;
+  gap: 6px;
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  h3 {
+    color: tokens.color(text-brand-cool);
+    font-size: tokens.fs(lg);
+    font-weight: 700;
+  }
+
+  p {
+    color: tokens.color(text-soft);
+    font-size: tokens.fs(sm);
+  }
+}
+
+.titleRow {
+  display: grid;
+  gap: 8px;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.meta {
+  color: tokens.color(text-muted-1) !important;
+  font-size: tokens.fs(xs) !important;
+}
+
+.actions {
+  display: grid;
+  gap: 8px;
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+}
+
+.modalBody {
+  display: grid;
+  gap: 10px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.toastWrap {
+  position: fixed;
+  left: 50%;
+  bottom: 74px;
+  transform: translateX(-50%);
+  z-index: 40;
+  width: min(92vw, 520px);
+  display: flex;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .headerActions {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .groupCard {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .titleRow {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .actions {
+    width: 220px;
+  }
+
+  .toastWrap {
+    bottom: 18px;
+  }
+}

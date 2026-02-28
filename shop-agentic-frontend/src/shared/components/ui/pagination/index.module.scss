@@ -1,0 +1,22 @@
+@use "../../../styles/tokens";
+
+.pagination {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.page-btn {
+  border: 1px solid #d2d2d6;
+  background: #f2f2f2;
+  color: #67676e;
+  border-radius: tokens.radius(sm);
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+}
+
+.active {
+  background: #23bfc1 !important;
+  border-color: #23bfc1 !important;
+  color: #ffffff !important;
+}

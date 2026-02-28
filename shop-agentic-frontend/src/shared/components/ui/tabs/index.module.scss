@@ -1,0 +1,52 @@
+@use "../../../styles/tokens";
+
+.tabs {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  background: tokens.color(surface-card);
+  min-height: 40px;
+}
+
+.tab {
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: tokens.color(text-neutral-6);
+  padding: 0 10px;
+  line-height: 1;
+  height: 100%;
+  box-sizing: border-box;
+  border-bottom: 3px solid transparent;
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.08s ease;
+
+  &:hover {
+    color: tokens.color(text-emphasis);
+    background: color-mix(
+      in srgb,
+      tokens.color(surface-card-2) 70%,
+      transparent
+    );
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid
+      color-mix(in srgb, tokens.color(primary-legacy) 70%, transparent);
+    outline-offset: -2px;
+  }
+}
+
+.active {
+  color: tokens.color(warning-strong);
+  border-bottom-color: tokens.color(warning-strong);
+}

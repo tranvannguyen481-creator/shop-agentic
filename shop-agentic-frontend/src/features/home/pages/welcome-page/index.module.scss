@@ -1,0 +1,80 @@
+@use "../../../../shared/styles/tokens";
+
+.page {
+  min-height: calc(
+    100vh - var(--app-header-height) - var(--app-tabs-height) - var(
+        --app-footer-height
+      ) -
+      32px
+  );
+  display: grid;
+  place-content: start center;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 28px 8px 40px;
+}
+
+.title {
+  margin: 0;
+  font-size: tokens.fs(2xl);
+  color: tokens.color(warning-strong);
+  font-weight: 700;
+}
+
+.illustration {
+  width: 180px;
+  height: 180px;
+  border-radius: tokens.radius(pill);
+  background: color-mix(
+    in srgb,
+    tokens.color(brand-soft-bg) 68%,
+    tokens.color(surface)
+  );
+  border: 1px solid tokens.color(border-soft);
+  display: grid;
+  place-items: center;
+}
+
+.icon {
+  width: 88px;
+  height: 88px;
+  color: tokens.color(text-brand-cool);
+}
+
+.headline {
+  margin: 0;
+  max-width: 720px;
+  font-size: tokens.fs(xl);
+  font-weight: 700;
+  color: tokens.color(text-brand-cool);
+}
+
+.description {
+  margin: 0;
+  max-width: 740px;
+  font-size: tokens.fs(lg);
+  color: tokens.color(text-brand-cool);
+
+  a {
+    color: tokens.color(warning-strong);
+    font-weight: 600;
+  }
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding-top: 34px;
+    gap: 20px;
+  }
+
+  .illustration {
+    width: 220px;
+    height: 220px;
+  }
+
+  .icon {
+    width: 104px;
+    height: 104px;
+  }
+}

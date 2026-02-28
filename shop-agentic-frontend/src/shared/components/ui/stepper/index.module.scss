@@ -1,0 +1,38 @@
+@use "../../../styles/tokens";
+
+.stepper {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 8px;
+
+  li {
+    text-align: center;
+    color: #8e8e94;
+  }
+
+  span {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-grid;
+    place-items: center;
+    border: 1px solid currentColor;
+    font-size: tokens.fs(xs);
+  }
+
+  p {
+    margin: 6px 0 0;
+    font-size: tokens.fs(xs);
+  }
+}
+
+.done {
+  color: #23bfc1;
+}
+
+.active {
+  color: #f1731c;
+}

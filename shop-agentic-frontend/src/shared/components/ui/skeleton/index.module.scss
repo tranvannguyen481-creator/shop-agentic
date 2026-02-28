@@ -1,0 +1,20 @@
+@use "../../../styles/tokens";
+
+@keyframes pulse {
+  0% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.55;
+  }
+}
+
+.skeleton {
+  display: inline-block;
+  border-radius: tokens.radius(md);
+  background: #e1e1e5;
+  animation: pulse 1.2s ease-in-out infinite;
+}

@@ -1,0 +1,112 @@
+@use "../../../styles/tokens";
+
+.home-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+
+  background: tokens.color(primary-legacy);
+  color: tokens.color(text-on-dark);
+  padding: 6px 10px 4px;
+  height: var(--app-header-height, 64px);
+  box-sizing: border-box;
+}
+
+.header-inner {
+  width: min(var(--app-max-width, 760px), 100%);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.brand {
+  h1 {
+    margin: 0;
+    font-size: tokens.fs(md);
+    letter-spacing: 0.02em;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 2px 0 0;
+    font-size: tokens.fs(2xs);
+    color: rgba(20, 114, 121, 0.95);
+  }
+
+  span {
+    font-size: tokens.fs(sm);
+    line-height: 1;
+    font-weight: 700;
+    text-transform: lowercase;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-btn {
+  border: 0;
+  background: transparent;
+  color: tokens.color(text-on-dark);
+
+  .icon {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.2;
+  }
+}
+
+.avatar {
+  border: 0;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.avatar-view {
+  border: 2px solid tokens.color(border-aqua);
+  background: rgba(255, 255, 255, 0.2);
+  color: tokens.color(text-on-brand-dark);
+  font-size: tokens.fs(xs);
+}
+
+@media (min-width: 576px) {
+  .home-header {
+    padding: 6px 12px 4px;
+  }
+
+  .brand {
+    h1 {
+      font-size: tokens.fs(lg);
+    }
+
+    span {
+      font-size: tokens.fs(md);
+    }
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .icon-btn .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+  }
+}

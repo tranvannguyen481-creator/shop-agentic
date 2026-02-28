@@ -1,0 +1,32 @@
+@use "../../../styles/tokens";
+
+.card {
+  background: tokens.color(surface);
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(sm);
+  padding: 10px 12px;
+}
+
+.interactive {
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.08s ease,
+    background-color 0.18s ease;
+
+  &:hover {
+    border-color: tokens.color(border-contrast);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &:focus-visible {
+    outline: 2px solid
+      color-mix(in srgb, tokens.color(primary-legacy) 70%, transparent);
+    outline-offset: 2px;
+  }
+}

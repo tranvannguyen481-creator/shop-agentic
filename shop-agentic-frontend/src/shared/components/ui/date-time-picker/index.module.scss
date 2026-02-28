@@ -1,0 +1,66 @@
+@use "../../../styles/tokens";
+
+.field {
+  display: grid;
+  gap: 6px;
+
+  span {
+    font-size: tokens.fs(sm);
+    color: tokens.color(text-muted-1);
+    font-weight: 500;
+  }
+
+  input {
+    border: 1px solid tokens.color(border-input);
+    border-radius: tokens.radius(sm);
+    background: tokens.color(surface);
+    color: tokens.color(form-input-text);
+    font-size: tokens.fs(sm);
+    line-height: 1.2;
+    min-height: 36px;
+    padding: 7px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: 0;
+    transition: border-color 0.18s ease;
+
+    &:hover {
+      border-color: tokens.color(border-mid);
+    }
+
+    &:focus {
+      border-color: tokens.color(border-input-focus);
+    }
+
+    &[aria-invalid="true"] {
+      border-color: tokens.color(form-required);
+      box-shadow: 0 0 0 2px
+        color-mix(in srgb, tokens.color(form-required) 22%, transparent);
+    }
+
+    &[aria-invalid="true"]:focus {
+      border-color: tokens.color(form-required);
+    }
+
+    &:disabled {
+      color: tokens.color(text-muted-2);
+      background-color: tokens.color(surface-muted);
+      cursor: not-allowed;
+    }
+
+    &::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.82;
+    }
+
+    &[type="time"] {
+      letter-spacing: 0.02em;
+    }
+  }
+}
+
+.required {
+  margin-left: 1px;
+  color: tokens.color(form-required);
+  font-style: normal;
+}

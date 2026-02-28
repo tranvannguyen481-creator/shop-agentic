@@ -1,0 +1,168 @@
+@use "../../../../shared/styles/tokens";
+
+.page {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 96px;
+}
+
+.header {
+  display: grid;
+  gap: 8px;
+  position: sticky;
+  top: calc(var(--app-header-height, 0px) + 10px);
+  z-index: 3;
+}
+
+.banner {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  border-radius: tokens.radius(md);
+}
+
+.headerCard {
+  display: grid;
+  gap: 8px;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    color: tokens.color(text-brand-cool);
+    font-size: tokens.fs(xl);
+    font-weight: 700;
+  }
+
+  p {
+    color: tokens.color(text-muted-1);
+    font-size: tokens.fs(sm);
+  }
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.countdown {
+  color: tokens.color(form-required);
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+}
+
+.metaRow {
+  display: grid;
+  gap: 4px;
+
+  span {
+    color: tokens.color(text-soft);
+    font-size: tokens.fs(xs);
+  }
+}
+
+.hostRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  p,
+  small {
+    margin: 0;
+  }
+
+  p {
+    color: tokens.color(text-muted-1);
+    font-size: tokens.fs(sm);
+    font-weight: 600;
+  }
+
+  small {
+    color: tokens.color(text-soft);
+    font-size: tokens.fs(xs);
+  }
+}
+
+.notes {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 2px;
+
+  li {
+    color: tokens.color(text-soft);
+    font-size: tokens.fs(xs);
+  }
+}
+
+.mainColumn {
+  display: grid;
+  gap: 10px;
+}
+
+.backBtn {
+  width: fit-content;
+}
+
+.checkoutBar {
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(md);
+  padding: 8px;
+  background: tokens.color(surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  p,
+  strong {
+    margin: 0;
+  }
+
+  p {
+    color: tokens.color(text-soft);
+    font-size: tokens.fs(xs);
+  }
+
+  strong {
+    color: tokens.color(text-muted-1);
+    font-size: tokens.fs(sm);
+  }
+}
+
+.loadingList {
+  display: grid;
+  gap: 8px;
+}
+
+.loadingCard {
+  display: grid;
+  gap: 8px;
+}
+
+.productList {
+  display: grid;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .productList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .page {
+    padding-bottom: 12px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .mainColumn {
+    gap: 12px;
+  }
+}

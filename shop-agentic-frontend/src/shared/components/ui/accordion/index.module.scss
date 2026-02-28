@@ -1,0 +1,26 @@
+@use "../../../styles/tokens";
+
+.accordion {
+  border: 1px solid #d9d9dd;
+  border-radius: tokens.radius(lg);
+  overflow: hidden;
+}
+
+.trigger {
+  width: 100%;
+  border: 0;
+  background: #ececef;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  color: #5f5f66;
+  font-size: tokens.fs(sm);
+}
+
+.content {
+  background: #f7f7f7;
+  color: #6a6a71;
+  font-size: tokens.fs(sm);
+  padding: 10px;
+}

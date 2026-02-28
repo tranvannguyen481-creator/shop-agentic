@@ -1,0 +1,27 @@
+@use "../../../styles/tokens";
+
+.alert {
+  border-radius: tokens.radius(lg);
+  padding: 10px 12px;
+  font-size: tokens.fs(sm);
+}
+
+.info {
+  background: #dff2f4;
+  color: #1f6f78;
+}
+
+.success {
+  background: #d9f1df;
+  color: #2f7943;
+}
+
+.warning {
+  background: #fde8d6;
+  color: #92561f;
+}
+
+.error {
+  background: #ffdede;
+  color: #a33b3b;
+}

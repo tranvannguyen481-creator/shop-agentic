@@ -1,0 +1,20 @@
+.bar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #23bfc1;
+  color: #ffffff;
+}
+
+.left,
+.right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.center {
+  text-align: center;
+}

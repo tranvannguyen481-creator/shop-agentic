@@ -1,0 +1,23 @@
+@use "../../../styles/tokens";
+
+.container {
+  display: grid;
+  gap: 12px;
+}
+
+.helper {
+  margin: 0;
+  color: tokens.color(text-soft);
+  font-size: tokens.fs(sm);
+  line-height: 1.45;
+}
+
+.field {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

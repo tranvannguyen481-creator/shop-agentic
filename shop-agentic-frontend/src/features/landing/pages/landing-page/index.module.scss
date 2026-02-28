@@ -1,0 +1,255 @@
+@use "../../../../shared/styles/tokens";
+
+.landing-page {
+  min-height: 100vh;
+  background: tokens.color(body-bg);
+  color: tokens.color(body-text);
+  display: flex;
+  flex-direction: column;
+}
+
+.top-bar {
+  background: tokens.color(primary-legacy);
+  color: tokens.color(text-on-dark);
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  h1 {
+    margin: 0;
+    line-height: 1;
+    font-size: tokens.fs(xl);
+    font-weight: 700;
+  }
+
+  span {
+    display: block;
+    font-size: tokens.fs(2xs);
+    margin-top: 4px;
+  }
+}
+
+.login-text {
+  margin: 0;
+  font-size: tokens.fs(xs);
+
+  a {
+    color: tokens.color(text-on-dark);
+    font-weight: 700;
+  }
+}
+
+.page-content {
+  width: min(760px, calc(100% - 20px));
+  margin: 12px auto;
+}
+
+.hero-card {
+  background: tokens.color(light);
+  border-radius: tokens.radius(3xl);
+  padding: 18px 14px 14px;
+  text-align: center;
+
+  h2 {
+    margin: 0;
+    font-size: tokens.fs(xl);
+    color: tokens.color(text-neutral-6);
+
+    span {
+      color: tokens.color(text-brand-cyan);
+    }
+  }
+
+  p {
+    font-size: tokens.fs(xs);
+    line-height: 1.55;
+    margin: 12px 0 0;
+    color: tokens.color(text-neutral-7);
+  }
+}
+
+.hero-image {
+  width: min(240px, 72%);
+  margin: 0 auto 14px;
+  display: block;
+}
+
+.stats-text {
+  strong {
+    color: tokens.color(warning);
+  }
+}
+
+.cta-row {
+  margin-top: 16px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.cta-button {
+  min-width: 170px;
+  border-radius: tokens.radius(lg);
+  font-size: tokens.fs(xs);
+  font-weight: 600;
+  text-transform: none;
+  padding: 10px 14px;
+}
+
+.cta-button-outline {
+  background: tokens.color(surface);
+  border-width: 2px;
+}
+
+.feature-grid {
+  margin-top: 14px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  article {
+    background: tokens.color(feature-soft-bg);
+    border: 1px solid tokens.color(feature-soft-border);
+    border-radius: tokens.radius(xl);
+    padding: 14px 10px;
+  }
+
+  h3 {
+    margin: 0;
+    color: tokens.color(text-brand-cool);
+    font-size: tokens.fs(md);
+  }
+
+  p {
+    margin: 8px 0 0;
+    font-size: tokens.fs(xs);
+  }
+}
+
+.explain-section {
+  margin-top: 10px;
+  background: tokens.color(text-brand-dark);
+  color: tokens.color(text-on-dark);
+  border-radius: 0 0 tokens.radius(3xl) tokens.radius(3xl);
+  text-align: center;
+  padding: 16px 14px;
+
+  h3 {
+    margin: 0 0 10px;
+    font-size: tokens.fs(lg);
+  }
+
+  p {
+    margin: 10px 0 0;
+    font-size: tokens.fs(xs);
+    line-height: 1.5;
+  }
+}
+
+.page-footer {
+  margin-top: auto;
+  background: tokens.color(dark);
+  color: tokens.color(text-on-dark);
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+
+  p {
+    margin: 4px 0 0;
+    font-size: tokens.fs(2xs);
+  }
+
+  a {
+    color: tokens.color(text-brand-sky);
+    font-weight: 600;
+    font-size: tokens.fs(xs);
+  }
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 14px 16px;
+  }
+
+  .brand h1 {
+    font-size: tokens.fs(xl);
+  }
+
+  .hero-card {
+    padding: 20px 16px;
+
+    h2 {
+      font-size: tokens.fs(xl);
+    }
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .page-footer {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (min-width: 576px) {
+  .top-bar {
+    padding: 14px 16px;
+  }
+
+  .brand h1 {
+    font-size: tokens.fs(2xl);
+  }
+
+  .page-content {
+    width: min(760px, calc(100% - 32px));
+    margin: 18px auto;
+  }
+
+  .hero-card {
+    padding: 24px 22px 18px;
+
+    h2 {
+      font-size: tokens.fs(2xl);
+    }
+
+    p {
+      font-size: tokens.fs(sm);
+    }
+  }
+
+  .hero-image {
+    width: min(290px, 70%);
+    margin: 0 auto 20px;
+  }
+
+  .cta-button {
+    font-size: tokens.fs(sm);
+  }
+
+  .explain-section {
+    padding: 22px 26px;
+
+    h3 {
+      font-size: tokens.fs(xl);
+    }
+
+    p {
+      font-size: tokens.fs(sm);
+    }
+  }
+
+  .page-footer {
+    padding: 16px 34px;
+  }
+}

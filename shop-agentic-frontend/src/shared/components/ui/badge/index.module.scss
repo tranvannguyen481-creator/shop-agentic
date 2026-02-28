@@ -1,0 +1,32 @@
+@use "../../../styles/tokens";
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 18px;
+  border-radius: tokens.radius(pill);
+  padding: 0 8px;
+  font-size: tokens.fs(2xs);
+  font-weight: 600;
+}
+
+.default {
+  background: #d7d7dc;
+  color: #5f5f66;
+}
+
+.success {
+  background: #d4f0dd;
+  color: #23753b;
+}
+
+.warning {
+  background: #fde8d6;
+  color: #9a5a25;
+}
+
+.danger {
+  background: #ffdede;
+  color: #a33b3b;
+}

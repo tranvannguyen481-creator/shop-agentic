@@ -1,0 +1,129 @@
+@use "../../../../shared/styles/tokens";
+
+.create-event-page {
+  width: 100%;
+  max-width: min(var(--app-max-width, 760px), 100%);
+  margin: 0 auto;
+  padding: 0 0 20px;
+}
+
+.form {
+  display: grid;
+  gap: 8px;
+  padding-bottom: 18px;
+}
+
+.group-gate-loading,
+.group-gate-blocking {
+  display: grid;
+  gap: 8px;
+}
+
+.group-gate-blocking {
+  h3,
+  p {
+    margin: 0;
+  }
+}
+
+.upload-row {
+  margin: 8px 0 0;
+  display: grid;
+  gap: 4px;
+
+  .template-link {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    color: tokens.color(link-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 600;
+    font-size: tokens.fs(xs);
+    line-height: 1.2;
+    justify-self: start;
+    transition:
+      color 0.18s ease,
+      opacity 0.18s ease;
+
+    &:hover {
+      color: tokens.color(text-brand-cool);
+      opacity: 0.92;
+    }
+
+    &:focus-visible {
+      outline: 1px dashed tokens.color(border-input-focus);
+      outline-offset: 2px;
+      border-radius: tokens.radius(xs);
+    }
+  }
+
+  .template-message {
+    margin: 0;
+    color: tokens.color(text-muted-1);
+    font-size: tokens.fs(xs);
+    line-height: 1.35;
+  }
+}
+
+.upload-field {
+  span {
+    color: tokens.color(text-muted-1);
+  }
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.time-field {
+  width: calc(50% - 4px);
+  margin-left: auto;
+}
+
+.section-title {
+  margin: 6px 0 0;
+  font-size: tokens.fs(md);
+  font-weight: 500;
+  color: tokens.color(text-muted-1);
+}
+
+.fee-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: tokens.color(text-soft);
+}
+
+.fee-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  span {
+    color: tokens.color(text-muted-1);
+  }
+
+  .fee-value {
+    width: 100px;
+
+    input {
+      padding: 7px 8px;
+    }
+  }
+}
+
+.single-check {
+  color: tokens.color(text-soft);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 6px;
+}

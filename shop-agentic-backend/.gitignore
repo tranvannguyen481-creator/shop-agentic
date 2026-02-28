@@ -1,0 +1,8 @@
+node_modules/
+.env
+service-account-key.json
+src/serviceAccount.json
+*.json.key
+*firebase-adminsdk*.json
+co-bee-2025-firebase-adminsdk-fbsvc-e7b73a68c0.json
+*.log
