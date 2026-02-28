@@ -88,3 +88,22 @@ export const signOutSession = async (): Promise<void> => {
     // no-op
   }
 };
+
+export interface UpdateProfilePayload {
+  displayName?: string;
+  mobileNumber?: string;
+  postalCode?: string;
+}
+
+export const updateUserProfile = async (
+  payload: UpdateProfilePayload,
+): Promise<AuthUser> => {
+  const response = await api.put("/auth/update-profile", payload);
+  const user = response.data?.data?.user as AuthUser | undefined;
+
+  if (!user) {
+    throw new Error("Missing user profile in response");
+  }
+
+  return user;
+};

@@ -1,6 +1,9 @@
 import admin from "@/app/config/firebaseAdmin";
 import { USERS_COLLECTION } from "@/features/auth/constants/auth.constants";
-import type { CompleteProfileDto } from "@/features/auth/dtos/auth.dto";
+import type {
+  CompleteProfileDto,
+  UpdateProfileDto,
+} from "@/features/auth/dtos/auth.dto";
 import type { UserProfile } from "@/features/auth/types/auth.types";
 import { AppError } from "@/shared/exceptions/AppError";
 import type { DecodedIdToken } from "firebase-admin/auth";
@@ -148,6 +151,43 @@ export async function completeProfile(
   const updated = await userRef.get();
   return {
     ...(updated.data() as UserProfile),
+    id: uid,
+    uid,
+  };
+}
+
+export async function updateProfile(
+  uid: string,
+  payload: UpdateProfileDto,
+): Promise<UserProfile & { id: string }> {
+  const userRef = db.collection(USERS_COLLECTION).doc(uid);
+  const snapshot = await userRef.get();
+
+  if (!snapshot.exists) {
+    throw AppError.notFound("User profile not found");
+  }
+
+  const nextData: Partial<UserProfile> & { updatedAt: number } = {
+    updatedAt: Date.now(),
+  };
+
+  if (payload.displayName !== undefined) {
+    nextData.displayName = payload.displayName;
+  }
+
+  if (payload.mobileNumber !== undefined) {
+    nextData.mobileNumber = payload.mobileNumber;
+  }
+
+  if (payload.postalCode !== undefined) {
+    nextData.postalCode = payload.postalCode;
+  }
+
+  await userRef.set(nextData, { merge: true });
+
+  return {
+    ...(snapshot.data() as UserProfile),
+    ...nextData,
     id: uid,
     uid,
   };

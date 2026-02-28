@@ -1,31 +1,62 @@
+import { useState } from "react";
 import { Bell, LockKeyhole, MapPin, SquarePen } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
 import {
+  Alert,
   Avatar,
   Badge,
   Button,
+  Modal,
   SectionCard,
+  Spinner,
 } from "../../../../shared/components/ui";
+import { Form, FormInput } from "../../../../shared/components/form";
 import AppLayout from "../../../../shared/layouts/app-layout";
+import { useCurrentUserQuery } from "../../../../shared/hooks/use-current-user-query";
 import { useSignOutSubmit } from "../../../auth/hooks/use-sign-out-submit";
+import {
+  useUpdateProfileForm,
+  type UpdateProfileFormValues,
+} from "../../hooks/use-update-profile-form";
 import styles from "./index.module.scss";
 
 export const routePath = APP_PATHS.userProfile;
 
 function ProfilePage() {
   const { onSignOut, isSubmitting } = useSignOutSubmit();
+  const { data: currentUser } = useCurrentUserQuery();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const { form, onSubmit, isSubmitting: isSaving, submitError } =
+    useUpdateProfileForm(() => setIsEditModalOpen(false));
+
+  const displayName =
+    typeof currentUser?.displayName === "string" && currentUser.displayName
+      ? currentUser.displayName
+      : "User";
+
+  const photoURL =
+    typeof currentUser?.photoURL === "string" ? currentUser.photoURL : undefined;
+
+  const createdAt =
+    typeof currentUser?.createdAt === "number" && currentUser.createdAt > 0
+      ? new Date(currentUser.createdAt).getFullYear()
+      : null;
 
   return (
     <AppLayout>
       <section className={styles.page}>
         <SectionCard className={styles.profileHeader}>
           <Avatar
-            name="Trương Thành Trung"
+            name={displayName}
+            src={photoURL}
             size={88}
             className={styles.avatar}
           />
-          <h2 className={styles.name}>Trương Thành Trung</h2>
-          <p className={styles.memberSince}>Member since 2023</p>
+          <h2 className={styles.name}>{displayName}</h2>
+          {createdAt !== null && (
+            <p className={styles.memberSince}>Member since {createdAt}</p>
+          )}
         </SectionCard>
 
         <section className={styles.actionsGrid}>
@@ -33,7 +64,12 @@ function ProfilePage() {
             <Bell className={styles.icon} aria-hidden="true" />
             <small>Notification</small>
           </Button>
-          <Button type="button" variant="text" className={styles.actionItem}>
+          <Button
+            type="button"
+            variant="text"
+            className={styles.actionItem}
+            onClick={() => setIsEditModalOpen(true)}
+          >
             <SquarePen className={styles.icon} aria-hidden="true" />
             <small>Edit Profile</small>
           </Button>
@@ -86,6 +122,60 @@ function ProfilePage() {
           </Button>
         </section>
       </section>
+
+      <Modal
+        open={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title="Edit Profile"
+      >
+        <Form<UpdateProfileFormValues>
+          form={form}
+          onSubmit={onSubmit}
+          className={styles.editForm}
+        >
+          <FormInput<UpdateProfileFormValues>
+            name="displayName"
+            label="Display Name"
+            placeholder="Display Name"
+          />
+          <FormInput<UpdateProfileFormValues>
+            name="mobileNumber"
+            label="Mobile Number"
+            type="tel"
+            placeholder="Mobile Number"
+          />
+          <FormInput<UpdateProfileFormValues>
+            name="postalCode"
+            label="Postal Code"
+            placeholder="Postal Code"
+          />
+          {submitError ? (
+            <Alert tone="error" className={styles.modalError}>
+              {submitError}
+            </Alert>
+          ) : null}
+          <div className={styles.modalActions}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsEditModalOpen(false)}
+              disabled={isSaving}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? (
+                <span className={styles.buttonLoading}>
+                  <Spinner size={16} />
+                  Saving...
+                </span>
+              ) : (
+                "Save"
+              )}
+            </Button>
+          </div>
+        </Form>
+      </Modal>
     </AppLayout>
   );
 }

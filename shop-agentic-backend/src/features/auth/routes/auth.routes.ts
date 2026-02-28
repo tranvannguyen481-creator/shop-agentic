@@ -20,6 +20,11 @@ router.post(
   authMiddleware,
   authController.completeProfile,
 );
+router.put(
+  "/update-profile",
+  authMiddleware,
+  authController.updateProfile,
+);
 router.post("/signout", authController.signOut);
 
 export default router;
