@@ -8,7 +8,8 @@
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/main.ts",
     "build": "tsc",
     "test": "jest",
-    "migrate:users:uid": "ts-node -r tsconfig-paths/register src/scripts/migrate-users-uid-only.js"
+    "script:clear-events": "ts-node -r tsconfig-paths/register src/scripts/clear-events.ts",
+    "script:seed-event": "ts-node -r tsconfig-paths/register src/scripts/seed-event.ts"
   },
   "keywords": [],
   "author": "",
