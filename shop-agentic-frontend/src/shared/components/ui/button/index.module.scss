@@ -2,10 +2,15 @@
 
 .button {
   border-radius: tokens.radius(lg);
-  padding: 8px 16px;
+  height: var(--ctrl-h);
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   font-size: tokens.fs(sm);
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   cursor: pointer;
@@ -82,6 +87,7 @@
   color: inherit;
   text-transform: none;
   border-radius: 0;
+  height: auto;
   padding: 0;
   letter-spacing: 0;
 

@@ -20,6 +20,9 @@ $font-family-sans-serif:
   --bs-body-bg: #{tokens.color(body-bg)};
   --bs-body-color: #{tokens.color(body-text)};
 
+  // ─── UI control height (single source of truth) ────────────────────────
+  --ctrl-h: #{tokens.$ctrl-h};
+
   @each $token, $value in tokens.$color-tokens {
     --color-#{$token}: #{$value};
   }

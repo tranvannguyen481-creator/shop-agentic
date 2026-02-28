@@ -16,9 +16,9 @@
     background: tokens.color(surface);
     color: tokens.color(form-input-text);
     font-size: tokens.fs(sm);
-    line-height: 1.2;
-    min-height: 36px;
-    padding: 7px 10px;
+    line-height: 1;
+    height: var(--ctrl-h);
+    padding: 0 10px;
     width: 100%;
     box-sizing: border-box;
     outline: 0;

@@ -2,31 +2,38 @@
 
 $color-tokens: (
   // --- BRAND IDENTITY: Blue for trust, Orange for energy ---
-  primary: #3b82f6,              // Blue (Gắn kết cộng đồng)
-  secondary: #f97316,            // Orange (Năng lượng sự kiện/Hot)
+  primary: #3b82f6,
+  // Blue (Gắn kết cộng đồng)
+  secondary: #f97316,
+  // Orange (Năng lượng sự kiện/Hot)
   primary-legacy: #2563eb,
   primary-legacy-strong: #1d4ed8,
-  
+
   // --- STATUS ---
-  success: #10b981,              // Đã đặt vé/Đã tham gia
-  warning: #facc15,              // Sắp diễn ra
+  success: #10b981,
+  // Đã đặt vé/Đã tham gia
+  warning: #facc15,
+  // Sắp diễn ra
   warning-strong: #eab308,
   warning-soft: #fefce8,
   warning-accent: #fef08a,
-  
+
   // --- SURFACES (Dùng Slate/Gray để tạo cảm giác hiện đại) ---
   light: #f8fafc,
-  dark: #0f172a,                 // Nền Header hoặc Sidebar chuyên nghiệp
-  surface: #ffffff,              // Card sự kiện
+  dark: #0f172a,
+  // Nền Header hoặc Sidebar chuyên nghiệp
+  surface: #ffffff,
+  // Card sự kiện
   surface-muted: #f1f5f9,
   surface-soft: #f8fafc,
   surface-card: #ffffff,
   surface-card-2: #f1f5f9,
   surface-card-3: #e2e8f0,
-  shell-bg: #f8fafc,             // Nền app chính
+  shell-bg: #f8fafc,
+  // Nền app chính
   shell-border: #e2e8f0,
   body-bg: #f8fafc,
-  
+
   // --- TYPOGRAPHY (Slate tones cho độ tương phản cao) ---
   body-text: #1e293b,
   text-soft: #475569,
@@ -43,7 +50,7 @@ $color-tokens: (
   text-neutral-6: #475569,
   text-neutral-7: #334155,
   text-neutral-8: #94a3b8,
-  
+
   // --- BRAND TEXT VARIANTS ---
   text-brand-soft: #60a5fa,
   text-brand-dark: #1e3a8a,
@@ -56,7 +63,7 @@ $color-tokens: (
   text-subtle: #9ca3af,
   text-emphasis: #111827,
   text-dim: #6b7280,
-  
+
   // --- BORDERS & INPUTS ---
   border-soft: #f1f5f9,
   border-muted: #e2e8f0,
@@ -68,7 +75,7 @@ $color-tokens: (
   border-input-focus: #3b82f6,
   border-upload: #93c5fd,
   border-aqua: #bae6fd,
-  
+
   // --- FORM & UI ELEMENTS ---
   accent-cyan-soft: #22d3ee,
   form-label: #475569,
@@ -79,15 +86,18 @@ $color-tokens: (
   brand-soft-text: #1d4ed8,
   feature-soft-bg: #ecfdf5,
   feature-soft-border: #a7f3d0,
-  
+
   // --- PROFILE & VISUALS (Gradient xanh dương - xanh lá nhẹ) ---
   profile-banner-start: #3b82f6,
   profile-banner-end: #06b6d4,
   profile-avatar-border: #ffffff,
   warning-bg-soft: #fffbeb,
   surface-error-soft: #fef2f2,
-  link-primary: #3b82f6,
+  link-primary: #3b82f6
 );
+
+// ─── Control height (input / button / select / search-bar) ─────────────────
+$ctrl-h: 40px;
 
 $radius-tokens: (
   xs: 3px,
