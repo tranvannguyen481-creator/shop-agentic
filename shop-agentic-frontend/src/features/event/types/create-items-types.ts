@@ -26,4 +26,13 @@ export interface CreateItemsPageViewModel {
   handleRemoveOption: (itemIndex: number, optionIndex: number) => void;
   getItemPreviewUrl: (itemIndex: number) => string | null;
   getItemOptions: (itemIndex: number) => ItemOptionFormValue[];
+  getItemOptionGroups: (
+    itemIndex: number,
+  ) => NonNullable<ItemFormValue["optionGroups"]>;
+  handleRemoveOptionGroup: (itemIndex: number, groupIndex: number) => void;
+  handleRemoveGroupChoice: (
+    itemIndex: number,
+    groupIndex: number,
+    choiceIndex: number,
+  ) => void;
 }

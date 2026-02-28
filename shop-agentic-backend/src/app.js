@@ -90,12 +90,14 @@ const groupRoutes = require("./features/group");
 const notificationRoutes = require("./features/notification");
 const testRoutes = require("./features/test");
 const orderRoutes = require("./features/order");
+const uploadRoutes = require("./features/upload");
 app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/test", testRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/upload", uploadRoutes);
 
 app.use((error, _req, res, _next) => {
   if (error?.type === "entity.too.large") {

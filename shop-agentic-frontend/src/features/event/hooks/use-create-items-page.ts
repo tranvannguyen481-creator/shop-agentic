@@ -407,6 +407,36 @@ export const useCreateItemsPage = (): CreateItemsPageViewModel => {
   const getItemOptions = (itemIndex: number): ItemOptionFormValue[] =>
     items?.[itemIndex]?.options ?? [];
 
+  const getItemOptionGroups = (
+    itemIndex: number,
+  ): NonNullable<CreateItemsFormValues["items"][number]["optionGroups"]> =>
+    items?.[itemIndex]?.optionGroups ?? [];
+
+  const handleRemoveOptionGroup = (itemIndex: number, groupIndex: number) => {
+    const path = `items.${itemIndex}.optionGroups` as const;
+    const groups = getValues(path) ?? [];
+    setValue(
+      path,
+      groups.filter((_, i) => i !== groupIndex),
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
+
+  const handleRemoveGroupChoice = (
+    itemIndex: number,
+    groupIndex: number,
+    choiceIndex: number,
+  ) => {
+    const path =
+      `items.${itemIndex}.optionGroups.${groupIndex}.choices` as const;
+    const choices = getValues(path) ?? [];
+    setValue(
+      path,
+      choices.filter((_, i) => i !== choiceIndex),
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
+
   const handleSubmit = (values: CreateItemsFormValues) => {
     saveCreateItemsDraft(values, bannerPreviewUrlsRef.current);
     navigateToNextStep(values);
@@ -431,5 +461,8 @@ export const useCreateItemsPage = (): CreateItemsPageViewModel => {
     handleRemoveOption,
     getItemPreviewUrl,
     getItemOptions,
+    getItemOptionGroups,
+    handleRemoveOptionGroup,
+    handleRemoveGroupChoice,
   };
 };

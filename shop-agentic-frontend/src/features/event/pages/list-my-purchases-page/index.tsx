@@ -1,5 +1,4 @@
 import { ShoppingCart } from "lucide-react";
-import { useState } from "react";
 import { APP_PATHS } from "../../../../app/route-config";
 import SearchBar from "../../../../shared/components/search-bar";
 import {
@@ -8,13 +7,13 @@ import {
   SectionCard,
 } from "../../../../shared/components/ui";
 import AppLayout from "../../../../shared/layouts/app-layout";
+import { useListMyPurchasesPage } from "../../hooks/use-list-my-purchases-page";
 import styles from "./index.module.scss";
 
 export const routePath = APP_PATHS.listMyPurchases;
 
 function ListMyPurchasesPage() {
-  const [search, setSearch] = useState("");
-  const handleSearchChange = (value: string) => setSearch(value);
+  const { search, handleSearchChange } = useListMyPurchasesPage();
 
   return (
     <AppLayout>

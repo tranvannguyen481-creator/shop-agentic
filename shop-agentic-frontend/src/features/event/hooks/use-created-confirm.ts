@@ -115,6 +115,30 @@ export const useCreatedConfirm = (): CreatedConfirmViewModel => {
         typeof item.price === "string" && item.price.trim()
           ? item.price
           : "$0.00",
+      imagePreviewUrl:
+        typeof item.imagePreviewUrl === "string" && item.imagePreviewUrl.trim()
+          ? item.imagePreviewUrl
+          : null,
+      options: Array.isArray(item.options)
+        ? (item.options as Array<Record<string, unknown>>)
+            .filter(
+              (o) => typeof o.value === "string" && (o.value as string).trim(),
+            )
+            .map((o) => ({ value: o.value as string }))
+        : [],
+      optionGroups: Array.isArray(item.optionGroups)
+        ? (item.optionGroups as Array<Record<string, unknown>>).map((g) => ({
+            name: typeof g.name === "string" ? g.name : "",
+            required: typeof g.required === "boolean" ? g.required : false,
+            choices: Array.isArray(g.choices)
+              ? (g.choices as Array<Record<string, unknown>>).map((c) => ({
+                  id: typeof c.id === "string" ? c.id : "",
+                  name: typeof c.name === "string" ? c.name : "",
+                  price: typeof c.price === "number" ? c.price : 0,
+                }))
+              : [],
+          }))
+        : [],
     }));
   }, [itemsDraft]);
 
@@ -238,6 +262,11 @@ export const useCreatedConfirm = (): CreatedConfirmViewModel => {
         ? draft.mode
         : "group-buy",
     items: confirmItems,
+    bannerPreviewUrls: Array.isArray(itemsDraft?.bannerPreviewUrls)
+      ? (itemsDraft.bannerPreviewUrls as unknown[]).filter(
+          (u): u is string => typeof u === "string" && u.trim().length > 0,
+        )
+      : [],
     hasDraft: draft !== null,
     // publish modal
     isPublishModalOpen,

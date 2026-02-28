@@ -1,8 +1,8 @@
+import { toVND } from "../../../../shared/utils/price-utils";
 import { GroupBuyPriceTagProps } from "../../types/group-buy-price-tag-types";
 import {
   calcEffectiveGroupPrice,
   calcProgressPercent,
-  toVND,
 } from "../../utils/price-utils";
 
 function GroupBuyPriceTag({

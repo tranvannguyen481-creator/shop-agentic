@@ -206,6 +206,9 @@ const mapEventListItem = (id, source = {}) => ({
   hostUid: source.hostUid ?? "",
   hostDisplayName: source.hostDisplayName ?? "",
   updatedAt: source.updatedAt ?? null,
+  bannerPreviewUrls: Array.isArray(source.bannerPreviewUrls)
+    ? source.bannerPreviewUrls
+    : [],
 });
 
 const mapGroupEventListItem = (id, source = {}) => ({

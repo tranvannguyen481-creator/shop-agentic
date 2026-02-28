@@ -39,6 +39,7 @@ export { default as Timeline } from "./timeline";
 export { default as Toast } from "./toast";
 export { default as Tooltip } from "./tooltip";
 export { default as UploadField } from "./upload-field";
+export { default as ZoomImage } from "./zoom-image";
 
 export type { BreadcrumbItem } from "./breadcrumbs";
 export type { DataListItem } from "./data-list";
