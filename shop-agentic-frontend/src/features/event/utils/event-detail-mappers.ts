@@ -1,4 +1,5 @@
 import {
+  computeStockStatus,
   EventDetailProductItem,
   EventDetailProductOptionChoice,
   EventDetailProductOptionGroup,
@@ -114,6 +115,10 @@ export const toProductItem = (
     qtyThreshold: Number(item.qtyThreshold ?? 0) || undefined,
     stock: Number(item.stock ?? 0) || undefined,
     totalGroupQty: Number(item.totalGroupQty ?? 0),
+    // availableQty and stockStatus get overridden with live Firestore data in
+    // useEventDetailPage; the values below are sensible static defaults.
+    availableQty: Number.POSITIVE_INFINITY,
+    stockStatus: computeStockStatus(Number.POSITIVE_INFINITY),
     imagePreviewUrl:
       typeof item.imagePreviewUrl === "string" ? item.imagePreviewUrl : "",
     options: rawOptions

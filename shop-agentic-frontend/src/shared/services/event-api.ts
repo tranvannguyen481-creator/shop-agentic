@@ -65,6 +65,7 @@ export interface GroupEventItem {
   groupId?: string;
   groupName?: string;
   hostDisplayName?: string;
+  bannerPreviewUrls?: string[];
   [key: string]: unknown;
 }
 

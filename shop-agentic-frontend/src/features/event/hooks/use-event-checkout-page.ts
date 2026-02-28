@@ -125,6 +125,7 @@ export const useEventCheckoutPage = (): EventCheckoutPageViewModel => {
         paymentMethod: "cod" as const,
       });
       window.localStorage.removeItem(`event:${eventId}:draft-order`);
+      window.localStorage.removeItem(`event-cart:${eventId}`);
       setOrderId(result.orderId);
       setInfoMessage(
         `Đặt hàng thành công! Mã đơn: ${result.orderId}. Tổng cộng: ${toVND(result.grandTotal)}`,

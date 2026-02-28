@@ -79,6 +79,7 @@ function EventDetailPage() {
 
         {}
         {vm.error ? <Alert tone="error">{vm.error}</Alert> : null}
+        {vm.cartError ? <Alert tone="error">{vm.cartError}</Alert> : null}
         {vm.infoMessage ? <Alert tone="success">{vm.infoMessage}</Alert> : null}
 
         {}
@@ -203,6 +204,7 @@ function EventDetailPage() {
                 <EventDetailProductCard
                   key={product.id}
                   product={product}
+                  cartQty={vm.cartQtyByProductId[product.id] ?? 0}
                   onAddToOrder={vm.onAddToOrder}
                 />
               ))}

@@ -41,6 +41,7 @@ export interface GroupEventListItem {
   groupName: string;
   hostDisplayName: string;
   updatedAt: number | null;
+  bannerPreviewUrls: string[];
 }
 
 export interface OptionChoice {

@@ -7,6 +7,10 @@ import {
   reHostEvent,
   type GroupEventItem,
 } from "../../../shared/services/event-api";
+import type {
+  EventFilterTab,
+  EventSortKey,
+} from "../components/event-list-view";
 
 const HOME_PAGE_SIZE = 50;
 
@@ -14,8 +18,10 @@ export const useHomePage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const [filterTab, setFilterTab] = useState<EventFilterTab>("all");
+  const [sortKey, setSortKey] = useState<EventSortKey>("closing");
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ["groupEvents"],
     queryFn: () => fetchGroupEvents(1, HOME_PAGE_SIZE),
   });
@@ -30,25 +36,71 @@ export const useHomePage = () => {
     },
   });
 
+  const allEvents = useMemo(
+    () => (data?.items ?? []) as GroupEventItem[],
+    [data],
+  );
+
+  const activeCount = useMemo(
+    () =>
+      allEvents.filter((e) => String(e.status ?? "").toLowerCase() !== "closed")
+        .length,
+    [allEvents],
+  );
+
+  const closedCount = useMemo(
+    () =>
+      allEvents.filter((e) => String(e.status ?? "").toLowerCase() === "closed")
+        .length,
+    [allEvents],
+  );
+
   const filteredEvents = useMemo(() => {
-    const events = (data?.items ?? []) as GroupEventItem[];
     const keyword = search.trim().toLowerCase();
 
-    if (!keyword) {
-      return events;
+    let list = allEvents;
+
+    // Tab filter
+    if (filterTab === "active") {
+      list = list.filter(
+        (e) => String(e.status ?? "").toLowerCase() !== "closed",
+      );
+    } else if (filterTab === "closed") {
+      list = list.filter(
+        (e) => String(e.status ?? "").toLowerCase() === "closed",
+      );
     }
 
-    return events.filter((event) => {
-      const title = String(event.title ?? "").toLowerCase();
-      const description = String(event.description ?? "").toLowerCase();
-      const groupName = String(event.groupName ?? "").toLowerCase();
-      return (
-        title.includes(keyword) ||
-        description.includes(keyword) ||
-        groupName.includes(keyword)
-      );
+    // Keyword filter
+    if (keyword) {
+      list = list.filter((event) => {
+        const title = String(event.title ?? "").toLowerCase();
+        const description = String(event.description ?? "").toLowerCase();
+        const groupName = String(event.groupName ?? "").toLowerCase();
+        return (
+          title.includes(keyword) ||
+          description.includes(keyword) ||
+          groupName.includes(keyword)
+        );
+      });
+    }
+
+    // Sort
+    list = [...list].sort((a, b) => {
+      if (sortKey === "closing") {
+        const aDate = a.closingDate
+          ? new Date(a.closingDate).getTime()
+          : Infinity;
+        const bDate = b.closingDate
+          ? new Date(b.closingDate).getTime()
+          : Infinity;
+        return aDate - bDate;
+      }
+      return String(a.title ?? "").localeCompare(String(b.title ?? ""));
     });
-  }, [data, search]);
+
+    return list;
+  }, [allEvents, search, filterTab, sortKey]);
 
   const onViewDetail = (eventId: string) => {
     navigate(APP_PATHS.eventDetail.replace(":eventId", eventId));
@@ -58,15 +110,27 @@ export const useHomePage = () => {
     reHostMutation.mutate(eventId);
   };
 
+  const onRefresh = () => {
+    void refetch();
+  };
+
   return {
     events: filteredEvents,
     total: data?.total ?? 0,
+    activeCount,
+    closedCount,
     isLoading,
+    isFetching,
     error: error ? String(error) : null,
     search,
     onSearchChange: setSearch,
+    filterTab,
+    onFilterTabChange: setFilterTab,
+    sortKey,
+    onSortChange: setSortKey,
     onViewDetail,
     onReHost,
+    onRefresh,
     isReHosting: reHostMutation.isPending,
     reHostingEventId: reHostMutation.variables ?? null,
   };

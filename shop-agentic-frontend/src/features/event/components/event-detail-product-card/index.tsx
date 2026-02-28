@@ -1,4 +1,11 @@
-import { Minus, Plus, ShoppingCart } from "lucide-react";
+import {
+  AlertTriangle,
+  Ban,
+  Minus,
+  Plus,
+  ShoppingBag,
+  ShoppingCart,
+} from "lucide-react";
 import { FormError } from "../../../../shared/components/form";
 import {
   Button,
@@ -16,25 +23,76 @@ import styles from "./index.module.scss";
 interface EventDetailProductCardProps {
   product: EventDetailProductItem;
   onAddToOrder: (payload: EventAddToOrderPayload) => void;
+  /** How many of this product the current user already has in their cart */
+  cartQty?: number;
+}
+
+// Merge option groups that share the same name so the heading is shown only once.
+function mergeOptionGroupsByName(
+  groups: EventDetailProductItem["optionGroups"],
+): EventDetailProductItem["optionGroups"] {
+  const seen = new Map<string, (typeof groups)[number]>();
+  for (const group of groups) {
+    const key = group.name.trim().toLowerCase();
+    if (seen.has(key)) {
+      const existing = seen.get(key)!;
+      seen.set(key, {
+        ...existing,
+        choices: [...existing.choices, ...group.choices],
+      });
+    } else {
+      seen.set(key, { ...group, choices: [...group.choices] });
+    }
+  }
+  return Array.from(seen.values());
 }
 
 function EventDetailProductCard({
   product,
   onAddToOrder,
+  cartQty = 0,
 }: EventDetailProductCardProps) {
+  const isOutOfStock = product.stockStatus === "out-of-stock";
+  const isLowStock = product.stockStatus === "low-stock";
+
+  // Max the user can still add without exceeding remaining stock
+  const maxAddable = Number.isFinite(product.availableQty)
+    ? Math.max(0, product.availableQty - cartQty)
+    : Number.POSITIVE_INFINITY;
+
   const viewModel = useEventProductOrderForm({
     product,
+    maxQty: Number.isFinite(maxAddable) ? maxAddable : undefined,
     onSubmitAddToOrder: onAddToOrder,
   });
 
+  const mergedOptionGroups = mergeOptionGroupsByName(product.optionGroups);
+
   return (
-    <SectionCard className={styles.card}>
+    <SectionCard
+      className={[styles.card, isOutOfStock ? styles.cardOutOfStock : ""]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      {/* Image + out-of-stock overlay */}
       {product.imagePreviewUrl ? (
-        <img
-          src={product.imagePreviewUrl}
-          alt={product.name}
-          className={styles.image}
-        />
+        <div className={styles.imageWrapper}>
+          <img
+            src={product.imagePreviewUrl}
+            alt={product.name}
+            className={styles.image}
+          />
+          {isOutOfStock ? (
+            <div className={styles.outOfStockOverlay}>
+              <Ban size={22} />
+              <span>Out of Stock</span>
+            </div>
+          ) : null}
+        </div>
+      ) : isOutOfStock ? (
+        <div className={styles.outOfStockBannerNoImage}>
+          <Ban size={16} /> Out of Stock
+        </div>
       ) : null}
 
       <div className={styles.content}>
@@ -47,7 +105,31 @@ function EventDetailProductCard({
           {product.description || "No description"}
         </p>
 
-        {product.optionGroups.map((optionGroup) => (
+        {/* Live stats */}
+        {product.totalGroupQty > 0 || cartQty > 0 || isLowStock ? (
+          <div className={styles.statsRow}>
+            {product.totalGroupQty > 0 ? (
+              <span className={styles.orderedPill}>
+                <ShoppingBag size={11} />
+                {product.totalGroupQty} ordered
+              </span>
+            ) : null}
+            {cartQty > 0 ? (
+              <span className={styles.cartPill}>
+                <ShoppingCart size={11} />
+                In cart: {cartQty}
+              </span>
+            ) : null}
+            {isLowStock ? (
+              <span className={styles.lowStockPill}>
+                <AlertTriangle size={11} />
+                Only {product.availableQty} left
+              </span>
+            ) : null}
+          </div>
+        ) : null}
+
+        {mergedOptionGroups.map((optionGroup) => (
           <section className={styles.optionGroup} key={optionGroup.id}>
             <div className={styles.optionHeader}>
               <h4>{optionGroup.name}</h4>
@@ -117,16 +199,18 @@ function EventDetailProductCard({
               type="button"
               variant="outline"
               onClick={viewModel.onDecreaseQuantity}
+              disabled={isOutOfStock}
             >
-              <Minus size={14} /> <span>−</span>
+              <Minus size={14} />
             </Button>
             <span>{viewModel.quantity}</span>
             <Button
               type="button"
               variant="outline"
               onClick={viewModel.onIncreaseQuantity}
+              disabled={isOutOfStock || viewModel.quantity >= maxAddable}
             >
-              <Plus size={14} /> <span>+</span>
+              <Plus size={14} />
             </Button>
           </div>
 
@@ -134,8 +218,17 @@ function EventDetailProductCard({
             type="button"
             variant="primary"
             onClick={viewModel.onAddToOrder}
+            disabled={isOutOfStock || maxAddable <= 0}
           >
-            <ShoppingCart size={16} /> Add to Order
+            {isOutOfStock ? (
+              <>
+                <Ban size={14} /> Out of Stock
+              </>
+            ) : (
+              <>
+                <ShoppingCart size={16} /> Add to Order
+              </>
+            )}
           </Button>
         </div>
       </div>

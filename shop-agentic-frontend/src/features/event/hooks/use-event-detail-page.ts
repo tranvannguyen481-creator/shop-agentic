@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { APP_PATHS } from "../../../app/route-config";
 import {
@@ -8,6 +8,8 @@ import {
 } from "../../../shared/services/event-api";
 import { EVENT_QUERY_KEYS } from "../constants/event-query-keys";
 import {
+  computeStockStatus,
+  EventAddToOrderPayload,
   EventDetailPageViewModel,
   EventDetailProductItem,
 } from "../types/event-detail-page-types";
@@ -17,6 +19,7 @@ import {
   toProductItem,
 } from "../utils/event-detail-mappers";
 import { useEventCart } from "./use-event-cart";
+import { useEventProductQuantities } from "./use-event-product-quantities";
 
 export const useEventDetailPage = (): EventDetailPageViewModel => {
   const navigate = useNavigate();
@@ -44,8 +47,18 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
     },
   });
 
-  const { orderLines, orderItemCount, infoMessage, onAddOrderLine } =
-    useEventCart();
+  const {
+    orderLines,
+    orderItemCount,
+    infoMessage,
+    onAddOrderLine,
+    onRemoveOrderLine,
+    onClearCart,
+  } = useEventCart(eventId);
+
+  const [cartError, setCartError] = useState<string | null>(null);
+
+  const liveData = useEventProductQuantities(eventId);
 
   const products = useMemo(() => {
     const rawProducts =
@@ -55,14 +68,29 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
 
     return rawProducts
       .map((item, index) => {
-        if (!item || typeof item !== "object") {
-          return null;
-        }
+        if (!item || typeof item !== "object") return null;
 
-        return toProductItem(item as Record<string, unknown>, index);
+        const base = toProductItem(item as Record<string, unknown>, index);
+
+        const totalGroupQty =
+          liveData.groupQtyMap[base.id] ?? base.totalGroupQty;
+
+        // Prefer live stock from Firestore snapshot; fall back to REST value
+        const liveStock = liveData.stockMap[base.id];
+        const stock =
+          typeof liveStock === "number" ? liveStock : (base.stock ?? 0);
+
+        const availableQty =
+          stock > 0
+            ? Math.max(0, stock - totalGroupQty)
+            : Number.POSITIVE_INFINITY;
+
+        const stockStatus = computeStockStatus(availableQty);
+
+        return { ...base, totalGroupQty, availableQty, stockStatus };
       })
       .filter((item): item is EventDetailProductItem => Boolean(item));
-  }, [event]);
+  }, [event, liveData]);
 
   const adminFeeValue = useMemo(
     () => toAdminFeeValue(event?.adminFee),
@@ -72,6 +100,50 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
   const productByIdMap = useMemo(
     () => new Map(products.map((product) => [product.id, product])),
     [products],
+  );
+
+  const cartQtyByProductId = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const line of orderLines) {
+      map[line.productId] = (map[line.productId] ?? 0) + line.quantity;
+    }
+    return map;
+  }, [orderLines]);
+
+  /**
+   * Stock-aware wrapper around `onAddOrderLine`.
+   * - Rejects out-of-stock products.
+   * - Caps the quantity to the remaining available stock.
+   */
+  const onAddToOrder = useCallback(
+    (payload: EventAddToOrderPayload) => {
+      const product = productByIdMap.get(payload.product.id);
+      if (!product) return;
+
+      if (product.stockStatus === "out-of-stock") {
+        setCartError(`"${product.name}" is out of stock.`);
+        return;
+      }
+
+      if (product.availableQty !== Number.POSITIVE_INFINITY) {
+        const alreadyInCart = cartQtyByProductId[product.id] ?? 0;
+        const canAdd = Math.max(0, product.availableQty - alreadyInCart);
+        if (canAdd === 0) {
+          setCartError(
+            `"${product.name}" — no more stock available (${product.availableQty} total, all in your cart).`,
+          );
+          return;
+        }
+        const cappedQty = Math.min(payload.quantity, canAdd);
+        setCartError(null);
+        onAddOrderLine({ ...payload, quantity: cappedQty });
+        return;
+      }
+
+      setCartError(null);
+      onAddOrderLine(payload);
+    },
+    [onAddOrderLine, productByIdMap, cartQtyByProductId],
   );
 
   const rawImportantNotes = event?.importantNotes;
@@ -115,8 +187,10 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
     groupName: typeof event?.groupName === "string" ? event.groupName : "",
     products,
     orderItemCount,
+    cartQtyByProductId,
     canProceedCheckout: !isClosed && orderLines.length > 0,
     infoMessage,
+    cartError,
     isLoading,
     isReHosting: reHostMutation.isPending,
     error: error
@@ -130,7 +204,9 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
         groupBuy: { enabled: false, minMembers: 0, extraDiscountPercent: 0 },
       },
     currentMembers: Number(event?.currentCount ?? event?.buyCount ?? 0),
-    onAddToOrder: onAddOrderLine,
+    onAddToOrder,
+    onRemoveOrderLine,
+    onClearCart,
     onProceedCheckout: () => {
       if (orderLines.length === 0 || isClosed) {
         return;
@@ -156,6 +232,7 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
         `event:${eventId}:draft-order`,
         JSON.stringify(orderPayload),
       );
+      // Cart is kept until the order is successfully placed (handled in checkout page)
       navigate(APP_PATHS.eventCheckout.replace(":eventId", eventId));
     },
     onBackToEvents: () => navigate(APP_PATHS.listMyEvents),

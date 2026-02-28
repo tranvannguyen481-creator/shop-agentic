@@ -182,6 +182,9 @@ export const mapGroupEventListItem = (
   groupName: (source["groupName"] as string) ?? "",
   hostDisplayName: (source["hostDisplayName"] as string) ?? "",
   updatedAt: (source["updatedAt"] as number) ?? null,
+  bannerPreviewUrls: Array.isArray(source["bannerPreviewUrls"])
+    ? (source["bannerPreviewUrls"] as string[])
+    : [],
 });
 
 // ─── mapEventProductItem ──────────────────────────────────────────────────────

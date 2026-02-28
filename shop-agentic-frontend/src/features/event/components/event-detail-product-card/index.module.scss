@@ -6,11 +6,54 @@
   gap: 0.625rem;
 }
 
+.cardOutOfStock {
+  opacity: 0.7;
+  filter: grayscale(0.4);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  border-radius: tokens.radius(sm);
+  overflow: hidden;
+}
+
 .image {
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
+  display: block;
+}
+
+.outOfStockOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.outOfStockBannerNoImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.5rem;
+  background: tokens.color(surface-error-soft);
+  color: tokens.color(form-required);
   border-radius: tokens.radius(sm);
+  font-size: tokens.fs(xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .content {
@@ -87,6 +130,48 @@
   padding: 0.5rem;
   border: 0.0625rem solid tokens.color(border-soft);
   border-radius: tokens.radius(sm);
+}
+
+.statsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.orderedPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: tokens.radius(pill);
+  background: tokens.color(surface-muted);
+  color: tokens.color(text-muted-1);
+  font-size: tokens.fs(xs);
+  font-weight: 600;
+}
+
+.cartPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: tokens.radius(pill);
+  background: tokens.color(brand-soft-bg);
+  color: tokens.color(primary-legacy);
+  font-size: tokens.fs(xs);
+  font-weight: 600;
+}
+
+.lowStockPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: tokens.radius(pill);
+  background: tokens.color(warning-bg-soft);
+  color: tokens.color(warning-strong);
+  font-size: tokens.fs(xs);
+  font-weight: 600;
 }
 
 .actionRow {

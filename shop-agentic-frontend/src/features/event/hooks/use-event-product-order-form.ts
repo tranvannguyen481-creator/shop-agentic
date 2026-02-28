@@ -10,6 +10,8 @@ import {
 
 interface UseEventProductOrderFormParams {
   product: EventDetailProductItem;
+  /** Maximum orderable quantity — use `Infinity` for unlimited. */
+  maxQty?: number;
   onSubmitAddToOrder: (payload: EventAddToOrderPayload) => void;
 }
 
@@ -34,6 +36,7 @@ const buildRequiredErrorMap = (
 
 export const useEventProductOrderForm = ({
   product,
+  maxQty = Number.POSITIVE_INFINITY,
   onSubmitAddToOrder,
 }: UseEventProductOrderFormParams) => {
   const requiredGroupIds = useMemo(
@@ -129,11 +132,16 @@ export const useEventProductOrderForm = ({
   };
 
   const onIncreaseQuantity = () => {
-    form.setValue("quantity", Math.max(quantity, 1) + 1, {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
+    const effectiveMax = Number.isFinite(maxQty) ? maxQty : 999;
+    form.setValue(
+      "quantity",
+      Math.min(Math.max(quantity, 1) + 1, effectiveMax),
+      {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      },
+    );
   };
 
   const onDecreaseQuantity = () => {
