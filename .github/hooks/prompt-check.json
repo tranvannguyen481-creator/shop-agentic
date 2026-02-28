@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "userPromptSubmitted": [
+      {
+        "command": "node .github/hooks/scripts/prompt-check.js",
+        "timeout": 3000
+      }
+    ]
+  }
+}

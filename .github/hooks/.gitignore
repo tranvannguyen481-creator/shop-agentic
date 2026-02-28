@@ -1,0 +1,3 @@
+# Hook execution logs — không commit lên repo
+logs/
+*.log

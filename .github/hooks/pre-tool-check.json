@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": "node .github/hooks/scripts/pre-tool-check.js",
+        "timeout": 5000
+      }
+    ]
+  }
+}

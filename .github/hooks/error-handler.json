@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "error": [
+      {
+        "command": "node .github/hooks/scripts/error-handler.js",
+        "timeout": 5000
+      }
+    ]
+  }
+}

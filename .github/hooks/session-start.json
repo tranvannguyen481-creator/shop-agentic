@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "node .github/hooks/scripts/session-start.js",
+        "timeout": 10000
+      }
+    ]
+  }
+}
