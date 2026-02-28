@@ -11,10 +11,9 @@ import express, {
 } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { ZodError } from "zod";
 
-import { AppError } from "@/shared/exceptions/AppError";
-import logger from "@/shared/utils/logger";
+import { globalErrorHandler } from "@/app/middleware/error-handler";
+import { requestLogger } from "@/app/middleware/request-logger";
 
 // Feature routers
 import authRouter from "@/features/auth";
@@ -75,19 +74,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 
 // ─── HTTP Request Logging ────────────────────────────────────────────────────
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-  const start = Date.now();
-  res.on("finish", () => {
-    logger.http(
-      `${req.method} ${req.originalUrl} ${res.statusCode} ${Date.now() - start}ms`,
-      {
-        requestId: req.requestId,
-        ip: req.ip,
-      },
-    );
-  });
-  next();
-});
+app.use(requestLogger);
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
 
@@ -114,50 +101,6 @@ app.use((_req: Request, res: Response) => {
 
 // ─── Global Error Handler ────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
-  // ZodError → 422 Unprocessable Entity
-  if (err instanceof ZodError) {
-    return res.status(422).json({
-      success: false,
-      error: "VALIDATION_ERROR",
-      message: "Validation failed",
-      details: err.issues.map((issue) => ({
-        field: issue.path.join("."),
-        message: issue.message,
-      })),
-    });
-  }
-
-  // AppError → structured response
-  if (err instanceof AppError) {
-    logger.warn(`AppError [${err.statusCode}]: ${err.message}`, {
-      requestId: req.requestId,
-      errorCode: err.errorCode,
-    });
-    return res.status(err.statusCode).json({
-      success: false,
-      error: err.errorCode,
-      message: err.message,
-      ...(err.details !== undefined && { details: err.details }),
-    });
-  }
-
-  // Unknown error → 500
-  const message = err instanceof Error ? err.message : "Internal server error";
-  logger.error(`Unhandled error: ${message}`, {
-    requestId: req.requestId,
-    stack: err instanceof Error ? err.stack : undefined,
-  });
-
-  return res.status(500).json({
-    success: false,
-    error: "INTERNAL_SERVER_ERROR",
-    message:
-      process.env["NODE_ENV"] === "production"
-        ? "Internal server error"
-        : message,
-  });
-});
+app.use(globalErrorHandler);
 
 export default app;

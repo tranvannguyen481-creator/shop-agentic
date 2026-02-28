@@ -1,24 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { APP_PATHS } from "../../../app/route-config";
 import { useSmartForm } from "../../../shared/components/form";
 import { useWizard } from "../../../shared/contexts";
 import { fetchMyGroups } from "../../../shared/services/group-api";
-import {
-  CREATE_EVENT_DEFAULT_VALUES,
-  CREATE_EVENT_DRAFT_STORAGE_KEY,
-} from "../constants/create-event-constants";
+import { CREATE_EVENT_DEFAULT_VALUES } from "../constants/create-event-constants";
 import { CREATE_ITEMS_DRAFT_STORAGE_KEY } from "../constants/create-items-constants";
 import { getEventStepMeta } from "../constants/event-step-flow";
 import { createEventSchema } from "../schemas/create-event-schema";
 import { CreateEventPageViewModel } from "../types/create-event-page-types";
+import { CreateEventFormValues } from "../types/create-event-types";
 import {
-  CreateEventFormValues,
-  DeliveryOptionsPayload,
-  ExternalUrlPayload,
-} from "../types/create-event-types";
+  getStoredCreateEventDraft,
+  saveCreateEventDraft,
+} from "../utils/create-event-draft-storage";
 import { fetchEventEditDraft } from "../utils/fetch-event-edit-draft";
+import { useCreateEventModals } from "./use-create-event-modals";
 import { useCreateEventTemplate } from "./use-create-event-template";
 
 interface UseCreateEventPageOptions {
@@ -27,38 +25,6 @@ interface UseCreateEventPageOptions {
 
 const GROUP_GATE_PAGE = 1;
 const GROUP_GATE_PAGE_SIZE = 100;
-
-const getStoredCreateEventDraft = (): Partial<CreateEventFormValues> => {
-  if (typeof window === "undefined") {
-    return {};
-  }
-
-  try {
-    const rawDraft = window.localStorage.getItem(
-      CREATE_EVENT_DRAFT_STORAGE_KEY,
-    );
-
-    if (!rawDraft) {
-      return {};
-    }
-
-    const parsedDraft = JSON.parse(rawDraft) as Partial<CreateEventFormValues>;
-
-    return {
-      ...parsedDraft,
-      uploadExcel: null,
-    };
-  } catch {
-    return {};
-  }
-};
-
-const toPersistedDraft = (
-  values: CreateEventFormValues,
-): Omit<CreateEventFormValues, "uploadExcel"> & { uploadExcel: null } => ({
-  ...values,
-  uploadExcel: null,
-});
 
 export const useCreateEventPage = (
   options?: UseCreateEventPageOptions,
@@ -76,13 +42,6 @@ export const useCreateEventPage = (
     : "";
 
   const initialDraftValues = useMemo(getStoredCreateEventDraft, []);
-
-  // Modal state (replacing Redux modal state)
-  const [isImportantNotesModalOpen, setIsImportantNotesModalOpen] =
-    useState(false);
-  const [isExternalUrlModalOpen, setIsExternalUrlModalOpen] = useState(false);
-  const [isDeliveryOptionsModalOpen, setIsDeliveryOptionsModalOpen] =
-    useState(false);
 
   const {
     data: groupsData,
@@ -130,18 +89,7 @@ export const useCreateEventPage = (
 
   useEffect(() => {
     const subscription = form.watch((values) => {
-      if (typeof window === "undefined") {
-        return;
-      }
-
-      try {
-        window.localStorage.setItem(
-          CREATE_EVENT_DRAFT_STORAGE_KEY,
-          JSON.stringify(toPersistedDraft(values as CreateEventFormValues)),
-        );
-      } catch {
-        // Ignore storage write failures.
-      }
+      saveCreateEventDraft(values as CreateEventFormValues);
     });
 
     return () => subscription.unsubscribe();
@@ -174,13 +122,10 @@ export const useCreateEventPage = (
 
     form.reset(nextValues);
 
+    saveCreateEventDraft(nextValues);
+
     if (typeof window !== "undefined") {
       try {
-        window.localStorage.setItem(
-          CREATE_EVENT_DRAFT_STORAGE_KEY,
-          JSON.stringify(toPersistedDraft(nextValues)),
-        );
-
         if (editDraftData.createItemsDraft) {
           window.localStorage.setItem(
             CREATE_ITEMS_DRAFT_STORAGE_KEY,
@@ -196,6 +141,7 @@ export const useCreateEventPage = (
   const stepMeta = getEventStepMeta(APP_PATHS.createEvent);
   const { templateMessage, handleDownloadTemplate, handleTemplateUpload } =
     useCreateEventTemplate(form);
+  const modals = useCreateEventModals(form);
 
   const importantNotes = form.watch("importantNotes");
   const externalUrlFieldName = form.watch("externalUrlFieldName");
@@ -205,72 +151,8 @@ export const useCreateEventPage = (
   const deliveryTimeTo = form.watch("deliveryTimeTo");
   const deliveryFees = form.watch("deliveryFees");
 
-  const handleImportantNotesToggle = useCallback((checked: boolean) => {
-    setIsImportantNotesModalOpen(checked);
-  }, []);
-
-  const handleExternalUrlToggle = useCallback((checked: boolean) => {
-    setIsExternalUrlModalOpen(checked);
-  }, []);
-
-  const handleDeliveryOptionsToggle = useCallback((checked: boolean) => {
-    setIsDeliveryOptionsModalOpen(checked);
-  }, []);
-
-  const handleCancelImportantNotes = () => {
-    form.setValue("addImportantNotes", false, { shouldDirty: true });
-    form.setValue("importantNotes", [], { shouldDirty: true });
-    setIsImportantNotesModalOpen(false);
-  };
-
-  const handleSaveImportantNotes = (notes: string[]) => {
-    form.setValue("importantNotes", notes, { shouldDirty: true });
-    setIsImportantNotesModalOpen(false);
-  };
-
-  const handleCancelExternalUrl = () => {
-    form.setValue("addExternalUrl", false, { shouldDirty: true });
-    form.setValue("externalUrlFieldName", "", { shouldDirty: true });
-    form.setValue("externalUrl", "", { shouldDirty: true });
-    setIsExternalUrlModalOpen(false);
-  };
-
-  const handleSaveExternalUrl = (payload: ExternalUrlPayload) => {
-    form.setValue("addExternalUrl", true, { shouldDirty: true });
-    form.setValue("externalUrlFieldName", payload.fieldName, {
-      shouldDirty: true,
-    });
-    form.setValue("externalUrl", payload.url, { shouldDirty: true });
-    setIsExternalUrlModalOpen(false);
-  };
-
-  const handleCancelDeliveryOptions = () => {
-    form.setValue("addDeliveryOptions", false, { shouldDirty: true });
-    form.setValue("deliveryScheduleDate", "", { shouldDirty: true });
-    form.setValue("deliveryTimeFrom", "", { shouldDirty: true });
-    form.setValue("deliveryTimeTo", "", { shouldDirty: true });
-    form.setValue("deliveryFees", [], { shouldDirty: true });
-    setIsDeliveryOptionsModalOpen(false);
-  };
-
-  const handleSaveDeliveryOptions = (payload: DeliveryOptionsPayload) => {
-    form.setValue("addDeliveryOptions", true, { shouldDirty: true });
-    form.setValue("deliveryScheduleDate", payload.date, { shouldDirty: true });
-    form.setValue("deliveryTimeFrom", payload.fromTime, { shouldDirty: true });
-    form.setValue("deliveryTimeTo", payload.toTime, { shouldDirty: true });
-    form.setValue("deliveryFees", payload.fees, { shouldDirty: true });
-    setIsDeliveryOptionsModalOpen(false);
-  };
-
   const handleSubmit = (values: CreateEventFormValues) => {
-    try {
-      window.localStorage.setItem(
-        CREATE_EVENT_DRAFT_STORAGE_KEY,
-        JSON.stringify(toPersistedDraft(values)),
-      );
-    } catch {
-      // Ignore storage write failures and continue navigation.
-    }
+    saveCreateEventDraft(values);
 
     if (stepMeta.nextPath) {
       navigate(stepMeta.nextPath);
@@ -296,9 +178,7 @@ export const useCreateEventPage = (
     handleSubmit,
     handleTemplateUpload,
     handleDownloadTemplate,
-    isImportantNotesModalOpen,
-    isExternalUrlModalOpen,
-    isDeliveryOptionsModalOpen,
+    ...modals,
     importantNotes,
     externalUrlFieldName,
     externalUrl,
@@ -306,15 +186,6 @@ export const useCreateEventPage = (
     deliveryTimeFrom,
     deliveryTimeTo,
     deliveryFees,
-    handleImportantNotesToggle,
-    handleExternalUrlToggle,
-    handleDeliveryOptionsToggle,
-    handleCancelImportantNotes,
-    handleSaveImportantNotes,
-    handleCancelExternalUrl,
-    handleSaveExternalUrl,
-    handleCancelDeliveryOptions,
-    handleSaveDeliveryOptions,
     onGoToCreateGroup: () => navigate(APP_PATHS.listMyGroups),
   };
 };

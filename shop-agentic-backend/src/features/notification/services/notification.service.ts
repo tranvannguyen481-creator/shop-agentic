@@ -4,82 +4,18 @@ import {
   USER_NOTIFICATIONS_COLLECTION,
 } from "@/features/notification/constants/notification.constants";
 import type { CreateNotificationBody } from "@/features/notification/dtos/notification.dto";
-import type {
-  NotificationItem,
-  NotificationPriority,
-  NotificationType,
-} from "@/features/notification/types/notification.types";
+import type { NotificationItem } from "@/features/notification/types/notification.types";
 import { AppError } from "@/shared/exceptions/AppError";
+import { assertActor } from "@/shared/utils/assert-actor";
+import { toNumber } from "@/shared/utils/firestore.utils";
 import type { DecodedIdToken } from "firebase-admin/auth";
+import {
+  type NotificationSource,
+  type UserNotificationSource,
+  toNotificationItem,
+} from "./notification-mappers";
 
 const db = admin.firestore();
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-function assertActor(
-  actor: DecodedIdToken | undefined,
-): asserts actor is DecodedIdToken {
-  if (!actor?.uid) throw AppError.unauthorized();
-}
-
-const toNumber = (value: unknown, fallback = 0): number => {
-  const next = Number(value);
-  return Number.isFinite(next) ? next : fallback;
-};
-
-interface NotificationSource {
-  userId?: string;
-  type?: NotificationType;
-  title?: string;
-  body?: string;
-  data?: Record<string, unknown>;
-  isRead?: boolean;
-  readAt?: number | null;
-  priority?: NotificationPriority;
-  createdAt?: number;
-  relatedEventId?: string;
-  relatedOrderId?: string;
-}
-
-interface UserNotificationSource {
-  userId?: string;
-  notificationId?: string;
-  isRead?: boolean;
-  readAt?: number | null;
-  createdAt?: number;
-}
-
-const toNotificationItem = (
-  id: string,
-  source: NotificationSource,
-  userView: UserNotificationSource,
-): NotificationItem => ({
-  id,
-  userId: source.userId ?? userView.userId ?? "",
-  type: source.type ?? ("broadcast" as NotificationType),
-  title: source.title ?? "",
-  body: source.body ?? "",
-  data:
-    source.data &&
-    typeof source.data === "object" &&
-    !Array.isArray(source.data)
-      ? source.data
-      : {},
-  isRead: Boolean(userView.isRead ?? source.isRead),
-  readAt: userView.readAt ?? source.readAt ?? null,
-  priority: source.priority ?? ("normal" as NotificationPriority),
-  createdAt: toNumber(userView.createdAt ?? source.createdAt, 0),
-  relatedEventId:
-    source.relatedEventId ??
-    (source.data && typeof source.data["eventId"] === "string"
-      ? source.data["eventId"]
-      : ""),
-  relatedOrderId:
-    source.relatedOrderId ??
-    (source.data && typeof source.data["orderId"] === "string"
-      ? source.data["orderId"]
-      : ""),
-});
 
 // ─── Service Functions ───────────────────────────────────────────────────────
 

@@ -6,165 +6,28 @@ import type {
   UpdateGroupSettingsBody,
 } from "@/features/group/dtos/group.dto";
 import {
-  GROUP_ROLE,
   GROUP_STATUS,
   type GroupDetail,
   type GroupListItem,
-  type GroupRole,
-  type GroupStatus,
 } from "@/features/group/types/group.types";
 import { AppError } from "@/shared/exceptions/AppError";
+import { assertActor } from "@/shared/utils/assert-actor";
+import {
+  normalizeEmail,
+  normalizeText,
+  toNumber,
+} from "@/shared/utils/firestore.utils";
 import type { DecodedIdToken } from "firebase-admin/auth";
+import {
+  assertMemberAccess,
+  assertOwner,
+  getGroupOrThrow,
+  type GroupSource,
+} from "./group-helpers";
+import { buildShareLink, generateUniqueInviteCode } from "./group-invite";
+import { mapGroupListItem } from "./group-mappers";
 
 const db = admin.firestore();
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-const toNumber = (value: unknown, fallback = 0): number => {
-  const next = Number(value);
-  return Number.isFinite(next) ? next : fallback;
-};
-
-const normalizeEmail = (value: unknown): string =>
-  typeof value === "string" ? value.trim().toLowerCase() : "";
-
-const normalizeText = (value: unknown): string =>
-  typeof value === "string" ? value.trim() : "";
-
-const makeInviteCode = (name: string): string => {
-  const normalizedName = normalizeText(name)
-    .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
-    .slice(0, 14);
-
-  const suffix = Math.floor(Math.random() * 900 + 100).toString();
-  return `${normalizedName || "GROUP"}-${suffix}`;
-};
-
-const buildShareLink = (inviteCode: string): string => {
-  const clientOrigin =
-    process.env.APP_CLIENT_ORIGIN ??
-    process.env.FRONTEND_ORIGIN ??
-    "http://localhost:3000";
-
-  return `${clientOrigin}/group/list-my-groups?invite=${inviteCode ?? ""}`;
-};
-
-const generateUniqueInviteCode = async (name: string): Promise<string> => {
-  let attempts = 0;
-
-  while (attempts < 8) {
-    const nextCode = makeInviteCode(name);
-    const snapshot = await db
-      .collection(GROUPS_COLLECTION)
-      .where("inviteCode", "==", nextCode)
-      .limit(1)
-      .get();
-
-    if (snapshot.empty) return nextCode;
-    attempts += 1;
-  }
-
-  return `${makeInviteCode(name)}-${Date.now().toString().slice(-4)}`;
-};
-
-interface GroupSource {
-  name?: string;
-  description?: string;
-  memberCount?: number;
-  memberEmails?: string[];
-  memberUids?: string[];
-  ownerUid?: string;
-  ownerEmail?: string;
-  ownerDisplayName?: string;
-  status?: GroupStatus;
-  inviteCode?: string;
-  updatedAt?: number;
-  createdAt?: number;
-}
-
-const mapGroupListItem = (
-  id: string,
-  source: GroupSource,
-  actor: DecodedIdToken | null,
-): GroupListItem & { isMember: boolean } => {
-  const actorUid = actor?.uid ?? "";
-  const actorEmail = normalizeEmail(actor?.email ?? "");
-  const memberEmails = Array.isArray(source.memberEmails)
-    ? source.memberEmails.map((email) => normalizeEmail(email)).filter(Boolean)
-    : [];
-
-  const isOwner = source.ownerUid === actorUid;
-  const isMember =
-    isOwner ||
-    memberEmails.includes(actorEmail) ||
-    (Array.isArray(source.memberUids) && source.memberUids.includes(actorUid));
-
-  return {
-    id,
-    name: source.name ?? "",
-    description: source.description ?? "",
-    memberCount: toNumber(source.memberCount, memberEmails.length || 1),
-    status:
-      source.status === GROUP_STATUS.PAUSED
-        ? GROUP_STATUS.PAUSED
-        : GROUP_STATUS.ACTIVE,
-    role: (isOwner ? GROUP_ROLE.OWNER : GROUP_ROLE.MEMBER) as GroupRole,
-    inviteCode: source.inviteCode ?? "",
-    updatedAt: toNumber(source.updatedAt, 0),
-    isMember,
-  };
-};
-
-function assertActor(
-  actor: DecodedIdToken | undefined,
-): asserts actor is DecodedIdToken {
-  if (!actor?.uid) throw AppError.unauthorized();
-}
-
-const getGroupOrThrow = async (
-  groupId: string,
-): Promise<{
-  groupRef: FirebaseFirestore.DocumentReference;
-  source: GroupSource;
-}> => {
-  const groupRef = db.collection(GROUPS_COLLECTION).doc(groupId);
-  const snapshot = await groupRef.get();
-
-  if (!snapshot.exists) throw AppError.notFound("Group not found");
-
-  return { groupRef, source: (snapshot.data() ?? {}) as GroupSource };
-};
-
-const assertOwner = (source: GroupSource, actor: DecodedIdToken): void => {
-  if (source.ownerUid !== actor.uid) {
-    throw new AppError(
-      "Only group owner can perform this action",
-      403,
-      "FORBIDDEN",
-    );
-  }
-};
-
-const assertMemberAccess = (
-  source: GroupSource,
-  actor: DecodedIdToken,
-): void => {
-  const actorEmail = normalizeEmail(actor?.email ?? "");
-  const memberEmails = Array.isArray(source.memberEmails)
-    ? source.memberEmails.map((email) => normalizeEmail(email))
-    : [];
-  const memberUids = Array.isArray(source.memberUids) ? source.memberUids : [];
-
-  if (
-    source.ownerUid !== actor.uid &&
-    !memberEmails.includes(actorEmail) &&
-    !memberUids.includes(actor.uid)
-  ) {
-    throw new AppError("You are not a member of this group", 403, "FORBIDDEN");
-  }
-};
 
 // ─── Service Functions ───────────────────────────────────────────────────────
 

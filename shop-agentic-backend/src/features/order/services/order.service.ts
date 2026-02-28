@@ -1,8 +1,6 @@
 import admin from "@/app/config/firebaseAdmin";
 import {
-  DEFAULT_VAT_RATE,
   EVENTS_COLLECTION,
-  GROUPS_COLLECTION,
   ORDERS_COLLECTION,
 } from "@/features/order/constants/order.constants";
 import type {
@@ -17,210 +15,13 @@ import {
   type OrderDocument,
 } from "@/features/order/types/order.types";
 import { AppError } from "@/shared/exceptions/AppError";
+import { assertActor } from "@/shared/utils/assert-actor";
+import { toNumber } from "@/shared/utils/firestore.utils";
 import type { DecodedIdToken } from "firebase-admin/auth";
+import { assertGroupMember, getEventOrThrow } from "./order-helpers";
+import { calcLineItem, calcOrderBreakdown } from "./order-pricing";
 
 const db = admin.firestore();
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-const toNum = (value: unknown, fallback = 0): number => {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : fallback;
-};
-
-function assertActor(
-  actor: DecodedIdToken | undefined,
-): asserts actor is DecodedIdToken {
-  if (!actor?.uid) throw AppError.unauthorized();
-}
-
-async function getEventOrThrow(
-  eventId: string,
-): Promise<Record<string, unknown> & { id: string }> {
-  const snap = await db.collection(EVENTS_COLLECTION).doc(eventId).get();
-  if (!snap.exists) throw AppError.notFound("Event không tồn tại");
-  return { id: snap.id, ...(snap.data() as Record<string, unknown>) };
-}
-
-async function assertGroupMember(
-  groupId: string,
-  actor: DecodedIdToken,
-): Promise<void> {
-  const snap = await db.collection(GROUPS_COLLECTION).doc(groupId).get();
-  if (!snap.exists) throw AppError.notFound("Group không tồn tại");
-
-  const group = (snap.data() ?? {}) as Record<string, unknown>;
-  const uid = actor.uid;
-  const email =
-    typeof actor.email === "string" ? actor.email.trim().toLowerCase() : "";
-
-  const memberUids = Array.isArray(group["memberUids"])
-    ? (group["memberUids"] as string[])
-    : [];
-  const memberEmails = Array.isArray(group["memberEmails"])
-    ? (group["memberEmails"] as string[]).map((e) => e.trim().toLowerCase())
-    : [];
-
-  const isMember =
-    group["ownerUid"] === uid ||
-    memberUids.includes(uid) ||
-    (email !== "" && memberEmails.includes(email));
-
-  if (!isMember)
-    throw AppError.forbidden("Bạn không phải thành viên của group này");
-}
-
-const findProduct = (
-  event: Record<string, unknown>,
-  productId: string,
-): (Record<string, unknown> & { id: string }) | null => {
-  const items = Array.isArray(event["items"])
-    ? (event["items"] as Array<Record<string, unknown>>)
-    : [];
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (!item || typeof item !== "object") continue;
-    const resolvedId =
-      typeof item["id"] === "string" && (item["id"] as string).trim()
-        ? (item["id"] as string).trim()
-        : `item-${i + 1}`;
-    if (resolvedId === productId) return { ...item, id: resolvedId };
-  }
-  return null;
-};
-
-// ─── Core Pricing Engine ─────────────────────────────────────────────────────
-
-function calcLineItem(
-  product: Record<string, unknown> & { id: string },
-  qty: number,
-  isGroupBuy: boolean,
-  currentGroupQty = 0,
-): LineItem {
-  const normalPrice = toNum(
-    product["basePrice"] ?? product["normalPrice"] ?? product["price"],
-    0,
-  );
-  const groupDiscountPercent = toNum(product["groupDiscountPercent"], 0);
-  const qtyThreshold = toNum(product["qtyThreshold"], 0);
-  const groupPrice = toNum(product["groupPrice"], 0);
-
-  let basePrice: number;
-  if (isGroupBuy) {
-    if (groupPrice > 0) {
-      basePrice = groupPrice;
-    } else if (groupDiscountPercent > 0) {
-      basePrice = Math.round(normalPrice * (1 - groupDiscountPercent / 100));
-    } else {
-      basePrice = normalPrice;
-    }
-  } else {
-    basePrice = normalPrice;
-  }
-
-  let itemDiscountPercent = 0;
-  if (
-    isGroupBuy &&
-    qtyThreshold > 0 &&
-    currentGroupQty + qty >= qtyThreshold &&
-    groupPrice === 0
-  ) {
-    itemDiscountPercent = groupDiscountPercent;
-  }
-
-  const discountedUnitPrice = Math.round(
-    basePrice * (1 - itemDiscountPercent / 100),
-  );
-  const lineTotalBeforeVat = discountedUnitPrice * qty;
-  const discountAmount = (basePrice - discountedUnitPrice) * qty;
-
-  return {
-    productId:
-      typeof product["id"] === "string"
-        ? product["id"]
-        : typeof product["productId"] === "string"
-          ? product["productId"]
-          : "",
-    productName: typeof product["name"] === "string" ? product["name"] : "",
-    qty,
-    normalPrice,
-    basePrice,
-    itemDiscountPercent,
-    discountAmount,
-    discountedUnitPrice,
-    lineTotalBeforeVat,
-  };
-}
-
-function calcOrderBreakdown(
-  event: Record<string, unknown>,
-  items: Array<{ productId: string; qty: number }>,
-  isGroupBuy: boolean,
-): OrderBreakdown {
-  const vatRate = toNum(event["vatRate"], DEFAULT_VAT_RATE);
-  const discountRules = (event["discountRules"] ?? {}) as Record<
-    string,
-    Record<string, unknown>
-  >;
-  const groupBuyRules = discountRules["groupBuy"] ?? {};
-  const productGroupQty = (event["productGroupQty"] ?? {}) as Record<
-    string,
-    unknown
-  >;
-
-  const orderItems = items.map((inputItem) => {
-    const product = findProduct(event, inputItem.productId);
-    if (!product) {
-      throw AppError.badRequest(
-        `Sản phẩm "${inputItem.productId}" không tìm thấy trong event`,
-      );
-    }
-    const currentGroupQty = toNum(productGroupQty[inputItem.productId], 0);
-    return calcLineItem(product, inputItem.qty, isGroupBuy, currentGroupQty);
-  });
-
-  const subtotalBeforeDiscount = orderItems.reduce(
-    (sum, li) => sum + li.lineTotalBeforeVat,
-    0,
-  );
-
-  let extraGroupDiscountPercent = 0;
-  let extraGroupDiscount = 0;
-
-  if (
-    isGroupBuy &&
-    groupBuyRules["enabled"] &&
-    toNum(groupBuyRules["extraDiscountPercent"], 0) > 0
-  ) {
-    const joinedCount = toNum(event["currentCount"] ?? event["buyCount"], 0);
-    const minMembers = toNum(groupBuyRules["minMembers"], 0);
-
-    if (joinedCount >= minMembers && minMembers > 0) {
-      extraGroupDiscountPercent = toNum(
-        groupBuyRules["extraDiscountPercent"],
-        0,
-      );
-      extraGroupDiscount = Math.round(
-        (subtotalBeforeDiscount * extraGroupDiscountPercent) / 100,
-      );
-    }
-  }
-
-  const subtotalAfterDiscount = subtotalBeforeDiscount - extraGroupDiscount;
-  const vatAmount = Math.round(subtotalAfterDiscount * vatRate);
-  const grandTotal = subtotalAfterDiscount + vatAmount;
-
-  return {
-    orderItems,
-    subtotalBeforeDiscount,
-    extraGroupDiscountPercent,
-    extraGroupDiscount,
-    subtotalAfterDiscount,
-    vatRate,
-    vatAmount,
-    grandTotal,
-  };
-}
 
 // ─── Service Functions ───────────────────────────────────────────────────────
 
@@ -241,11 +42,14 @@ export async function calculateOrder(
     ((event["discountRules"] as Record<string, unknown> | undefined) ?? {})[
       "groupBuy"
     ] ?? ({} as Record<string, unknown>);
-  const minMembers = toNum(
+  const minMembers = toNumber(
     (groupBuyRules as Record<string, unknown>)["minMembers"],
     0,
   );
-  const currentMembers = toNum(event["currentCount"] ?? event["buyCount"], 0);
+  const currentMembers = toNumber(
+    event["currentCount"] ?? event["buyCount"],
+    0,
+  );
   const membersNeededForDiscount = Math.max(0, minMembers - currentMembers);
 
   return {
@@ -257,7 +61,7 @@ export async function calculateOrder(
     membersNeededForDiscount,
     willGetExtraDiscount:
       membersNeededForDiscount === 0 &&
-      toNum(
+      toNumber(
         (groupBuyRules as Record<string, unknown>)["extraDiscountPercent"],
         0,
       ) > 0,
@@ -392,8 +196,8 @@ export async function listMyOrders(
 }> {
   assertActor(actor);
 
-  const normalizedPage = Math.max(1, toNum(page, 1));
-  const normalizedPageSize = Math.max(1, Math.min(toNum(pageSize, 20), 100));
+  const normalizedPage = Math.max(1, toNumber(page, 1));
+  const normalizedPageSize = Math.max(1, Math.min(toNumber(pageSize, 20), 100));
 
   let query = db
     .collection(ORDERS_COLLECTION)
@@ -440,5 +244,5 @@ export async function listEventOrders(
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
 
-// export for unit-testing
+// Re-export for unit-testing
 export { calcLineItem, calcOrderBreakdown };

@@ -1,15 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { APP_PATHS } from "../../../app/route-config";
 import {
-  addGroupMember,
-  createGroup,
   fetchGroupByCode,
   fetchGroupShareLink,
   fetchMyGroups,
-  resetGroupCode,
-  updateGroupSettings,
 } from "../../../shared/services/group-api";
 import { GROUP_STATUS_OPTIONS } from "../constants/list-my-groups-constants";
 import {
@@ -18,6 +14,7 @@ import {
   GroupStatus,
   ListMyGroupsPageViewModel,
 } from "../types/list-my-groups-types";
+import { useGroupMutations } from "./use-group-mutations";
 
 const isEmail = (value: string) => /\S+@\S+\.\S+/.test(value);
 
@@ -26,7 +23,6 @@ const GROUP_PAGE_SIZE = 100;
 
 export const useListMyGroupsPage = (): ListMyGroupsPageViewModel => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const redirectTimeoutRef = useRef<number | null>(null);
 
   const [search, setSearch] = useState("");
@@ -63,7 +59,11 @@ export const useListMyGroupsPage = (): ListMyGroupsPageViewModel => {
     return () => window.clearTimeout(timer);
   }, [search]);
 
-  const { data: groupsData, isLoading, error } = useQuery({
+  const {
+    data: groupsData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["myGroups", GROUP_PAGE, GROUP_PAGE_SIZE],
     queryFn: () => fetchMyGroups(GROUP_PAGE, GROUP_PAGE_SIZE),
   });
@@ -126,44 +126,14 @@ export const useListMyGroupsPage = (): ListMyGroupsPageViewModel => {
     [allGroups, selectedGroupId],
   );
 
-  const createGroupMutation = useMutation({
-    mutationFn: (payload: { name: string; description: string }) =>
-      createGroup(payload),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["myGroups"] });
-    },
-  });
-
-  const updateGroupSettingsMutation = useMutation({
-    mutationFn: ({
-      groupId,
-      status,
-    }: {
-      groupId: string;
-      status: "active" | "paused";
-    }) => updateGroupSettings(groupId, status),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["myGroups"] });
-    },
-  });
-
-  const addGroupMemberMutation = useMutation({
-    mutationFn: ({ groupId, email }: { groupId: string; email: string }) =>
-      addGroupMember(groupId, email),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["myGroups"] });
-    },
-  });
-
-  const resetGroupCodeMutation = useMutation({
-    mutationFn: (groupId: string) => resetGroupCode(groupId),
-    onSuccess: (result) => {
-      void queryClient.invalidateQueries({ queryKey: ["myGroups"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["groupShareLink", selectedGroupId],
-      });
-      setSelectedGroupShareLink(result.shareLink);
-    },
+  const {
+    createGroupMutation,
+    updateGroupSettingsMutation,
+    addGroupMemberMutation,
+    resetGroupCodeMutation,
+  } = useGroupMutations({
+    selectedGroupId,
+    onShareLinkUpdate: setSelectedGroupShareLink,
   });
 
   const toGroupDetailPath = useCallback(
