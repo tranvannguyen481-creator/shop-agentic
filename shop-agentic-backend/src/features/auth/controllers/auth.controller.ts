@@ -5,6 +5,7 @@ import {
 import {
   completeProfileSchema,
   googleLoginSchema,
+  registerSchema,
   sessionSchema,
   updateProfileSchema,
 } from "@/features/auth/dtos/auth.dto";
@@ -123,5 +124,19 @@ export async function updateProfile(
     success: true,
     data: { user: updatedUser },
     message: "Profile updated",
+  });
+}
+
+export async function register(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  const parsedBody = registerSchema.parse(req.body ?? {});
+  const result = await authService.register(parsedBody);
+
+  return res.status(201).json({
+    success: true,
+    data: result,
+    message: "Registration successful",
   });
 }

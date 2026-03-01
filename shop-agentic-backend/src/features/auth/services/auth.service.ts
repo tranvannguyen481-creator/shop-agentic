@@ -2,10 +2,12 @@ import admin from "@/app/config/firebaseAdmin";
 import { USERS_COLLECTION } from "@/features/auth/constants/auth.constants";
 import type {
   CompleteProfileDto,
+  RegisterDto,
   UpdateProfileDto,
 } from "@/features/auth/dtos/auth.dto";
 import type { UserProfile } from "@/features/auth/types/auth.types";
 import { AppError } from "@/shared/exceptions/AppError";
+import bcrypt from "bcryptjs";
 import type { DecodedIdToken } from "firebase-admin/auth";
 
 const db = admin.firestore();
@@ -195,4 +197,52 @@ export async function updateProfile(
     id: uid,
     uid,
   };
+}
+
+export async function register(
+  payload: RegisterDto,
+): Promise<{ user: UserProfile & { id: string } }> {
+  const email = normalizeEmail(payload.email);
+
+  // Check duplicate email in Firestore
+  const existing = await db
+    .collection(USERS_COLLECTION)
+    .where("email", "==", email)
+    .limit(1)
+    .get();
+
+  if (!existing.empty) {
+    throw new AppError("Email already exists", 409, "EMAIL_CONFLICT");
+  }
+
+  // Create Firebase Auth user (handles password storage securely)
+  const firebaseUser = await admin.auth().createUser({
+    email,
+    password: payload.password,
+    displayName: payload.fullName,
+  });
+
+  const passwordHash = await bcrypt.hash(payload.password, 10);
+  const now = Date.now();
+
+  const profile: UserProfile = {
+    uid: firebaseUser.uid,
+    email,
+    displayName: payload.fullName,
+    photoURL: "",
+    provider: "email",
+    role: "member",
+    isVerified: false,
+    loginCount: 0,
+    lastLoginAt: 0,
+    updatedAt: now,
+    createdAt: now,
+  };
+
+  await db
+    .collection(USERS_COLLECTION)
+    .doc(firebaseUser.uid)
+    .set({ ...profile, passwordHash });
+
+  return { user: { ...profile, id: firebaseUser.uid } };
 }
