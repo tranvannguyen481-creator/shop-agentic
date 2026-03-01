@@ -93,6 +93,7 @@ export interface EventDetailPageViewModel {
   groupId: string;
   groupName: string;
   products: EventDetailProductItem[];
+  orderLines: EventDetailCartLineItem[];
   orderItemCount: number;
   cartQtyByProductId: Record<string, number>;
   canProceedCheckout: boolean;
@@ -113,6 +114,20 @@ export interface EventDetailPageViewModel {
   };
 
   currentMembers: number;
+
+  /** Whether the current user is a member of the event's user group */
+  isGroupMember: boolean;
+  /** Whether the user has a pending join request */
+  pendingJoinRequest: boolean;
+  /** True when the blocking join-group modal should be shown */
+  showJoinGroupModal: boolean;
+  /** Tracks the state of the join request mutation */
+  joinRequestStatus: "idle" | "loading" | "sent" | "error";
+  /** Error message from the join request, if any */
+  joinRequestError: string | null;
+  /** Fires the join request to the backend */
+  onRequestJoinGroup: () => void;
+
   onAddToOrder: (payload: EventAddToOrderPayload) => void;
   onRemoveOrderLine: (lineId: string) => void;
   onClearCart: () => void;

@@ -57,7 +57,6 @@ export const useGroupDetailPage = () => {
     if (!canUsePremiumLayout && mode === "premium") {
       setMode("admin-mobile");
     }
-
   }, [canUsePremiumLayout]);
 
   const dashboardCards = useMemo(
@@ -109,10 +108,9 @@ export const useGroupDetailPage = () => {
     groupName: String(group?.name ?? "Group"),
     description: String(group?.description ?? "No description"),
     ownerDisplayName: String(group?.ownerDisplayName ?? "-"),
-    ownerEmail: String((group as Record<string, unknown>)?.ownerEmail ?? "-"),
-    createdAtText: toReadableDate(
-      (group as Record<string, unknown>)?.createdAt,
-    ),
+    ownerEmail: String(group?.ownerEmail ?? "-"),
+    ownerUid: String(group?.ownerUid ?? ""),
+    createdAtText: toReadableDate(group?.createdAt),
     updatedAtText: toReadableDate(group?.updatedAt),
     status: String(group?.status ?? "active"),
     memberCount: String(Number(group?.memberCount ?? 0)),

@@ -2,14 +2,18 @@
 
 .container {
   display: grid;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .helper {
   margin: 0;
-  color: tokens.color(text-soft);
+  color: tokens.color(text-muted-1);
   font-size: tokens.fs(sm);
-  line-height: 1.45;
+  line-height: 1.5;
+  padding: 0.625rem 0.75rem;
+  background: tokens.color(surface-muted);
+  border-radius: tokens.radius(xl);
+  border: 0.0625rem solid tokens.color(border-muted);
 }
 
 .field {

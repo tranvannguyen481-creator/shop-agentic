@@ -5,12 +5,12 @@ import { APP_PATHS } from "../../../app/route-config";
 import {
   fetchGroupEvents,
   reHostEvent,
-  type GroupEventItem,
 } from "../../../shared/services/event-api";
 import type {
   EventFilterTab,
   EventSortKey,
 } from "../components/event-list-view";
+import type { GroupEventItem } from "../types/event-list-types";
 
 const HOME_PAGE_SIZE = 50;
 

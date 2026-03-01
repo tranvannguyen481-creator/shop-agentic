@@ -1,15 +1,13 @@
-import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useSmartForm } from "../../../shared/components/form";
 import {
   CURRENT_USER_QUERY_KEY,
   useCurrentUserQuery,
 } from "../../../shared/hooks/use-current-user-query";
-import {
-  updateUserProfile,
-  type AuthUser,
-} from "../../../shared/services/auth-api";
+import { updateUserProfile } from "../../../shared/services/auth-api";
+import type { AuthUser } from "../../auth/types/auth-user";
 
 export const updateProfileSchema = z.object({
   displayName: z
@@ -62,7 +60,6 @@ export function useUpdateProfileForm(onSuccess?: () => void) {
             : "",
       });
     }
-
   }, [currentUser]);
 
   const onSubmit = async (values: UpdateProfileFormValues) => {

@@ -121,3 +121,32 @@
     box-shadow: 0 0.375rem 1rem rgba(79, 70, 229, 0.35);
   }
 }
+
+// ── Icon-only button ──────────────────────────────
+// Applied via iconOnly prop. Square, borderless, surface-soft hover (#f8fafc).
+// Must come after all variant rules so hover overrides correctly.
+.icon-only {
+  border: 0;
+  background: transparent;
+  color: tokens.color(text-muted-1);
+  border-radius: tokens.radius(lg);
+  width: 2.125rem;
+  height: 2.125rem;
+  padding: 0;
+  flex-shrink: 0;
+  text-transform: none;
+  letter-spacing: 0;
+
+  &:hover:not(:disabled) {
+    background: tokens.color(surface-soft);
+    color: tokens.color(body-text);
+    transform: none;
+    box-shadow: none;
+    text-decoration: none;
+  }
+
+  &:active:not(:disabled) {
+    background: tokens.color(surface-muted);
+    transform: none;
+  }
+}

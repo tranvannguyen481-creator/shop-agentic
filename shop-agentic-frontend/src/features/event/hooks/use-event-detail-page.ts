@@ -1,11 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { APP_PATHS } from "../../../app/route-config";
 import {
   fetchEventDetail,
+  recordGroupVisit,
   reHostEvent,
 } from "../../../shared/services/event-api";
+import { requestJoinGroup } from "../../../shared/services/group-api";
 import { EVENT_QUERY_KEYS } from "../constants/event-query-keys";
 import {
   computeStockStatus,
@@ -27,15 +29,32 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
   const params = useParams<{ eventId: string }>();
   const eventId = params.eventId?.trim() ?? "";
 
+  // Read optional encrypted groupToken from the share-link URL
+  const [searchParams] = useSearchParams();
+  const groupToken = searchParams.get("groupToken") ?? undefined;
+
   const {
     data: event,
     isLoading,
     error,
   } = useQuery({
-    queryKey: EVENT_QUERY_KEYS.detail(eventId),
-    queryFn: () => fetchEventDetail(eventId),
+    queryKey: [...EVENT_QUERY_KEYS.detail(eventId), groupToken],
+    queryFn: () => fetchEventDetail(eventId, groupToken),
     enabled: !!eventId,
   });
+
+  // ── Record visit when the user enters via a group share link ────────────
+  // Fire once per mount when a valid groupToken is present and the event
+  // has loaded successfully.  The backend de-duplicates by uid, so repeated
+  // renders or refreshes won't create extra toasts for the host.
+  const visitRecorded = useRef(false);
+  useEffect(() => {
+    if (!groupToken || !eventId || !event || visitRecorded.current) return;
+    visitRecorded.current = true;
+    recordGroupVisit(eventId).catch(() => {
+      /* best-effort — swallow errors silently */
+    });
+  }, [groupToken, eventId, event]);
 
   const reHostMutation = useMutation({
     mutationFn: () => reHostEvent(eventId),
@@ -46,6 +65,48 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
       );
     },
   });
+
+  // ── Group membership & join request ────────────────────────────────────
+  const isGroupMember = event?.isGroupMember !== false; // default true when no group
+  const pendingJoinRequest = Boolean(event?.pendingJoinRequest);
+  const groupId = typeof event?.groupId === "string" ? event.groupId : "";
+
+  // Show the blocking modal when the user arrived via a share link,
+  // the event belongs to a group, and the user is NOT a member.
+  const showJoinGroupModal =
+    !isLoading && !!groupToken && !!groupId && !isGroupMember;
+
+  const [joinRequestStatus, setJoinRequestStatus] = useState<
+    "idle" | "loading" | "sent" | "error"
+  >(pendingJoinRequest ? "sent" : "idle");
+  const [joinRequestError, setJoinRequestError] = useState<string | null>(null);
+
+  // Sync `pendingJoinRequest` from the API into local state
+  useEffect(() => {
+    if (pendingJoinRequest) setJoinRequestStatus("sent");
+  }, [pendingJoinRequest]);
+
+  const joinRequestMutation = useMutation({
+    mutationFn: () => requestJoinGroup(groupId, eventId),
+    onMutate: () => {
+      setJoinRequestStatus("loading");
+      setJoinRequestError(null);
+    },
+    onSuccess: () => {
+      setJoinRequestStatus("sent");
+    },
+    onError: (err) => {
+      setJoinRequestStatus("error");
+      setJoinRequestError(
+        err instanceof Error ? err.message : "Không thể gửi yêu cầu",
+      );
+    },
+  });
+
+  const onRequestJoinGroup = useCallback(() => {
+    if (joinRequestStatus === "loading" || joinRequestStatus === "sent") return;
+    joinRequestMutation.mutate();
+  }, [joinRequestStatus, joinRequestMutation]);
 
   const {
     orderLines,
@@ -185,7 +246,14 @@ export const useEventDetailPage = (): EventDetailPageViewModel => {
     isClosed,
     groupId: typeof event?.groupId === "string" ? event.groupId : "",
     groupName: typeof event?.groupName === "string" ? event.groupName : "",
+    isGroupMember,
+    pendingJoinRequest,
+    showJoinGroupModal,
+    joinRequestStatus,
+    joinRequestError,
+    onRequestJoinGroup,
     products,
+    orderLines,
     orderItemCount,
     cartQtyByProductId,
     canProceedCheckout: !isClosed && orderLines.length > 0,

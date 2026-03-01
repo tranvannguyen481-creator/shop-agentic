@@ -6,48 +6,81 @@ import {
   SectionCard,
   Skeleton,
 } from "../../../../shared/components/ui";
+import { useCurrentUserQuery } from "../../../../shared/hooks/use-current-user-query";
 import AppLayout from "../../../../shared/layouts/app-layout";
+import JoinRequestsSection from "../../components/join-requests-section";
 import { useGroupDetailPage } from "../../hooks/use-group-detail-page";
+import { useJoinRequests } from "../../hooks/use-join-requests";
 import styles from "./index.module.scss";
 
 export const routePath = APP_PATHS.groupDetail;
 
 function GroupDetailPage() {
   const viewModel = useGroupDetailPage();
+  const { data: currentUser } = useCurrentUserQuery();
+
+  const currentUid = currentUser?.uid ?? currentUser?.id;
+  const isOwner =
+    !!currentUid && !!viewModel.ownerUid && currentUid === viewModel.ownerUid;
+
+  const joinRequests = useJoinRequests(viewModel.groupId, isOwner);
 
   return (
     <AppLayout>
       <section className={styles.page}>
         <div className={styles.content}>
-          <header className={styles.header}>
-            <h2>{viewModel.groupName}</h2>
-            <p>
-              {viewModel.canUsePremiumLayout
-                ? "Premium member can switch dashboard mode"
-                : "Standard member uses admin mobile layout"}
-            </p>
-          </header>
+          {/* Hero banner */}
+          <div className={styles.hero}>
+            <span className={styles.heroInitial}>
+              {String(viewModel.groupName ?? "G")
+                .charAt(0)
+                .toUpperCase()}
+            </span>
+            <div className={styles.heroInfo}>
+              <h2 className={styles.heroTitle}>
+                {viewModel.groupName || "Group"}
+              </h2>
+              <p className={styles.heroSub}>
+                {viewModel.canUsePremiumLayout
+                  ? "Premium · Switch dashboard mode below"
+                  : "Standard · Admin mobile layout"}
+              </p>
+            </div>
+          </div>
 
+          {/* Mode segmented switch */}
           <div className={styles.modeSwitch}>
-            <Button
+            <button
               type="button"
-              variant={
-                viewModel.mode === "admin-mobile" ? "primary" : "outline"
-              }
+              className={[
+                styles.modeBtn,
+                viewModel.mode === "admin-mobile" ? styles.modeBtnActive : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               onClick={() => viewModel.onSelectMode("admin-mobile")}
             >
-              <Monitor size={16} />
+              <Monitor size={14} />
               Admin mobile
-            </Button>
-            <Button
+            </button>
+            <button
               type="button"
-              variant={viewModel.mode === "premium" ? "primary" : "outline"}
-              onClick={() => viewModel.onSelectMode("premium")}
+              className={[
+                styles.modeBtn,
+                viewModel.mode === "premium" ? styles.modeBtnActive : "",
+                !viewModel.canUsePremiumLayout ? styles.modeBtnDisabled : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              onClick={() =>
+                viewModel.canUsePremiumLayout &&
+                viewModel.onSelectMode("premium")
+              }
               disabled={!viewModel.canUsePremiumLayout}
             >
-              <Crown size={16} />
+              <Crown size={14} />
               Premium
-            </Button>
+            </button>
           </div>
 
           {!viewModel.canUsePremiumLayout ? (
@@ -100,20 +133,22 @@ function GroupDetailPage() {
                   </div>
 
                   <SectionCard className={styles.details}>
-                    <h3>Group details</h3>
-                    <p>{viewModel.description}</p>
-                    <p>
-                      <strong>Owner:</strong> {viewModel.ownerDisplayName}
-                    </p>
-                    <p>
-                      <strong>Owner email:</strong> {viewModel.ownerEmail}
-                    </p>
-                    <p>
-                      <strong>Created:</strong> {viewModel.createdAtText}
-                    </p>
-                    <p>
-                      <strong>Updated:</strong> {viewModel.updatedAtText}
-                    </p>
+                    <h3 className={styles.detailsTitle}>Group details</h3>
+                    {viewModel.description ? (
+                      <p className={styles.detailsDesc}>
+                        {viewModel.description}
+                      </p>
+                    ) : null}
+                    <dl className={styles.detailsGrid}>
+                      <dt>Owner</dt>
+                      <dd>{viewModel.ownerDisplayName}</dd>
+                      <dt>Email</dt>
+                      <dd>{viewModel.ownerEmail}</dd>
+                      <dt>Created</dt>
+                      <dd>{viewModel.createdAtText}</dd>
+                      <dt>Updated</dt>
+                      <dd>{viewModel.updatedAtText}</dd>
+                    </dl>
                   </SectionCard>
                 </>
               ) : (
@@ -128,24 +163,35 @@ function GroupDetailPage() {
                   </div>
 
                   <SectionCard className={styles.details}>
-                    <h3>Premium dashboard</h3>
-                    <p>
-                      Subscription mode active for this group. You can switch
-                      back to admin mobile layout anytime.
+                    <h3 className={styles.detailsTitle}>Premium dashboard</h3>
+                    <p className={styles.detailsDesc}>
+                      Subscription mode active. Switch back to admin mobile
+                      anytime.
                     </p>
-                    <p>
-                      <strong>Group status:</strong> {viewModel.status}
-                    </p>
-                    <p>
-                      <strong>Members:</strong> {viewModel.memberCount}
-                    </p>
-                    <p>
-                      <strong>Invite code:</strong> {viewModel.inviteCode}
-                    </p>
+                    <dl className={styles.detailsGrid}>
+                      <dt>Status</dt>
+                      <dd>{viewModel.status}</dd>
+                      <dt>Members</dt>
+                      <dd>{viewModel.memberCount}</dd>
+                      <dt>Invite code</dt>
+                      <dd>{viewModel.inviteCode}</dd>
+                    </dl>
                   </SectionCard>
                 </>
               )}
             </>
+          ) : null}
+
+          {!viewModel.isLoading && isOwner ? (
+            <JoinRequestsSection
+              items={joinRequests.items}
+              isLoading={joinRequests.isLoading}
+              error={joinRequests.error}
+              approvingId={joinRequests.approvingId}
+              rejectingId={joinRequests.rejectingId}
+              onApprove={joinRequests.onApprove}
+              onReject={joinRequests.onReject}
+            />
           ) : null}
 
           <Button

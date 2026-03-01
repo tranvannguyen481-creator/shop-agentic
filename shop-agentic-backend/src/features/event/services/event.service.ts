@@ -10,6 +10,12 @@ import {
   type EventStatus,
   type GroupEventListItem,
 } from "@/features/event/types/event.types";
+import { GROUPS_COLLECTION } from "@/features/group/constants/group.constants";
+import type { GroupSource } from "@/features/group/services/group-helpers";
+import {
+  isGroupMember as checkGroupMember,
+  hasPendingJoinRequest,
+} from "@/features/group/services/group.service";
 import { AppError } from "@/shared/exceptions/AppError";
 import { assertActor } from "@/shared/utils/assert-actor";
 import { normalizeEmail, toNumber } from "@/shared/utils/firestore.utils";
@@ -335,6 +341,52 @@ export async function joinEvent(
   });
 }
 
+/**
+ * Record that a user visited an event via a group share link.
+ *
+ * - Uses `visit_{uid}` as the doc ID inside `groupBuyActivity` so that
+ *   refreshing the page does NOT create duplicate toasts.
+ * - Does NOT auto-add the user to the group — they must send a join
+ *   request which is approved by the group owner.
+ */
+export async function recordGroupVisit(
+  eventId: string,
+  actor: DecodedIdToken,
+): Promise<{ alreadyVisited: boolean }> {
+  assertActor(actor);
+
+  const eventRef = db.collection(EVENTS_COLLECTION).doc(eventId);
+  const visitDocRef = eventRef
+    .collection("groupBuyActivity")
+    .doc(`visit_${actor.uid}`);
+
+  const [existing, eventSnap] = await Promise.all([
+    visitDocRef.get(),
+    eventRef.get(),
+  ]);
+
+  // ── Record visit activity (deduplicated) ────────────────────────────────
+  if (existing.exists) {
+    return { alreadyVisited: true };
+  }
+
+  const displayName =
+    actor.name ??
+    (actor as Record<string, unknown>)["displayName"] ??
+    actor.email ??
+    "Ai đó";
+
+  await visitDocRef.set({
+    uid: actor.uid,
+    displayName,
+    email: actor.email ?? "",
+    action: "visited",
+    joinedAt: Date.now(),
+  });
+
+  return { alreadyVisited: false };
+}
+
 export async function getEventEditDraft(
   eventId: string,
 ): Promise<Record<string, unknown>> {
@@ -412,6 +464,7 @@ export async function getManageOrdersData(
 export async function getEventDetail(
   eventId: string,
   actor: DecodedIdToken | null,
+  invitedGroupId?: string,
 ): Promise<Record<string, unknown>> {
   const eventSnapshot = await db
     .collection(EVENTS_COLLECTION)
@@ -423,9 +476,16 @@ export async function getEventDetail(
   const eventData = (eventSnapshot.data() ?? {}) as Record<string, unknown>;
 
   // Permission check: if event belongs to a group, actor must be a member
-  if (actor?.uid && eventData["groupId"]) {
+  // — UNLESS the caller provided a valid invitedGroupId that matches.
+  const eventGroupId =
+    typeof eventData["groupId"] === "string" ? eventData["groupId"] : "";
+
+  const isInvitedViaToken =
+    !!invitedGroupId && !!eventGroupId && invitedGroupId === eventGroupId;
+
+  if (actor?.uid && eventGroupId && !isInvitedViaToken) {
     try {
-      await getGroupForCreate(eventData["groupId"] as string, actor);
+      await getGroupForCreate(eventGroupId, actor);
     } catch {
       throw new AppError(
         "You do not have permission to view this event",
@@ -490,7 +550,43 @@ export async function getEventDetail(
         (eventData["productGroupQty"] as Record<string, unknown>) ?? {},
       ),
     ),
+
+    // Group membership flags for invite-via-link flow
+    ...(await resolveGroupMembershipFlags(eventGroupId, actor)),
   };
+}
+
+/**
+ * Helper: resolve `isGroupMember` and `pendingJoinRequest` for the
+ * current actor relative to the event's group.
+ */
+async function resolveGroupMembershipFlags(
+  eventGroupId: string,
+  actor: DecodedIdToken | null,
+): Promise<{ isGroupMember: boolean; pendingJoinRequest: boolean }> {
+  if (!eventGroupId || !actor?.uid) {
+    return { isGroupMember: true, pendingJoinRequest: false };
+  }
+
+  const groupSnap = await db
+    .collection(GROUPS_COLLECTION)
+    .doc(eventGroupId)
+    .get();
+
+  if (!groupSnap.exists) {
+    return { isGroupMember: true, pendingJoinRequest: false };
+  }
+
+  const source = (groupSnap.data() ?? {}) as GroupSource;
+  const isMember = checkGroupMember(source, actor.uid, actor.email ?? "");
+
+  if (isMember) {
+    return { isGroupMember: true, pendingJoinRequest: false };
+  }
+
+  const hasPending = await hasPendingJoinRequest(eventGroupId, actor.uid);
+
+  return { isGroupMember: false, pendingJoinRequest: hasPending };
 }
 
 export async function reHostEvent(

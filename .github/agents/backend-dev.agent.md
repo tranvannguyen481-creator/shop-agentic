@@ -64,7 +64,7 @@ src/features/<feature>/
 
 - Never use `console.log` — always use the `logger`
 - Never touch any file inside `shop-agentic-frontend/`
-- Never use SQL, Prisma, TypeORM, or Sequelize
+- Never use Mongoose, Prisma, TypeORM, or any SQL database
 - Never put business logic or Firestore calls in a controller
 - Never skip Zod validation on incoming request data
 

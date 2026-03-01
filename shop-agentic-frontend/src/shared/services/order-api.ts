@@ -8,6 +8,15 @@ import type {
 } from "../../features/event/types/order.types";
 import api from "./api";
 
+export type {
+  CalculateOrderRequest,
+  CalculateOrderResult,
+  ListOrdersResult,
+  OrderDetail,
+  PlaceOrderRequest,
+  PlaceOrderResult,
+} from "../../features/event/types/order.types";
+
 export const calculateOrder = async (
   payload: CalculateOrderRequest,
 ): Promise<CalculateOrderResult> => {

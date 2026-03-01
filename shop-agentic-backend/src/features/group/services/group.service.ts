@@ -3,6 +3,7 @@ import { GROUPS_COLLECTION } from "@/features/group/constants/group.constants";
 import type {
   AddGroupMemberBody,
   CreateGroupBody,
+  RequestJoinGroupBody,
   UpdateGroupSettingsBody,
 } from "@/features/group/dtos/group.dto";
 import {
@@ -10,6 +11,10 @@ import {
   type GroupDetail,
   type GroupListItem,
 } from "@/features/group/types/group.types";
+import {
+  JOIN_REQUEST_STATUS,
+  type JoinRequestItem,
+} from "@/features/group/types/join-request.types";
 import { AppError } from "@/shared/exceptions/AppError";
 import { assertActor } from "@/shared/utils/assert-actor";
 import {
@@ -275,4 +280,242 @@ export async function getGroupDetail(
     inviteCode: source.inviteCode ?? "",
     memberCount: toNumber(source.memberCount, 1),
   };
+}
+
+// ─── Join Request Functions ──────────────────────────────────────────────────
+
+/**
+ * Create a join request for a group.
+ * Returns `alreadyRequested: true` if a pending request already exists.
+ */
+export async function requestJoinGroup(
+  groupId: string,
+  payload: RequestJoinGroupBody,
+  actor: DecodedIdToken,
+): Promise<{ requestId: string; alreadyRequested: boolean }> {
+  assertActor(actor);
+
+  const { source } = await getGroupOrThrow(groupId);
+
+  // Already a member — no need to request
+  const actorEmail = normalizeEmail(actor.email ?? "");
+  const memberUids = Array.isArray(source.memberUids) ? source.memberUids : [];
+  const memberEmails = Array.isArray(source.memberEmails)
+    ? source.memberEmails.map((e) => normalizeEmail(e))
+    : [];
+
+  if (
+    source.ownerUid === actor.uid ||
+    memberUids.includes(actor.uid) ||
+    memberEmails.includes(actorEmail)
+  ) {
+    throw AppError.badRequest("You are already a member of this group");
+  }
+
+  // Check for existing pending request
+  const existingQuery = await db
+    .collection(GROUPS_COLLECTION)
+    .doc(groupId)
+    .collection("joinRequests")
+    .where("uid", "==", actor.uid)
+    .where("status", "==", JOIN_REQUEST_STATUS.PENDING)
+    .limit(1)
+    .get();
+
+  if (!existingQuery.empty) {
+    return { requestId: existingQuery.docs[0].id, alreadyRequested: true };
+  }
+
+  const now = Date.now();
+  const requestRef = db
+    .collection(GROUPS_COLLECTION)
+    .doc(groupId)
+    .collection("joinRequests")
+    .doc();
+
+  const displayName =
+    (actor as Record<string, unknown>)["name"] ??
+    (actor as Record<string, unknown>)["displayName"] ??
+    actor.email ??
+    "";
+
+  await requestRef.set({
+    uid: actor.uid,
+    email: actor.email ?? "",
+    displayName: String(displayName),
+    groupId,
+    eventId: payload.eventId,
+    status: JOIN_REQUEST_STATUS.PENDING,
+    createdAt: now,
+    updatedAt: now,
+  });
+
+  return { requestId: requestRef.id, alreadyRequested: false };
+}
+
+/**
+ * List pending join requests for a group (owner only).
+ */
+export async function listJoinRequests(
+  groupId: string,
+  actor: DecodedIdToken,
+): Promise<{ items: JoinRequestItem[] }> {
+  assertActor(actor);
+
+  const { source } = await getGroupOrThrow(groupId);
+  assertOwner(source, actor);
+
+  const snapshot = await db
+    .collection(GROUPS_COLLECTION)
+    .doc(groupId)
+    .collection("joinRequests")
+    .where("status", "==", JOIN_REQUEST_STATUS.PENDING)
+    .orderBy("createdAt", "desc")
+    .limit(100)
+    .get();
+
+  const items: JoinRequestItem[] = snapshot.docs.map((doc) => {
+    const d = (doc.data() ?? {}) as Record<string, unknown>;
+    return {
+      id: doc.id,
+      groupId,
+      uid: String(d["uid"] ?? ""),
+      email: String(d["email"] ?? ""),
+      displayName: String(d["displayName"] ?? ""),
+      status:
+        (d["status"] as JoinRequestItem["status"]) ??
+        JOIN_REQUEST_STATUS.PENDING,
+      eventId: String(d["eventId"] ?? ""),
+      createdAt: toNumber(d["createdAt"], 0),
+      updatedAt: toNumber(d["updatedAt"], 0),
+    };
+  });
+
+  return { items };
+}
+
+/**
+ * Approve a join request — adds the user to the group's `memberUids`
+ * and `memberEmails`, then marks the request as approved.
+ */
+export async function approveJoinRequest(
+  groupId: string,
+  requestId: string,
+  actor: DecodedIdToken,
+): Promise<{ success: boolean }> {
+  assertActor(actor);
+
+  const { groupRef, source } = await getGroupOrThrow(groupId);
+  assertOwner(source, actor);
+
+  const requestRef = groupRef.collection("joinRequests").doc(requestId);
+  const requestSnap = await requestRef.get();
+
+  if (!requestSnap.exists) throw AppError.notFound("Join request not found");
+
+  const reqData = (requestSnap.data() ?? {}) as Record<string, unknown>;
+
+  if (reqData["status"] !== JOIN_REQUEST_STATUS.PENDING) {
+    throw AppError.badRequest("This request has already been processed");
+  }
+
+  const requesterUid = String(reqData["uid"] ?? "");
+  const requesterEmail = normalizeEmail(String(reqData["email"] ?? ""));
+  const now = Date.now();
+
+  const batch = db.batch();
+
+  // Add the user to the group
+  const updatePayload: Record<string, unknown> = {
+    memberUids: admin.firestore.FieldValue.arrayUnion(requesterUid),
+    updatedAt: now,
+  };
+  if (requesterEmail) {
+    updatePayload["memberEmails"] =
+      admin.firestore.FieldValue.arrayUnion(requesterEmail);
+    updatePayload["memberCount"] = admin.firestore.FieldValue.increment(1);
+  }
+  batch.update(groupRef, updatePayload);
+
+  // Mark request as approved
+  batch.update(requestRef, {
+    status: JOIN_REQUEST_STATUS.APPROVED,
+    updatedAt: now,
+  });
+
+  await batch.commit();
+
+  return { success: true };
+}
+
+/**
+ * Reject a join request.
+ */
+export async function rejectJoinRequest(
+  groupId: string,
+  requestId: string,
+  actor: DecodedIdToken,
+): Promise<{ success: boolean }> {
+  assertActor(actor);
+
+  const { groupRef, source } = await getGroupOrThrow(groupId);
+  assertOwner(source, actor);
+
+  const requestRef = groupRef.collection("joinRequests").doc(requestId);
+  const requestSnap = await requestRef.get();
+
+  if (!requestSnap.exists) throw AppError.notFound("Join request not found");
+
+  const reqData = (requestSnap.data() ?? {}) as Record<string, unknown>;
+
+  if (reqData["status"] !== JOIN_REQUEST_STATUS.PENDING) {
+    throw AppError.badRequest("This request has already been processed");
+  }
+
+  await requestRef.update({
+    status: JOIN_REQUEST_STATUS.REJECTED,
+    updatedAt: Date.now(),
+  });
+
+  return { success: true };
+}
+
+/**
+ * Check whether a user has a pending join request for a given group.
+ */
+export async function hasPendingJoinRequest(
+  groupId: string,
+  uid: string,
+): Promise<boolean> {
+  const snapshot = await db
+    .collection(GROUPS_COLLECTION)
+    .doc(groupId)
+    .collection("joinRequests")
+    .where("uid", "==", uid)
+    .where("status", "==", JOIN_REQUEST_STATUS.PENDING)
+    .limit(1)
+    .get();
+
+  return !snapshot.empty;
+}
+
+/**
+ * Check whether a given user is a member of a group.
+ */
+export function isGroupMember(
+  source: GroupSource,
+  uid: string,
+  email: string,
+): boolean {
+  const memberUids = Array.isArray(source.memberUids) ? source.memberUids : [];
+  const memberEmails = Array.isArray(source.memberEmails)
+    ? source.memberEmails.map((e) => normalizeEmail(e))
+    : [];
+  const normalizedEmail = normalizeEmail(email);
+
+  return (
+    source.ownerUid === uid ||
+    memberUids.includes(uid) ||
+    memberEmails.includes(normalizedEmail)
+  );
 }

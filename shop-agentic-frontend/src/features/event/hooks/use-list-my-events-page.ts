@@ -2,14 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { APP_PATHS } from "../../../app/route-config";
-import {
-  fetchHostedEvents,
-  type HostedEventItem,
-} from "../../../shared/services/event-api";
+import { fetchHostedEvents } from "../../../shared/services/event-api";
 import type {
   EventFilterTab,
   EventSortKey,
 } from "../components/event-list-view";
+import type { HostedEventItem } from "../types/event-list-types";
 
 const HOSTED_EVENTS_PAGE_SIZE = 50;
 

@@ -1,28 +1,58 @@
 @use "../../../../shared/styles/tokens";
 
+// ─── Card shell ───────────────────────────────────────────────────────────────
 .card {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.625rem;
+  background: tokens.color(surface-card);
+  border-radius: tokens.radius(3xl);
+  overflow: hidden;
+  border: 1px solid tokens.color(border-soft);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    box-shadow:
+      0 6px 20px rgba(0, 0, 0, 0.1),
+      0 2px 6px rgba(0, 0, 0, 0.06);
+  }
 }
 
 .cardOutOfStock {
-  opacity: 0.7;
-  filter: grayscale(0.4);
+  opacity: 0.62;
+  filter: grayscale(0.35);
 }
 
+// ─── Image area ───────────────────────────────────────────────────────────────
 .imageWrapper {
   position: relative;
   width: 100%;
-  border-radius: tokens.radius(sm);
   overflow: hidden;
 }
 
 .image {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   display: block;
+}
+
+.priceBadge {
+  position: absolute;
+  bottom: 0.625rem;
+  right: 0.625rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  border-radius: tokens.radius(pill);
+  padding: 0.25rem 0.75rem;
+  font-size: tokens.fs(xs);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1;
 }
 
 .outOfStockOverlay {
@@ -32,8 +62,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
-  background: rgba(0, 0, 0, 0.55);
+  gap: 0.3rem;
+  background: rgba(0, 0, 0, 0.52);
   color: #fff;
   font-size: tokens.fs(sm);
   font-weight: 700;
@@ -41,97 +71,98 @@
   text-transform: uppercase;
 }
 
-.outOfStockBannerNoImage {
+// ─── No-image header ──────────────────────────────────────────────────────────
+.noImageHeader {
+  background: linear-gradient(
+    135deg,
+    tokens.color(primary-legacy) 0%,
+    #6366f1 100%
+  );
+  padding: 1.125rem 1.25rem;
   display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.noImageTitleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.625rem;
+}
+
+.noImageTitle {
+  margin: 0;
+  color: #fff;
+  font-size: tokens.fs(md);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.noImagePrice {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  border-radius: tokens.radius(pill);
+  padding: 0.25rem 0.75rem;
+  font-size: tokens.fs(xs);
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.outOfStockBannerNoImage {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  padding: 0.5rem;
-  background: tokens.color(surface-error-soft);
-  color: tokens.color(form-required);
-  border-radius: tokens.radius(sm);
+  gap: 0.3rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: tokens.radius(pill);
+  padding: 0.1875rem 0.625rem;
   font-size: tokens.fs(xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  align-self: flex-start;
 }
 
+// ─── Content area ─────────────────────────────────────────────────────────────
 .content {
-  display: grid;
-  gap: 0.625rem;
+  padding: 1rem 1.125rem 1.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .titleRow {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.5rem;
 
-  h3,
-  strong {
-    margin: 0;
-  }
-
   h3 {
-    color: tokens.color(text-brand-cool);
+    margin: 0;
     font-size: tokens.fs(md);
-    font-weight: 700;
+    font-weight: 800;
+    color: tokens.color(body-text);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
   }
 
   strong {
-    color: tokens.color(text-muted-1);
-    font-size: tokens.fs(sm);
+    display: none; // hidden — price is on image badge
   }
 }
 
 .description {
   margin: 0;
   color: tokens.color(text-soft);
-  font-size: tokens.fs(sm);
+  font-size: tokens.fs(xs);
+  line-height: 1.65;
 }
 
-.optionGroup {
-  display: grid;
-  gap: 0.375rem;
-}
-
-.optionHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 0.375rem;
-
-  h4,
-  span {
-    margin: 0;
-  }
-
-  h4 {
-    color: tokens.color(text-muted-1);
-    font-size: tokens.fs(sm);
-    font-weight: 700;
-  }
-
-  span {
-    color: tokens.color(form-required);
-    font-size: tokens.fs(xs);
-    font-weight: 600;
-  }
-}
-
-.radioWrap {
-  padding: 0.5rem;
-  border: 0.0625rem solid tokens.color(border-soft);
-  border-radius: tokens.radius(sm);
-}
-
-.checkboxList {
-  display: grid;
-  gap: 0.375rem;
-  padding: 0.5rem;
-  border: 0.0625rem solid tokens.color(border-soft);
-  border-radius: tokens.radius(sm);
-}
-
+// ─── Stats pills ──────────────────────────────────────────────────────────────
 .statsRow {
   display: flex;
   flex-wrap: wrap;
@@ -142,7 +173,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.125rem 0.5rem;
+  padding: 0.2rem 0.625rem;
   border-radius: tokens.radius(pill);
   background: tokens.color(surface-muted);
   color: tokens.color(text-muted-1);
@@ -154,9 +185,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.125rem 0.5rem;
+  padding: 0.2rem 0.625rem;
   border-radius: tokens.radius(pill);
-  background: tokens.color(brand-soft-bg);
+  background: #eff6ff;
   color: tokens.color(primary-legacy);
   font-size: tokens.fs(xs);
   font-weight: 600;
@@ -166,39 +197,189 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.125rem 0.5rem;
+  padding: 0.2rem 0.625rem;
   border-radius: tokens.radius(pill);
-  background: tokens.color(warning-bg-soft);
-  color: tokens.color(warning-strong);
+  background: #fffbeb;
+  color: #b45309;
   font-size: tokens.fs(xs);
   font-weight: 600;
 }
 
-.actionRow {
-  display: grid;
-  grid-template-columns: 1fr;
+// ─── Option groups ────────────────────────────────────────────────────────────
+.optionGroup {
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
+}
+
+.optionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.375rem;
+
+  h4 {
+    margin: 0;
+    font-size: tokens.fs(xs);
+    font-weight: 700;
+    color: tokens.color(text-muted-1);
+  }
+
+  .requiredBadge {
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: tokens.color(form-required);
+    background: #fef2f2;
+    border-radius: tokens.radius(pill);
+    padding: 0.125rem 0.5rem;
+  }
+}
+
+.pillGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.875rem;
+  border-radius: tokens.radius(pill);
+  border: 1.5px solid tokens.color(border-muted);
+  background: tokens.color(surface-card);
+  color: tokens.color(text-soft);
+  font-size: tokens.fs(xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    color 0.15s,
+    box-shadow 0.15s;
+  line-height: 1;
+
+  &:hover {
+    border-color: tokens.color(primary-legacy);
+    color: tokens.color(primary-legacy);
+    background: #eff6ff;
+  }
+}
+
+.pillActive {
+  background: tokens.color(primary-legacy);
+  border-color: tokens.color(primary-legacy);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.32);
+
+  &:hover {
+    background: tokens.color(primary-legacy-strong);
+    border-color: tokens.color(primary-legacy-strong);
+    color: #fff;
+  }
+}
+
+.pillPrice {
+  opacity: 0.82;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.optionError {
+  margin: 0;
+  font-size: tokens.fs(xs);
+  color: tokens.color(form-required);
+  font-weight: 500;
+}
+
+// ─── Action row ───────────────────────────────────────────────────────────────
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid tokens.color(border-soft);
 }
 
 .quantityRow {
-  display: inline-grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  justify-self: start;
+  gap: 0.375rem;
+  background: tokens.color(surface-muted);
+  border-radius: tokens.radius(pill);
+  padding: 0.25rem;
 
   span {
-    min-width: 2.25rem;
+    min-width: 1.75rem;
     text-align: center;
-    color: tokens.color(text-muted-1);
     font-size: tokens.fs(sm);
     font-weight: 700;
+    color: tokens.color(body-text);
   }
 }
 
-@media (min-width: 576px) {
-  .actionRow {
-    grid-template-columns: auto 1fr;
-    align-items: center;
+.qtyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 50%;
+  border: none;
+  background: tokens.color(surface-card);
+  color: tokens.color(text-soft);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover:not(:disabled) {
+    background: tokens.color(surface-card-2);
+    color: tokens.color(body-text);
   }
+
+  &:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+  }
+}
+
+.addBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.5rem;
+  border-radius: tokens.radius(pill);
+  border: none;
+  cursor: pointer;
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  background: linear-gradient(
+    135deg,
+    tokens.color(primary-legacy) 0%,
+    #6366f1 100%
+  );
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3);
+  transition:
+    opacity 0.15s,
+    transform 0.12s;
+
+  &:hover:not(:disabled) {
+    opacity: 0.92;
+    transform: scale(1.01);
+  }
+}
+
+.addBtnDisabled {
+  background: tokens.color(surface-muted);
+  color: tokens.color(text-soft);
+  box-shadow: none;
+  cursor: not-allowed;
 }

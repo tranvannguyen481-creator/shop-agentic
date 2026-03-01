@@ -31,6 +31,15 @@ export const addGroupMemberBodySchema = z.object({
   email: z.string().trim().email("Valid member email is required"),
 });
 
+export const requestJoinGroupBodySchema = z.object({
+  eventId: z.string().trim().min(1, "eventId is required"),
+});
+
+export const joinRequestIdParamsSchema = z.object({
+  groupId: z.string().min(1, "groupId is required"),
+  requestId: z.string().min(1, "requestId is required"),
+});
+
 export type ListGroupsQuery = z.infer<typeof listGroupsQuerySchema>;
 export type GroupIdParams = z.infer<typeof groupIdParamsSchema>;
 export type InviteCodeParams = z.infer<typeof inviteCodeParamsSchema>;
@@ -39,3 +48,5 @@ export type UpdateGroupSettingsBody = z.infer<
   typeof updateGroupSettingsBodySchema
 >;
 export type AddGroupMemberBody = z.infer<typeof addGroupMemberBodySchema>;
+export type RequestJoinGroupBody = z.infer<typeof requestJoinGroupBodySchema>;
+export type JoinRequestIdParams = z.infer<typeof joinRequestIdParamsSchema>;

@@ -1,4 +1,5 @@
-import { Eye, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
+import { APP_PATHS } from "../../../../app/route-config";
 import EventListView, {
   type EventItem,
 } from "../../../../features/event/components/event-list-view";
@@ -6,6 +7,8 @@ import { useHomePage } from "../../../../features/event/hooks/use-home-page";
 import { Button } from "../../../../shared/components/ui";
 import AppLayout from "../../../../shared/layouts/app-layout";
 import styles from "./index.module.scss";
+
+export const routePath = APP_PATHS.home;
 
 function HomePage() {
   const vm = useHomePage();
@@ -32,17 +35,7 @@ function HomePage() {
             : "Re-host"}
         </span>
       </Button>
-    ) : (
-      <Button
-        type="button"
-        variant="secondary"
-        className={styles["action-btn"]}
-        onClick={() => vm.onViewDetail(event.id)}
-      >
-        <Eye size={13} />
-        <span>View</span>
-      </Button>
-    );
+    ) : null;
   };
 
   return (

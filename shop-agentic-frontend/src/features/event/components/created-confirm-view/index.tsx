@@ -110,15 +110,24 @@ function CreatedConfirmView() {
       {}
       {vm.items.length > 0 ? (
         <div className={styles.itemList}>
+          <div className={styles.itemListHeader}>
+            <span className={styles.itemListTitle}>Items for sale</span>
+            <span className={styles.itemCount}>{vm.items.length}</span>
+          </div>
           {vm.items.map((item, i) => (
             <SectionCard key={i} className={styles.itemRow}>
-              {item.imagePreviewUrl && (
-                <ZoomImage
-                  src={item.imagePreviewUrl}
-                  alt={item.name}
-                  className={styles.itemThumb}
-                />
-              )}
+              <div className={styles.itemThumbWrap}>
+                {item.imagePreviewUrl ? (
+                  <ZoomImage
+                    src={item.imagePreviewUrl}
+                    alt={item.name}
+                    className={styles.itemThumb}
+                  />
+                ) : (
+                  <div className={styles.itemThumbPlaceholder} />
+                )}
+                <span className={styles.itemIndex}>{i + 1}</span>
+              </div>
               <div className={styles.itemInfo}>
                 <p className={styles.itemName}>{item.name}</p>
 
@@ -159,8 +168,9 @@ function CreatedConfirmView() {
                     ))}
                   </div>
                 )}
+
+                <span className={styles.itemPrice}>{item.price}</span>
               </div>
-              <span className={styles.itemPrice}>{item.price}</span>
             </SectionCard>
           ))}
         </div>

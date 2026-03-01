@@ -15,6 +15,8 @@ import { useSignUpSubmit } from "../../hooks/use-sign-up-submit";
 import { SignUpProfileFormValues } from "../../types/sign-up-profile-types";
 import styles from "./index.module.scss";
 
+export const routePath = APP_PATHS.signUp;
+
 const getOptionalString = (value: unknown) =>
   typeof value === "string" && value.trim() ? value : undefined;
 

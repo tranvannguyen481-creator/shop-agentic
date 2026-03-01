@@ -21,8 +21,14 @@ export function calcLineItem(
   const qtyThreshold = toNumber(product["qtyThreshold"], 0);
   const groupPrice = toNumber(product["groupPrice"], 0);
 
+  // Group pricing only applies when the quantity threshold is already met.
+  // thresholdMet = true when there is no threshold requirement (qtyThreshold <= 0)
+  //                OR the cumulative group qty (including this order) reaches the threshold.
+  const thresholdMet =
+    qtyThreshold <= 0 || currentGroupQty + qty >= qtyThreshold;
+
   let basePrice: number;
-  if (isGroupBuy) {
+  if (isGroupBuy && thresholdMet) {
     if (groupPrice > 0) {
       basePrice = groupPrice;
     } else if (groupDiscountPercent > 0) {
@@ -34,21 +40,15 @@ export function calcLineItem(
     basePrice = normalPrice;
   }
 
-  let itemDiscountPercent = 0;
-  if (
-    isGroupBuy &&
-    qtyThreshold > 0 &&
-    currentGroupQty + qty >= qtyThreshold &&
-    groupPrice === 0
-  ) {
-    itemDiscountPercent = groupDiscountPercent;
-  }
+  // itemDiscountPercent is now fully captured in basePrice above.
+  const itemDiscountPercent =
+    normalPrice > 0 && basePrice < normalPrice
+      ? Math.round((1 - basePrice / normalPrice) * 100)
+      : 0;
 
-  const discountedUnitPrice = Math.round(
-    basePrice * (1 - itemDiscountPercent / 100),
-  );
+  const discountedUnitPrice = basePrice;
   const lineTotalBeforeVat = discountedUnitPrice * qty;
-  const discountAmount = (basePrice - discountedUnitPrice) * qty;
+  const discountAmount = (normalPrice - discountedUnitPrice) * qty;
 
   return {
     productId:
@@ -88,7 +88,7 @@ export function calcOrderBreakdown(
     const product = findProduct(event, inputItem.productId);
     if (!product) {
       throw AppError.badRequest(
-        `Sản phẩm "${inputItem.productId}" không tìm thấy trong event`,
+        `Product "${inputItem.productId}" not found in event`,
       );
     }
     const currentGroupQty = toNumber(productGroupQty[inputItem.productId], 0);

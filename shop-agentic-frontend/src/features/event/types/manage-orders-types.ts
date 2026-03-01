@@ -1,4 +1,13 @@
-import { ManageOrdersData } from "../../../shared/services/event-api";
+export interface ManageOrdersData {
+  title: string;
+  closingDate: string;
+  collectionDate: string;
+  closingInText: string;
+  deliveryInText: string;
+  buyCount: number;
+  totalPurchase: string;
+  adminFee: string;
+}
 
 export interface ManageOrdersViewModel {
   eventId: string;

@@ -21,10 +21,10 @@ function AppHeader() {
           <Button
             type="button"
             variant="text"
+            iconOnly
             aria-label="Notifications"
-            className={styles["icon-btn"]}
           >
-            <Bell className={styles.icon} aria-hidden="true" />
+            <Bell size={18} aria-hidden="true" />
             <span className="visually-hidden">Notifications</span>
           </Button>
           <Button

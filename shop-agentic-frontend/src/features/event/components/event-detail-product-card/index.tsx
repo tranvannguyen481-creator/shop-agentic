@@ -6,16 +6,10 @@ import {
   ShoppingBag,
   ShoppingCart,
 } from "lucide-react";
-import { FormError } from "../../../../shared/components/form";
-import {
-  Button,
-  Checkbox,
-  RadioGroup,
-  SectionCard,
-} from "../../../../shared/components/ui";
 import { useEventProductOrderForm } from "../../hooks/use-event-product-order-form";
 import {
   EventAddToOrderPayload,
+  EventDetailCartLineItem,
   EventDetailProductItem,
 } from "../../types/event-detail-page-types";
 import styles from "./index.module.scss";
@@ -25,6 +19,39 @@ interface EventDetailProductCardProps {
   onAddToOrder: (payload: EventAddToOrderPayload) => void;
   /** How many of this product the current user already has in their cart */
   cartQty?: number;
+  /** All cart lines for this product — used to restore previously selected options */
+  cartLines?: EventDetailCartLineItem[];
+}
+
+/**
+ * Derives initial option selections from the most-recently added cart line so
+ * that previously chosen options are pre-ticked when the user returns to the page.
+ */
+function deriveInitialSelections(
+  cartLines: EventDetailCartLineItem[],
+  mergedGroups: EventDetailProductItem["optionGroups"],
+): { required: Record<string, string>; optional: Record<string, string[]> } {
+  if (cartLines.length === 0) return { required: {}, optional: {} };
+
+  const lastLine = cartLines[cartLines.length - 1];
+  const selectedChoiceIds = new Set(lastLine.selectedChoices.map((c) => c.id));
+
+  const required: Record<string, string> = {};
+  const optional: Record<string, string[]> = {};
+
+  for (const group of mergedGroups) {
+    const matchingIds = group.choices
+      .filter((c) => selectedChoiceIds.has(c.id))
+      .map((c) => c.id);
+    if (matchingIds.length === 0) continue;
+    if (group.required) {
+      required[group.id] = matchingIds[0];
+    } else {
+      optional[group.id] = matchingIds;
+    }
+  }
+
+  return { required, optional };
 }
 
 // Merge option groups that share the same name so the heading is shown only once.
@@ -51,6 +78,7 @@ function EventDetailProductCard({
   product,
   onAddToOrder,
   cartQty = 0,
+  cartLines = [],
 }: EventDetailProductCardProps) {
   const isOutOfStock = product.stockStatus === "out-of-stock";
   const isLowStock = product.stockStatus === "low-stock";
@@ -60,21 +88,31 @@ function EventDetailProductCard({
     ? Math.max(0, product.availableQty - cartQty)
     : Number.POSITIVE_INFINITY;
 
+  // Merged groups must be computed before the hook so initial selections use
+  // the same group IDs that the UI later exposes to the form state.
+  const mergedOptionGroups = mergeOptionGroupsByName(product.optionGroups);
+
+  // Stable initial selections — derived once on mount from the last cart line.
+  // React Hook Form only reads `defaultValues` once, so recomputations on
+  // subsequent renders are harmless.
+  const { required: initialRequired, optional: initialOptional } =
+    deriveInitialSelections(cartLines, mergedOptionGroups);
+
   const viewModel = useEventProductOrderForm({
     product,
     maxQty: Number.isFinite(maxAddable) ? maxAddable : undefined,
     onSubmitAddToOrder: onAddToOrder,
+    initialRequiredSelections: initialRequired,
+    initialOptionalSelections: initialOptional,
   });
 
-  const mergedOptionGroups = mergeOptionGroupsByName(product.optionGroups);
-
   return (
-    <SectionCard
+    <div
       className={[styles.card, isOutOfStock ? styles.cardOutOfStock : ""]
         .filter(Boolean)
         .join(" ")}
     >
-      {/* Image + out-of-stock overlay */}
+      {/* ── Image block ────────────────────────────────────────────────────── */}
       {product.imagePreviewUrl ? (
         <div className={styles.imageWrapper}>
           <img
@@ -82,6 +120,8 @@ function EventDetailProductCard({
             alt={product.name}
             className={styles.image}
           />
+          {/* Price badge overlaid on image */}
+          <span className={styles.priceBadge}>{viewModel.totalPriceText}</span>
           {isOutOfStock ? (
             <div className={styles.outOfStockOverlay}>
               <Ban size={22} />
@@ -89,21 +129,35 @@ function EventDetailProductCard({
             </div>
           ) : null}
         </div>
-      ) : isOutOfStock ? (
-        <div className={styles.outOfStockBannerNoImage}>
-          <Ban size={16} /> Out of Stock
+      ) : (
+        /* Gradient header when no image */
+        <div className={styles.noImageHeader}>
+          <div className={styles.noImageTitleRow}>
+            <h3 className={styles.noImageTitle}>{product.name}</h3>
+            <span className={styles.noImagePrice}>
+              {viewModel.totalPriceText}
+            </span>
+          </div>
+          {isOutOfStock ? (
+            <span className={styles.outOfStockBannerNoImage}>
+              <Ban size={13} /> Out of Stock
+            </span>
+          ) : null}
         </div>
-      ) : null}
+      )}
 
+      {/* ── Content ────────────────────────────────────────────────────────── */}
       <div className={styles.content}>
-        <div className={styles.titleRow}>
-          <h3>{product.name}</h3>
-          <strong>{viewModel.totalPriceText}</strong>
-        </div>
+        {/* Title row — only shown when there is an image */}
+        {product.imagePreviewUrl ? (
+          <div className={styles.titleRow}>
+            <h3>{product.name}</h3>
+          </div>
+        ) : null}
 
-        <p className={styles.description}>
-          {product.description || "No description"}
-        </p>
+        {product.description ? (
+          <p className={styles.description}>{product.description}</p>
+        ) : null}
 
         {/* Live stats */}
         {product.totalGroupQty > 0 || cartQty > 0 || isLowStock ? (
@@ -129,96 +183,98 @@ function EventDetailProductCard({
           </div>
         ) : null}
 
+        {/* Option groups — pill toggles */}
         {mergedOptionGroups.map((optionGroup) => (
           <section className={styles.optionGroup} key={optionGroup.id}>
             <div className={styles.optionHeader}>
               <h4>{optionGroup.name}</h4>
-              {optionGroup.required ? <span>* Required</span> : null}
+              {optionGroup.required ? (
+                <span className={styles.requiredBadge}>Required</span>
+              ) : null}
             </div>
 
-            {optionGroup.required ? (
-              <RadioGroup
-                name={`${product.id}-${optionGroup.id}`}
-                options={optionGroup.choices.map((choice) => ({
-                  label:
-                    choice.price > 0
-                      ? `${choice.name} (+$${choice.price.toFixed(2)})`
-                      : choice.name,
-                  value: choice.id,
-                }))}
-                value={viewModel.requiredSelectionMap[optionGroup.id] ?? ""}
-                onChange={(choiceId) =>
-                  viewModel.onSelectRequiredChoice(optionGroup.id, choiceId)
-                }
-                wrapperClassName={styles.radioWrap}
-              />
-            ) : (
-              <div className={styles.checkboxList}>
-                {optionGroup.choices.map((choice) => {
-                  const selectedValues =
-                    viewModel.selectedOptionalMap[optionGroup.id] ?? [];
+            <div className={styles.pillGroup}>
+              {optionGroup.choices.map((choice) => {
+                const isSelected = optionGroup.required
+                  ? viewModel.requiredSelectionMap[optionGroup.id] === choice.id
+                  : (
+                      viewModel.selectedOptionalMap[optionGroup.id] ?? []
+                    ).includes(choice.id);
 
-                  return (
-                    <Checkbox
-                      key={choice.id}
-                      label={
-                        choice.price > 0
-                          ? `${choice.name} (+$${choice.price.toFixed(2)})`
-                          : choice.name
-                      }
-                      checked={selectedValues.includes(choice.id)}
-                      onChange={() =>
-                        viewModel.onToggleOptionalChoice(
-                          optionGroup.id,
-                          choice.id,
-                        )
-                      }
-                    />
-                  );
-                })}
-              </div>
-            )}
+                return (
+                  <button
+                    key={choice.id}
+                    type="button"
+                    className={[
+                      styles.pill,
+                      isSelected ? styles.pillActive : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                    onClick={() =>
+                      optionGroup.required
+                        ? viewModel.onSelectRequiredChoice(
+                            optionGroup.id,
+                            choice.id,
+                          )
+                        : viewModel.onToggleOptionalChoice(
+                            optionGroup.id,
+                            choice.id,
+                          )
+                    }
+                  >
+                    <span>{choice.name}</span>
+                    {choice.price > 0 ? (
+                      <span className={styles.pillPrice}>
+                        +${choice.price.toFixed(2)}
+                      </span>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
 
-            {optionGroup.required ? (
-              <FormError
-                error={
-                  viewModel.requiredErrors[optionGroup.id]
-                    ? ({
-                        message: viewModel.requiredErrors[optionGroup.id] || "",
-                      } as never)
-                    : undefined
-                }
-              />
+            {optionGroup.required &&
+            viewModel.requiredErrors[optionGroup.id] ? (
+              <p className={styles.optionError}>
+                {viewModel.requiredErrors[optionGroup.id]}
+              </p>
             ) : null}
           </section>
         ))}
 
+        {/* Action row */}
         <div className={styles.actionRow}>
           <div className={styles.quantityRow}>
-            <Button
+            <button
               type="button"
-              variant="outline"
+              className={styles.qtyBtn}
               onClick={viewModel.onDecreaseQuantity}
               disabled={isOutOfStock}
             >
-              <Minus size={14} />
-            </Button>
+              <Minus size={13} />
+            </button>
             <span>{viewModel.quantity}</span>
-            <Button
+            <button
               type="button"
-              variant="outline"
+              className={styles.qtyBtn}
               onClick={viewModel.onIncreaseQuantity}
               disabled={isOutOfStock || viewModel.quantity >= maxAddable}
             >
-              <Plus size={14} />
-            </Button>
+              <Plus size={13} />
+            </button>
           </div>
 
-          <Button
+          <button
             type="button"
-            variant="primary"
-            onClick={viewModel.onAddToOrder}
+            className={[
+              styles.addBtn,
+              isOutOfStock || maxAddable <= 0 ? styles.addBtnDisabled : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
             disabled={isOutOfStock || maxAddable <= 0}
+            onClick={viewModel.onAddToOrder}
           >
             {isOutOfStock ? (
               <>
@@ -226,13 +282,13 @@ function EventDetailProductCard({
               </>
             ) : (
               <>
-                <ShoppingCart size={16} /> Add to Order
+                <ShoppingCart size={15} /> Add
               </>
             )}
-          </Button>
+          </button>
         </div>
       </div>
-    </SectionCard>
+    </div>
   );
 }
 

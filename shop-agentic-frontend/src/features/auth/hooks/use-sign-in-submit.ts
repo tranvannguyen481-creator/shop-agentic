@@ -24,15 +24,19 @@ export function useSignInSubmit() {
   const { googleAuthAndRedirect, isSubmitting: isGoogleSubmitting } =
     useGoogleAuth();
 
+  const fromState = (
+    location.state as { from?: { pathname?: string; search?: string } } | null
+  )?.from;
+
   const fromPath =
-    typeof (location.state as { from?: { pathname?: string } } | null)?.from
-      ?.pathname === "string"
-      ? (location.state as { from?: { pathname?: string } }).from?.pathname
-      : null;
+    typeof fromState?.pathname === "string" ? fromState.pathname : null;
+
+  const fromSearch =
+    typeof fromState?.search === "string" ? fromState.search : "";
 
   const redirectPath =
     fromPath && fromPath !== APP_PATHS.signIn && fromPath !== APP_PATHS.signUp
-      ? fromPath
+      ? fromPath + fromSearch
       : APP_PATHS.welcome;
 
   const mutation = useMutation({

@@ -6,10 +6,13 @@ import {
   Users,
 } from "lucide-react";
 import { ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { APP_PATHS } from "../../../../app/route-config";
 import SearchBar from "../../../../shared/components/search-bar";
 import {
   Alert,
   Badge,
+  Button,
   EmptyState,
   SectionCard,
   Skeleton,
@@ -142,15 +145,16 @@ function EventListView({
             </select>
           </div>
 
-          <button
+          <Button
             type="button"
-            className={styles.refreshBtn}
+            variant="text"
+            iconOnly
             onClick={onRefresh}
             disabled={isFetching}
             aria-label="Refresh"
           >
             {isFetching ? <Spinner size={14} /> : <RefreshCw size={14} />}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -200,85 +204,104 @@ function EventListView({
               : undefined;
 
             return (
-              <SectionCard
+              <article
                 key={event.id}
-                className={[styles.eventItem, closed ? styles.inactive : ""]
+                className={[styles.eventCard, closed ? styles.inactive : ""]
                   .filter(Boolean)
                   .join(" ")}
               >
-                {/* Banner */}
-                {bannerUrl ? (
-                  <div className={styles.bannerThumb}>
-                    <img src={bannerUrl} alt="" loading="lazy" />
-                  </div>
-                ) : null}
-
-                {/* Header */}
-                <div className={styles.eventHeader}>
-                  <h3 className={styles.title}>
-                    {String(event.title ?? "Untitled Event")}
-                  </h3>
-                  <Badge tone={toStatusTone(event.status)}>
+                {/* Banner with overlaid status badge */}
+                <div className={styles.bannerWrap}>
+                  {bannerUrl ? (
+                    <img
+                      className={styles.bannerImg}
+                      src={bannerUrl}
+                      alt=""
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className={styles.bannerPlaceholder} />
+                  )}
+                  <Badge
+                    tone={toStatusTone(event.status)}
+                    className={styles.statusBadge}
+                  >
                     {String(event.status ?? "active")}
                   </Badge>
-                </div>
-
-                {/* Meta row */}
-                {(showGroupName && event.groupName) || event.hostDisplayName ? (
-                  <div className={styles.metaRow}>
-                    {showGroupName && event.groupName ? (
-                      <span className={styles.groupChip}>
-                        <Users size={11} />
-                        <span>{String(event.groupName)}</span>
-                      </span>
-                    ) : null}
-                    {event.hostDisplayName ? (
-                      <span className={styles.hostChip}>
-                        {String(event.hostDisplayName)}
-                      </span>
-                    ) : null}
-                  </div>
-                ) : null}
-
-                {/* Description */}
-                <p className={styles.description}>
-                  {String(event.description ?? "")}
-                </p>
-
-                {/* Info row: pills + buy count */}
-                <div className={styles.infoRow}>
-                  {closed ? (
-                    <div className={styles.closedBanner}>
-                      <CalendarDays size={11} />
-                      Closing date passed — event closed
-                    </div>
-                  ) : (
-                    <div className={styles.pills}>
-                      {event.closingInText ? (
-                        <span className={styles["closing-pill"]}>
-                          <CalendarDays size={11} />
-                          {String(event.closingInText)}
-                        </span>
-                      ) : null}
-                      {event.deliveryInText ? (
-                        <span className={styles["delivery-pill"]}>
-                          {String(event.deliveryInText)}
-                        </span>
-                      ) : null}
-                    </div>
-                  )}
-
                   {buyCount !== null && buyCount > 0 ? (
-                    <span className={styles.buyCount}>
-                      <ShoppingBag size={11} />
-                      {buyCount} {buyCount === 1 ? "order" : "orders"}
+                    <span className={styles.buyCountBadge}>
+                      <ShoppingBag size={10} />
+                      {buyCount}
                     </span>
                   ) : null}
                 </div>
 
-                {/* Actions (page-specific) */}
-                <div className={styles.actions}>{renderActions(event)}</div>
-              </SectionCard>
+                {/* Card content */}
+                <div className={styles.cardContent}>
+                  {/* Meta row: group + host */}
+                  {(showGroupName && event.groupName) ||
+                  event.hostDisplayName ? (
+                    <div className={styles.metaRow}>
+                      {showGroupName && event.groupName ? (
+                        <span className={styles.groupChip}>
+                          <Users size={11} />
+                          <span>{String(event.groupName)}</span>
+                        </span>
+                      ) : null}
+                      {event.hostDisplayName ? (
+                        <span className={styles.hostChip}>
+                          by {String(event.hostDisplayName)}
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  {/* Title */}
+                  <h3 className={styles.title}>
+                    <Link
+                      className={styles.titleLink}
+                      to={APP_PATHS.eventDetail.replace(":eventId", event.id)}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {String(event.title ?? "Untitled Event")}
+                    </Link>
+                  </h3>
+
+                  {/* Description */}
+                  {event.description ? (
+                    <p className={styles.description}>
+                      {String(event.description)}
+                    </p>
+                  ) : null}
+
+                  {/* Pills row */}
+                  <div className={styles.pills}>
+                    {closed ? (
+                      <span className={styles["closing-pill"]} data-closed>
+                        <CalendarDays size={11} />
+                        Event closed
+                      </span>
+                    ) : (
+                      <>
+                        {event.closingInText ? (
+                          <span className={styles["closing-pill"]}>
+                            <CalendarDays size={11} />
+                            {String(event.closingInText)}
+                          </span>
+                        ) : null}
+                        {event.deliveryInText ? (
+                          <span className={styles["delivery-pill"]}>
+                            {String(event.deliveryInText)}
+                          </span>
+                        ) : null}
+                      </>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className={styles.actions}>{renderActions(event)}</div>
+                </div>
+              </article>
             );
           })}
         </div>

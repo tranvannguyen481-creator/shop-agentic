@@ -4,6 +4,8 @@ import { APP_PATHS } from "../../../../app/route-config";
 import { Button, SectionCard } from "../../../../shared/components/ui";
 import styles from "./index.module.scss";
 
+export const routePath = APP_PATHS.landing;
+
 function LandingPage() {
   return (
     <div className={styles["landing-page"]}>

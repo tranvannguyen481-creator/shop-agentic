@@ -14,6 +14,8 @@ import { useSignInSubmit } from "../../hooks/use-sign-in-submit";
 import { SignInFormValues } from "../../types/sign-in-types";
 import styles from "./index.module.scss";
 
+export const routePath = APP_PATHS.signIn;
+
 function SignInPage() {
   const form = useSignInForm();
   const { showPin, pinInputType, togglePinVisibility } = usePinVisibility();

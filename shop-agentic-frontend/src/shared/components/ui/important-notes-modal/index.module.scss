@@ -2,20 +2,26 @@
 
 .container {
   display: grid;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .helper {
   margin: 0;
-  color: tokens.color(text-soft);
+  color: tokens.color(text-muted-1);
   font-size: tokens.fs(sm);
+  line-height: 1.5;
+  padding: 0.625rem 0.75rem;
+  background: tokens.color(surface-muted);
+  border-radius: tokens.radius(xl);
+  border: 0.0625rem solid tokens.color(border-muted);
 }
 
 .noteBlock {
-  border: 0.0625rem solid tokens.color(border-soft);
-  border-radius: tokens.radius(md);
+  border: 0.0625rem solid tokens.color(border-muted);
+  border-radius: tokens.radius(xl);
   background: tokens.color(surface);
-  padding: 0.625rem;
+  padding: 0.875rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
 }
 
 .noteField {
@@ -27,6 +33,7 @@
 
   textarea {
     min-height: 5.375rem;
+    border-radius: tokens.radius(lg) !important;
   }
 }
 
@@ -34,27 +41,36 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.625rem;
 
   strong {
     color: tokens.color(text-emphasis);
-    font-size: tokens.fs(md);
+    font-size: tokens.fs(sm);
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
 }
 
-.removeBtn,
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.removeBtn {
+  color: tokens.color(form-required);
+  font-size: tokens.fs(xs);
+  font-weight: 600;
+
+  &:disabled {
+    color: tokens.color(text-muted-2);
+  }
+}
+
 .addBtn {
   color: tokens.color(primary-legacy);
   font-size: tokens.fs(sm);
-  font-weight: 600;
-  text-transform: none;
-}
-
-.removeBtn:disabled {
-  color: tokens.color(text-muted-2);
-}
-
-.addBtn {
+  font-weight: 700;
   justify-self: end;
 }
 

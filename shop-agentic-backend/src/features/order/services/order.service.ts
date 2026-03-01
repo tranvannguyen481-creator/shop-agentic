@@ -51,6 +51,12 @@ export async function calculateOrder(
     0,
   );
   const membersNeededForDiscount = Math.max(0, minMembers - currentMembers);
+  // The *configured* extra discount percent regardless of whether the threshold
+  // has been reached — used by the UI to show "giảm thêm X%" text.
+  const potentialExtraDiscountPercent = toNumber(
+    (groupBuyRules as Record<string, unknown>)["extraDiscountPercent"],
+    0,
+  );
 
   return {
     ...breakdown,
@@ -59,12 +65,9 @@ export async function calculateOrder(
     currentMembers,
     minMembers,
     membersNeededForDiscount,
+    potentialExtraDiscountPercent,
     willGetExtraDiscount:
-      membersNeededForDiscount === 0 &&
-      toNumber(
-        (groupBuyRules as Record<string, unknown>)["extraDiscountPercent"],
-        0,
-      ) > 0,
+      membersNeededForDiscount === 0 && potentialExtraDiscountPercent > 0,
   };
 }
 
@@ -137,8 +140,25 @@ export async function placeOrder(
           admin.firestore.FieldValue.increment(li.qty);
       });
 
+      // Increment buyCount so real-time listeners can track group size
+      incrementUpdates["buyCount"] = admin.firestore.FieldValue.increment(1);
       incrementUpdates["updatedAt"] = now;
       transaction.update(eventRef, incrementUpdates);
+
+      // Write join activity for real-time toast notifications
+      const activityRef = eventRef.collection("groupBuyActivity").doc();
+      transaction.set(activityRef, {
+        uid: actor.uid,
+        displayName:
+          actor.name ??
+          (actor as Record<string, unknown>)["displayName"] ??
+          actor.email ??
+          "Thành viên",
+        email: actor.email ?? "",
+        action: "joined",
+        orderItemCount: breakdown.orderItems.length,
+        joinedAt: now,
+      });
     }
   });
 

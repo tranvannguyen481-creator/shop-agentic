@@ -1,20 +1,10 @@
 import { isAxiosError } from "axios";
 import firebase from "firebase/compat/app";
+import type { AuthUser } from "../../features/auth/types/auth-user";
 import api from "./api";
 import { auth } from "./firebase";
 
-export interface AuthUser {
-  id: string;
-  uid?: string;
-  email?: string;
-  displayName?: string;
-  photoURL?: string;
-  role?: string;
-  subscriptionTier?: string;
-  subscriptionStatus?: string;
-  isPremium?: boolean;
-  [key: string]: unknown;
-}
+export type { AuthUser } from "../../features/auth/types/auth-user";
 
 export const fetchCurrentUser = async (): Promise<AuthUser | null> => {
   try {
@@ -78,15 +68,11 @@ export const signUpWithGoogle = async (): Promise<AuthUser> =>
 export const signOutSession = async (): Promise<void> => {
   try {
     await api.post("/auth/signout");
-  } catch {
-
-  }
+  } catch {}
 
   try {
     await auth.signOut();
-  } catch {
-
-  }
+  } catch {}
 };
 
 export interface UpdateProfilePayload {

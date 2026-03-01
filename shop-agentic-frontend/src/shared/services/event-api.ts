@@ -1,25 +1,19 @@
+import type {
+  GroupEventItem,
+  GroupEventsResult,
+  HostedEventItem,
+  HostedEventsResult,
+} from "../../features/event/types/event-list-types";
+import type { ManageOrdersData } from "../../features/event/types/manage-orders-types";
 import api from "./api";
 
-export interface HostedEventItem {
-  id: string;
-  title?: string;
-  description?: string;
-  closingDate?: string;
-  collectionDate?: string;
-  buyCount?: number;
-  adminFee?: string;
-  status?: string;
-  closingInText?: string;
-  deliveryInText?: string;
-  hostDisplayName?: string;
-  bannerPreviewUrls?: string[];
-  [key: string]: unknown;
-}
-
-export interface HostedEventsResult {
-  items: HostedEventItem[];
-  total: number;
-}
+export type {
+  GroupEventItem,
+  GroupEventsResult,
+  HostedEventItem,
+  HostedEventsResult,
+  ManageOrdersData,
+};
 
 export const fetchHostedEvents = async (
   page: number,
@@ -37,9 +31,11 @@ export const fetchHostedEvents = async (
 
 export const fetchEventDetail = async (
   eventId: string,
+  groupToken?: string,
 ): Promise<Record<string, unknown>> => {
   const response = await api.get(
     `/events/${encodeURIComponent(eventId)}/detail`,
+    groupToken ? { params: { groupToken } } : undefined,
   );
 
   const event = response.data?.data as Record<string, unknown> | undefined;
@@ -50,29 +46,6 @@ export const fetchEventDetail = async (
 
   return event;
 };
-
-export interface GroupEventItem {
-  id: string;
-  title?: string;
-  description?: string;
-  closingDate?: string;
-  collectionDate?: string;
-  buyCount?: number;
-  adminFee?: string;
-  status?: string;
-  closingInText?: string;
-  deliveryInText?: string;
-  groupId?: string;
-  groupName?: string;
-  hostDisplayName?: string;
-  bannerPreviewUrls?: string[];
-  [key: string]: unknown;
-}
-
-export interface GroupEventsResult {
-  items: GroupEventItem[];
-  total: number;
-}
 
 export const fetchGroupEvents = async (
   page: number,
@@ -98,17 +71,6 @@ export const reHostEvent = async (
   return response.data?.data as { eventId: string; groupId: string };
 };
 
-export interface ManageOrdersData {
-  title: string;
-  closingDate: string;
-  collectionDate: string;
-  closingInText: string;
-  deliveryInText: string;
-  buyCount: number;
-  totalPurchase: string;
-  adminFee: string;
-}
-
 export const fetchManageOrdersData = async (
   eventId: string,
 ): Promise<ManageOrdersData> => {
@@ -123,4 +85,87 @@ export const fetchManageOrdersData = async (
   }
 
   return data;
+};
+
+/**
+ * Fetch an encrypted share token that embeds the event's groupId.
+ */
+export const fetchGroupShareToken = async (
+  eventId: string,
+): Promise<string> => {
+  const response = await api.get(
+    `/events/${encodeURIComponent(eventId)}/group-share-token`,
+  );
+
+  const token = response.data?.data?.token;
+  if (typeof token !== "string" || !token.trim()) {
+    throw new Error("Failed to generate share token");
+  }
+  return token;
+};
+
+/**
+ * Decrypt an encrypted share token back to the original groupId.
+ */
+export const resolveShareToken = async (token: string): Promise<string> => {
+  const response = await api.get("/events/resolve-share-token", {
+    params: { token },
+  });
+
+  const groupId = response.data?.data?.groupId;
+  if (typeof groupId !== "string" || !groupId.trim()) {
+    throw new Error("Invalid or expired share token");
+  }
+  return groupId;
+};
+
+// ─── Group-buy session ────────────────────────────────────────────────────────
+
+export interface GroupBuySessionInfo {
+  isHost: boolean;
+  participantCount: number;
+  sessionActive: boolean;
+}
+
+/**
+ * Toggle "Mua nhóm" ON — joins (or creates) the active group-buy session.
+ */
+export const joinGroupBuySession = async (
+  eventId: string,
+): Promise<GroupBuySessionInfo> => {
+  const response = await api.post(
+    `/events/${encodeURIComponent(eventId)}/group-buy/join`,
+  );
+  return response.data?.data as GroupBuySessionInfo;
+};
+
+/**
+ * Host-only: dissolve the group-buy session.
+ */
+export const dissolveGroupBuySession = async (
+  eventId: string,
+): Promise<void> => {
+  await api.delete(`/events/${encodeURIComponent(eventId)}/group-buy/dissolve`);
+};
+
+/**
+ * Non-host: leave the group-buy session.
+ */
+export const leaveGroupBuySession = async (eventId: string): Promise<void> => {
+  await api.delete(`/events/${encodeURIComponent(eventId)}/group-buy/leave`);
+};
+
+/**
+ * Record that the current user visited an event via a group share link.
+ * Deduplicated on the backend (one visit per user).
+ */
+export const recordGroupVisit = async (
+  eventId: string,
+): Promise<{ alreadyVisited: boolean }> => {
+  const response = await api.post(
+    `/events/${encodeURIComponent(eventId)}/record-group-visit`,
+  );
+  return (response.data?.data ?? { alreadyVisited: false }) as {
+    alreadyVisited: boolean;
+  };
 };

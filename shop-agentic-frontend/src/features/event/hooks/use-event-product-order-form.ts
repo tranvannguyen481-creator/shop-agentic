@@ -13,6 +13,10 @@ interface UseEventProductOrderFormParams {
   /** Maximum orderable quantity — use `Infinity` for unlimited. */
   maxQty?: number;
   onSubmitAddToOrder: (payload: EventAddToOrderPayload) => void;
+  /** Pre-selected choices for required groups restored from the cart. */
+  initialRequiredSelections?: Record<string, string>;
+  /** Pre-selected choices for optional groups restored from the cart. */
+  initialOptionalSelections?: Record<string, string[]>;
 }
 
 const buildRequiredErrorMap = (
@@ -38,6 +42,8 @@ export const useEventProductOrderForm = ({
   product,
   maxQty = Number.POSITIVE_INFINITY,
   onSubmitAddToOrder,
+  initialRequiredSelections = {},
+  initialOptionalSelections = {},
 }: UseEventProductOrderFormParams) => {
   const requiredGroupIds = useMemo(
     () =>
@@ -51,13 +57,13 @@ export const useEventProductOrderForm = ({
     schema: createEventDetailOrderSchema(requiredGroupIds),
     defaultValues: {
       quantity: 1,
-      requiredSelections: {},
+      requiredSelections: initialRequiredSelections,
     },
   });
 
   const [selectedOptionalMap, setSelectedOptionalMap] = useState<
     Record<string, string[]>
-  >({});
+  >(initialOptionalSelections);
 
   const quantity = Number(form.watch("quantity") ?? 1);
   const watchedRequiredSelections = form.watch("requiredSelections");

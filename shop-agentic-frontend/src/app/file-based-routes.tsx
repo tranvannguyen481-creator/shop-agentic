@@ -1,13 +1,9 @@
-import type { ComponentType } from "react";
+import { lazy, Suspense, type ComponentType } from "react";
 import { Route, Routes } from "react-router-dom";
+import { Spinner } from "../shared/components/ui";
 import { ProtectedRoute, PublicRoute } from "../shared/guards";
 import NotFoundPage from "./not-found-page";
 import { APP_PATHS } from "./route-config";
-
-interface RouteModule {
-  default: ComponentType;
-  routePath?: string;
-}
 
 interface GeneratedRoute {
   path: string;
@@ -20,23 +16,22 @@ const PUBLIC_PATHS = new Set<string>([
   APP_PATHS.signUp,
 ]);
 
-const routeModules = import.meta.glob<RouteModule>(
+// Eagerly load only the `routePath` string export — zero component code loaded
+const routePathMeta = import.meta.glob<string>(
   "../features/**/pages/**/index.tsx",
-  { eager: true },
+  { eager: true, import: "routePath" },
+);
+
+const routeLoaders = import.meta.glob<{ default: ComponentType }>(
+  "../features/**/pages/**/index.tsx",
 );
 
 const trimSlashes = (value: string) => value.replace(/^\/+|\/+$/g, "");
 
 const normalizePath = (value: string) => {
-  if (!value) {
-    return APP_PATHS.landing;
-  }
-
+  if (!value) return APP_PATHS.landing;
   const withLeadingSlash = value.startsWith("/") ? value : `/${value}`;
-  if (withLeadingSlash === APP_PATHS.landing) {
-    return withLeadingSlash;
-  }
-
+  if (withLeadingSlash === APP_PATHS.landing) return withLeadingSlash;
   return withLeadingSlash.replace(/\/+$/, "");
 };
 
@@ -54,40 +49,43 @@ const derivePathFromFile = (fileKey: string) => {
 };
 
 const getGeneratedRoutes = (): GeneratedRoute[] => {
-  const routeKeys = Object.keys(routeModules).sort();
+  const routeKeys = Object.keys(routeLoaders).sort();
   const seenPaths = new Set<string>();
 
   return routeKeys
     .map((routeKey) => {
-      const routeModule = routeModules[routeKey];
-      const configuredPath = routeModule.routePath?.trim() ?? "";
+      const configuredPath = (routePathMeta[routeKey] ?? "").trim();
       const path = normalizePath(
         configuredPath || derivePathFromFile(routeKey),
       );
 
-      if (seenPaths.has(path)) {
-        return null;
-      }
-
+      if (seenPaths.has(path)) return null;
       seenPaths.add(path);
-      return {
-        path,
-        component: routeModule.default,
-      };
+
+      const component = lazy(routeLoaders[routeKey]) as ComponentType;
+
+      return { path, component };
     })
     .filter((item): item is GeneratedRoute => item !== null)
     .sort((a, b) => {
-      if (a.path === APP_PATHS.landing) {
-        return -1;
-      }
-
-      if (b.path === APP_PATHS.landing) {
-        return 1;
-      }
-
+      if (a.path === APP_PATHS.landing) return -1;
+      if (b.path === APP_PATHS.landing) return 1;
       return a.path.localeCompare(b.path);
     });
 };
+
+const PageFallback = () => (
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "40vh",
+    }}
+  >
+    <Spinner size={28} />
+  </div>
+);
 
 function FileBasedRoutes() {
   const routes = getGeneratedRoutes();
@@ -97,35 +95,37 @@ function FileBasedRoutes() {
   );
 
   return (
-    <Routes>
-      <Route element={<PublicRoute />}>
-        {publicRoutes.map((route) => {
-          const PageComponent = route.component;
-          return (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={<PageComponent />}
-            />
-          );
-        })}
-      </Route>
+    <Suspense fallback={<PageFallback />}>
+      <Routes>
+        <Route element={<PublicRoute />}>
+          {publicRoutes.map((route) => {
+            const PageComponent = route.component;
+            return (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<PageComponent />}
+              />
+            );
+          })}
+        </Route>
 
-      <Route element={<ProtectedRoute />}>
-        {protectedRoutes.map((route) => {
-          const PageComponent = route.component;
-          return (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={<PageComponent />}
-            />
-          );
-        })}
-      </Route>
+        <Route element={<ProtectedRoute />}>
+          {protectedRoutes.map((route) => {
+            const PageComponent = route.component;
+            return (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<PageComponent />}
+              />
+            );
+          })}
+        </Route>
 
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Suspense>
   );
 }
 

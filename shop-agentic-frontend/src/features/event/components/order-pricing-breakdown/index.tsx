@@ -1,16 +1,13 @@
-import {
-  Alert,
-  Divider,
-  SectionCard,
-  Skeleton,
-} from "../../../../shared/components/ui";
+import { Skeleton } from "../../../../shared/components/ui";
 import { toPercent, toVND } from "../../../../shared/utils/price-utils";
 import { OrderPricingBreakdownProps } from "../../types/order-pricing-breakdown-types";
+import styles from "./index.module.scss";
 
 function OrderPricingBreakdown({
   breakdown,
   isGroupBuy,
   isLoading = false,
+  liveMemberCount,
 }: OrderPricingBreakdownProps) {
   const {
     subtotalBeforeDiscount,
@@ -20,97 +17,122 @@ function OrderPricingBreakdown({
     vatRate,
     vatAmount,
     grandTotal,
-    currentMembers,
+    currentMembers: staticMembers,
     minMembers,
-    membersNeededForDiscount,
-    willGetExtraDiscount,
+    membersNeededForDiscount: staticMembersNeeded,
+    willGetExtraDiscount: staticWillGet,
+    potentialExtraDiscountPercent,
   } = breakdown;
+
+  // Use live member count when available and higher than the static API value
+  const currentMembers =
+    liveMemberCount != null && liveMemberCount > staticMembers
+      ? liveMemberCount
+      : staticMembers;
+  const membersNeededForDiscount = Math.max(0, minMembers - currentMembers);
+  const willGetExtraDiscount =
+    liveMemberCount != null && liveMemberCount > staticMembers
+      ? currentMembers >= minMembers
+      : staticWillGet;
 
   if (isLoading) {
     return (
-      <SectionCard>
-        <div className="d-flex flex-column gap-2">
-          <Skeleton height={14} width="60%" />
-          <Skeleton height={14} width="80%" />
-          <Skeleton height={14} width="70%" />
-          <Skeleton height={18} width="90%" />
+      <div className={styles.card}>
+        <div className={styles.skeletonRows}>
+          <Skeleton height={13} width="55%" />
+          <Skeleton height={13} width="75%" />
+          <Skeleton height={13} width="65%" />
+          <Skeleton height={16} width="88%" />
         </div>
-      </SectionCard>
+      </div>
     );
   }
 
   return (
-    <SectionCard>
-      {}
-      {isGroupBuy && minMembers > 0 && (
-        <>
-          {willGetExtraDiscount ? (
-            <Alert tone="success" className="mb-3">
-              ✅ Đã đủ {minMembers} thành viên! Đang được giảm thêm{" "}
-              {toPercent(extraGroupDiscountPercent)}.
-            </Alert>
-          ) : (
-            <Alert tone="warning" className="mb-3">
-              👥 Còn thiếu <strong>{membersNeededForDiscount} người nữa</strong>{" "}
-              để được giảm thêm {toPercent(extraGroupDiscountPercent)} (
-              {currentMembers}/{minMembers} thành viên hiện tại).
-            </Alert>
-          )}
-        </>
-      )}
+    <div className={styles.card}>
+      {/* Group buy banner */}
+      {isGroupBuy && minMembers > 0 ? (
+        willGetExtraDiscount ? (
+          <div className={`${styles.groupAlert} ${styles.groupAlertSuccess}`}>
+            <span className={styles.groupAlertIcon}>✅</span>
+            <span>
+              Đã đủ {minMembers} thành viên! Đang được giảm thêm{" "}
+              <strong>{toPercent(extraGroupDiscountPercent)}</strong>.
+            </span>
+          </div>
+        ) : (
+          <div className={`${styles.groupAlert} ${styles.groupAlertWarning}`}>
+            <span className={styles.groupAlertIcon}>👥</span>
+            <span>
+              Còn thiếu <strong>{membersNeededForDiscount} người nữa</strong> để
+              được giảm thêm{" "}
+              <strong>
+                {toPercent(
+                  potentialExtraDiscountPercent ?? extraGroupDiscountPercent,
+                )}
+              </strong>{" "}
+              ({currentMembers}/{minMembers} thành viên hiện tại).
+            </span>
+          </div>
+        )
+      ) : null}
 
-      <div className="d-flex flex-column gap-2">
-        <div className="d-flex justify-content-between align-items-center">
-          <span className="text-secondary small">Tạm tính</span>
-          <span className="font-monospace small">
+      {/* Line rows */}
+      <div className={styles.rows}>
+        <div className={styles.row}>
+          <span className={styles.rowLabel}>Tạm tính</span>
+          <span className={styles.rowValue}>
             {toVND(subtotalBeforeDiscount)}
           </span>
         </div>
 
-        {isGroupBuy && totalDiscount > 0 && (
-          <div className="d-flex justify-content-between align-items-center">
-            <span className="text-success small">
+        {isGroupBuy && totalDiscount > 0 ? (
+          <div className={styles.row}>
+            <span className={styles.rowLabel}>
               Giảm giá nhóm ({toPercent(extraGroupDiscountPercent)})
             </span>
-            <span className="text-success font-monospace small">
+            <span className={`${styles.rowValue} ${styles.rowDiscount}`}>
               −{toVND(totalDiscount)}
             </span>
           </div>
-        )}
+        ) : null}
 
-        {isGroupBuy && totalDiscount > 0 && (
-          <div className="d-flex justify-content-between align-items-center">
-            <span className="text-secondary small">Sau giảm giá</span>
-            <span className="font-monospace small">
+        {isGroupBuy && totalDiscount > 0 ? (
+          <div className={styles.row}>
+            <span className={styles.rowLabel}>Sau giảm giá</span>
+            <span className={styles.rowValue}>
               {toVND(subtotalAfterDiscount)}
             </span>
           </div>
-        )}
+        ) : null}
 
-        <div className="d-flex justify-content-between align-items-center">
-          <span className="text-secondary small">
+        <div className={styles.row}>
+          <span className={styles.rowLabel}>
             VAT ({toPercent(vatRate * 100)})
           </span>
-          <span className="font-monospace small">{toVND(vatAmount)}</span>
+          <span className={styles.rowValue}>{toVND(vatAmount)}</span>
         </div>
 
-        <Divider />
-
-        <div className="d-flex justify-content-between align-items-center">
-          <span className="fw-semibold">Tổng cộng</span>
-          <span className="fw-semibold font-monospace">
-            {toVND(grandTotal)}
-          </span>
-        </div>
+        <div className={styles.rowDivider} />
       </div>
 
-      {isGroupBuy && totalDiscount > 0 && (
-        <Alert tone="success" className="mt-2 fw-medium">
-          🎉 Tiết kiệm {toVND(subtotalBeforeDiscount - subtotalAfterDiscount)}{" "}
+      {/* Grand total */}
+      <div className={styles.totalRow}>
+        <span className={styles.totalLabel}>Tổng cộng</span>
+        <span className={styles.totalValue}>{toVND(grandTotal)}</span>
+      </div>
+
+      {/* Savings callout */}
+      {isGroupBuy && totalDiscount > 0 ? (
+        <div className={styles.savingsRow}>
+          🎉 Tiết kiệm{" "}
+          <strong>
+            {toVND(subtotalBeforeDiscount - subtotalAfterDiscount)}
+          </strong>{" "}
           so với mua lẻ!
-        </Alert>
-      )}
-    </SectionCard>
+        </div>
+      ) : null}
+    </div>
   );
 }
 

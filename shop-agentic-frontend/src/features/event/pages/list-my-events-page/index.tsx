@@ -1,11 +1,11 @@
-import { Eye, Pencil, Plus, Share2 } from "lucide-react";
+import { Pencil, Plus, Share2 } from "lucide-react";
 import { APP_PATHS } from "../../../../app/route-config";
+import { Button } from "../../../../shared/components/ui";
+import AppLayout from "../../../../shared/layouts/app-layout";
 import EventListView, {
   type EventItem,
 } from "../../components/event-list-view";
 import { useListMyEventsPage } from "../../hooks/use-list-my-events-page";
-import { Button } from "../../../../shared/components/ui";
-import AppLayout from "../../../../shared/layouts/app-layout";
 import styles from "./index.module.scss";
 
 export const routePath = APP_PATHS.listMyEvents;
@@ -23,15 +23,6 @@ function ListMyEventsPage() {
       >
         <Pencil size={13} />
         <span>Edit</span>
-      </Button>
-      <Button
-        type="button"
-        variant="secondary"
-        className={styles["action-btn"]}
-        onClick={() => vm.onViewDetail(event.id)}
-      >
-        <Eye size={13} />
-        <span>View</span>
       </Button>
       <Button
         type="button"

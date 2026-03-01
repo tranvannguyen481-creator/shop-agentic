@@ -80,5 +80,5 @@ After every delegation cycle, respond with:
 - [x] reviewer: APPROVE / REQUEST CHANGES
 
 ### Open Questions
-- <any follow-ups for the user>
+- <any follow-ups for the user> 
 ```

@@ -83,5 +83,10 @@ process.stdin.on("end", () => {
     warnings.forEach((w, i) => console.warn(`  ${i + 1}. ${w}`));
   }
 
+  // ── Nhắc dùng Orchestrator ─────────────────────────────────────────────
+  console.log(
+    "[SHOP-AGENTIC] Dùng orchestrator.agent.md để điều phối công việc",
+  );
+
   process.exit(0);
 });

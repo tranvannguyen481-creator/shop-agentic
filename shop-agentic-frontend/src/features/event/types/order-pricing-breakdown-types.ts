@@ -4,4 +4,6 @@ export interface OrderPricingBreakdownProps {
   breakdown: CheckoutPricingBreakdown;
   isGroupBuy: boolean;
   isLoading?: boolean;
+  /** Real-time member count from Firestore; overrides breakdown.currentMembers when higher */
+  liveMemberCount?: number;
 }

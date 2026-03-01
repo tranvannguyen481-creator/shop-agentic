@@ -21,6 +21,15 @@ export interface CheckoutPricingBreakdown {
   minMembers: number;
   membersNeededForDiscount: number;
   willGetExtraDiscount: boolean;
+  /** The configured extra-discount percent from discountRules (regardless of threshold) */
+  potentialExtraDiscountPercent: number;
+}
+
+export interface GroupBuyToastItem {
+  id: string;
+  displayName: string;
+  message: string;
+  timestamp: number;
 }
 
 export interface EventCheckoutPageViewModel {
@@ -34,9 +43,21 @@ export interface EventCheckoutPageViewModel {
   isGroupBuy: boolean;
   isCalculating: boolean;
   isPlacingOrder: boolean;
+  isJoiningGroupBuy: boolean;
   orderId: string | null;
   pricingBreakdown: CheckoutPricingBreakdown | null;
-  onToggleGroupBuy: (value: boolean) => void;
+  shareUrl: string;
+  shareCopied: boolean;
+  hasNativeShare: boolean;
+
+  /** Real-time group buy data */
+  liveMemberCount: number;
+  groupBuyToasts: GroupBuyToastItem[];
+  onDismissGroupBuyToast: (id: string) => void;
+
+  onToggleGroupBuy: (value: boolean) => void | Promise<void>;
   onBackToDetail: () => void;
   onPlaceOrder: () => void;
+  onCopyShareLink: () => void;
+  onNativeShare: () => void;
 }

@@ -65,32 +65,6 @@
   gap: 0.125rem;
 }
 
-.icon-btn {
-  border: 0;
-  background: transparent;
-  color: tokens.color(text-muted-1);
-  border-radius: tokens.radius(lg);
-  width: 2.125rem;
-  height: 2.125rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
-
-  &:hover {
-    background: tokens.color(surface-soft);
-    color: tokens.color(body-text);
-  }
-
-  .icon {
-    width: 1rem;
-    height: 1rem;
-    stroke-width: 2;
-  }
-}
-
 .avatar {
   border: 0;
   padding: 0.125rem;

@@ -109,25 +109,36 @@ function ListMyGroupsView({ viewModel }: ListMyGroupsViewProps) {
                 }
               }}
             >
-              <div className={styles.groupHeader}>
-                <h3 className={styles.groupTitle}>{group.name}</h3>
-                <div className={styles.badges}>
-                  <Badge
-                    tone={group.status === "active" ? "success" : "warning"}
-                  >
-                    {group.status}
-                  </Badge>
-                  <Badge tone={group.role === "owner" ? "default" : "warning"}>
-                    {group.role}
-                  </Badge>
+              <div className={styles.cardTop}>
+                <span className={styles.groupAvatar}>
+                  {String(group.name ?? "")
+                    .charAt(0)
+                    .toUpperCase()}
+                </span>
+                <div className={styles.groupInfo}>
+                  <div className={styles.groupHeader}>
+                    <h3 className={styles.groupTitle}>{group.name}</h3>
+                    <div className={styles.badges}>
+                      <Badge
+                        tone={group.status === "active" ? "success" : "warning"}
+                      >
+                        {group.status}
+                      </Badge>
+                      <Badge
+                        tone={group.role === "owner" ? "default" : "warning"}
+                      >
+                        {group.role}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <p className={styles.groupDesc}>{group.description}</p>
+
+                  <div className={styles.groupMeta}>
+                    <Users size={11} />
+                    <span>{group.memberCount} members</span>
+                  </div>
                 </div>
-              </div>
-
-              <p className={styles.groupDesc}>{group.description}</p>
-
-              <div className={styles.groupMeta}>
-                <Users size={12} />
-                <span>{group.memberCount} members</span>
               </div>
 
               <div className={styles.actions}>

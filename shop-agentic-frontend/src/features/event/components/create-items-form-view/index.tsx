@@ -154,6 +154,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                     <Button
                       type="button"
                       variant="text"
+                      iconOnly
                       aria-label={`Move item ${itemIndex + 1} up`}
                       onClick={() => viewModel.handleSwapItemUp(itemIndex)}
                       disabled={itemIndex === 0}
@@ -164,6 +165,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                     <Button
                       type="button"
                       variant="text"
+                      iconOnly
                       aria-label={`Move item ${itemIndex + 1} down`}
                       onClick={() => viewModel.handleSwapItemDown(itemIndex)}
                       disabled={itemIndex === viewModel.itemFields.length - 1}
@@ -183,6 +185,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                     <Button
                       type="button"
                       variant="text"
+                      iconOnly
                       aria-label={`Duplicate item ${itemIndex + 1}`}
                       onClick={() => viewModel.handleDuplicateItem(itemIndex)}
                     >
@@ -192,6 +195,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                     <Button
                       type="button"
                       variant="text"
+                      iconOnly
                       aria-label={`Delete item ${itemIndex + 1}`}
                       onClick={() => viewModel.handleRemoveItem(itemIndex)}
                       disabled={viewModel.itemFields.length === 1}
@@ -218,6 +222,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                         <Button
                           type="button"
                           variant="text"
+                          iconOnly
                           className={styles["remove-option"]}
                           aria-label={`Remove option ${optionIndex + 1}`}
                           onClick={() =>
@@ -251,6 +256,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                           <Button
                             type="button"
                             variant="text"
+                            iconOnly
                             className={styles["remove-option-group"]}
                             aria-label={`Remove option group ${group.name}`}
                             onClick={() =>
@@ -282,6 +288,7 @@ function CreateItemsFormView({ viewModel }: CreateItemsFormViewProps) {
                               <Button
                                 type="button"
                                 variant="text"
+                                iconOnly
                                 className={styles["remove-choice"]}
                                 aria-label={`Remove choice ${choice.name}`}
                                 onClick={() =>

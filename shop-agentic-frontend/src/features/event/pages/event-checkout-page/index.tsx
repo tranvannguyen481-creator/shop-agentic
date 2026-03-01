@@ -1,16 +1,19 @@
-import { ChevronLeft, CreditCard } from "lucide-react";
-import { APP_PATHS } from "../../../../app/route-config";
 import {
-  Alert,
-  Button,
-  EmptyState,
-  SectionCard,
-  Switch,
-} from "../../../../shared/components/ui";
+  Check,
+  ChevronLeft,
+  Copy,
+  CreditCard,
+  Share2,
+  Users,
+  X,
+} from "lucide-react";
+import { APP_PATHS } from "../../../../app/route-config";
+import { Alert, Switch } from "../../../../shared/components/ui";
 import AppLayout from "../../../../shared/layouts/app-layout";
 import { toVND } from "../../../../shared/utils/price-utils";
 import OrderPricingBreakdown from "../../components/order-pricing-breakdown";
 import { useEventCheckoutPage } from "../../hooks/use-event-checkout-page";
+import styles from "./index.module.scss";
 
 export const routePath = APP_PATHS.eventCheckout;
 
@@ -19,158 +22,255 @@ function EventCheckoutPage() {
 
   return (
     <AppLayout>
-      <div className="container py-4" style={{ maxWidth: 640 }}>
-        {}
-        <div className="d-flex align-items-center gap-3 mb-4">
-          <Button
+      <div className={styles.page}>
+        {/* Sticky header */}
+        <div className={styles.header}>
+          <button
             type="button"
-            variant="text"
-            className="p-0 d-flex align-items-center gap-1"
+            className={styles.backLink}
             onClick={vm.onBackToDetail}
           >
-            <ChevronLeft size={16} /> Quay lại
-          </Button>
-          <div className="vr" style={{ height: 24 }} />
-          <div>
-            <h5 className="mb-0 fw-bold">Xác nhận đơn hàng</h5>
-            <p className="text-secondary mb-0" style={{ fontSize: "0.8rem" }}>
-              {vm.itemCount} sản phẩm
-            </p>
+            <ChevronLeft size={15} />
+            Quay lại
+          </button>
+          <div className={styles.divider} />
+          <div className={styles.headerMeta}>
+            <h5 className={styles.headerTitle}>Xác nhận đơn hàng</h5>
+            {vm.hasItems ? (
+              <span className={styles.headerSub}>
+                {vm.itemCount} sản phẩm &middot; {vm.subtotalText}
+              </span>
+            ) : null}
           </div>
         </div>
 
-        {}
         {vm.orderId ? (
-          <div className="text-center py-5">
-            <div style={{ fontSize: "3rem" }} className="mb-3">
-              🎉
+          /* Success state */
+          <div className={styles.successWrap}>
+            <span className={styles.successEmoji}>🎉</span>
+            <div className={styles.successCard}>
+              <h4 className={styles.successTitle}>Đặt hàng thành công!</h4>
+              <p className={styles.successSub}>
+                Đơn hàng của bạn đã được ghi nhận.
+              </p>
+              <code className={styles.orderId}>{vm.orderId}</code>
             </div>
-            <h4 className="fw-bold text-success mb-1">Đặt hàng thành công!</h4>
-            <p className="text-secondary mb-3">
-              Mã đơn hàng:{" "}
-              <code className="text-dark fw-semibold">{vm.orderId}</code>
-            </p>
-            {vm.infoMessage && (
-              <Alert tone="success" className="mb-3">
-                {vm.infoMessage}
-              </Alert>
-            )}
-            <Button variant="outline" onClick={vm.onBackToDetail}>
-              <ChevronLeft size={16} />
+            {vm.infoMessage ? (
+              <Alert tone="success">{vm.infoMessage}</Alert>
+            ) : null}
+            <button
+              type="button"
+              className={styles.successBackBtn}
+              onClick={vm.onBackToDetail}
+            >
+              <ChevronLeft size={14} />
               Quay lại event
-            </Button>
+            </button>
           </div>
         ) : !vm.hasItems ? (
-          <EmptyState
-            icon={<span>🛒</span>}
-            title="Chưa có sản phẩm nào"
-            description="Quay lại event để chọn sản phẩm trước khi thanh toán."
-            actions={
-              <Button
-                type="button"
-                variant="primary"
-                onClick={vm.onBackToDetail}
-              >
-                <ChevronLeft size={16} />
-                Quay lại event
-              </Button>
-            }
-          />
+          /* Empty state */
+          <div className={styles.emptyWrap}>
+            <span className={styles.emptyIcon}>🛒</span>
+            <h4 className={styles.emptyTitle}>Chưa có sản phẩm nào</h4>
+            <p className={styles.emptySub}>
+              Quay lại event để chọn sản phẩm trước khi thanh toán.
+            </p>
+            <button
+              type="button"
+              className={styles.emptyBackBtn}
+              onClick={vm.onBackToDetail}
+            >
+              <ChevronLeft size={15} />
+              Quay lại event
+            </button>
+          </div>
         ) : (
-          <div className="d-flex flex-column gap-3">
-            {}
-            <SectionCard>
-              <p
-                className="fw-semibold text-uppercase text-secondary mb-3"
-                style={{ fontSize: "0.75rem", letterSpacing: "0.05em" }}
-              >
-                Sản phẩm đã chọn
-              </p>
-              <div className="d-flex flex-column gap-2">
+          /* Main checkout */
+          <div className={styles.inner}>
+            {/* Order lines */}
+            <div className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h4 className={styles.cardTitle}>Sản phẩm đã chọn</h4>
+                <span className={styles.itemCount}>{vm.itemCount}</span>
+              </div>
+              <div className={styles.lineList}>
                 {vm.items.map((item, index) => (
                   <div
                     key={`${item.productId}-${index}`}
-                    className="d-flex justify-content-between align-items-start pb-2 border-bottom"
+                    className={styles.lineItem}
                   >
-                    <div className="me-3">
-                      <p className="mb-0 fw-medium">{item.name}</p>
-                      {item.selectedChoices.length > 0 && (
-                        <p className="mb-0 text-secondary small">
-                          {item.selectedChoices.join(", ")}
-                        </p>
-                      )}
-                      <p className="mb-0 text-secondary small">
-                        × {item.quantity}
-                      </p>
+                    <div className={styles.lineLeft}>
+                      <span className={styles.qtyBadge}>×{item.quantity}</span>
+                      <div>
+                        <p className={styles.lineName}>{item.name}</p>
+                        {item.selectedChoices.length > 0 ? (
+                          <p className={styles.lineOptions}>
+                            {item.selectedChoices.join(" · ")}
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
-                    <div className="text-end flex-shrink-0">
-                      <p className="mb-0 fw-semibold">
+                    <div className={styles.lineRight}>
+                      <span className={styles.lineTotal}>
                         {toVND(item.price * item.quantity)}
-                      </p>
-                      {item.quantity > 1 && (
-                        <p className="mb-0 text-muted small">
+                      </span>
+                      {item.quantity > 1 ? (
+                        <span className={styles.lineUnit}>
                           {toVND(item.price)} / cái
-                        </p>
-                      )}
+                        </span>
+                      ) : null}
                     </div>
                   </div>
                 ))}
               </div>
-            </SectionCard>
+            </div>
 
-            {}
-            <SectionCard>
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <p className="fw-semibold mb-0">🛍️ Mua nhóm</p>
-                  <p className="text-secondary mb-0 small">
-                    Bật để nhận giá ưu đãi khi đủ số lượng / thành viên
-                  </p>
-                </div>
-                <Switch
-                  checked={vm.isGroupBuy}
-                  onChange={vm.onToggleGroupBuy}
-                  disabled={vm.isCalculating || vm.isPlacingOrder}
-                />
+            {/* Group buy toggle */}
+            <div className={styles.groupBuyCard}>
+              <span className={styles.groupBuyIcon}>🛍️</span>
+              <div className={styles.groupBuyMeta}>
+                <p className={styles.groupBuyLabel}>Mua nhóm</p>
+                <p className={styles.groupBuySub}>
+                  {vm.isJoiningGroupBuy
+                    ? "Đang tham gia phiên mua nhóm..."
+                    : "Bật để nhận giá ưu đãi khi đủ số lượng / thành viên"}
+                </p>
               </div>
-            </SectionCard>
+              <Switch
+                checked={vm.isGroupBuy}
+                onChange={vm.onToggleGroupBuy}
+                disabled={
+                  vm.isCalculating || vm.isPlacingOrder || vm.isJoiningGroupBuy
+                }
+              />
+            </div>
 
-            {}
-            {vm.isCalculating && !vm.pricingBreakdown ? (
-              <div className="border rounded p-3 bg-light text-center">
-                <div
-                  className="spinner-border spinner-border-sm text-primary me-2"
-                  role="status"
-                  aria-hidden="true"
-                />
-                <span className="text-secondary small">
-                  Đang tính toán giá...
+            {/* Live member count — visible when group buy is on */}
+            {vm.isGroupBuy && vm.liveMemberCount > 0 ? (
+              <div className={styles.liveMemberCard}>
+                <Users size={16} className={styles.liveMemberIcon} />
+                <span className={styles.liveMemberCount}>
+                  {vm.liveMemberCount}
                 </span>
+                <span className={styles.liveMemberLabel}>
+                  người đã tham gia mua nhóm
+                </span>
+              </div>
+            ) : null}
+
+            {/* Share link — visible only when group buy is on */}
+            {vm.isGroupBuy ? (
+              <div className={styles.shareCard}>
+                <div className={styles.shareCardHeader}>
+                  <Share2 size={14} className={styles.shareCardIcon} />
+                  <span className={styles.shareCardTitle}>
+                    Mời bạn bè mua nhóm
+                  </span>
+                </div>
+                <p className={styles.shareCardSub}>
+                  Chia sẻ link để mọi người cùng tham gia &amp; nhận giá ưu đãi
+                </p>
+                <div className={styles.shareUrlRow}>
+                  <span className={styles.shareUrlText}>{vm.shareUrl}</span>
+                  <button
+                    type="button"
+                    className={`${styles.shareActionBtn} ${vm.shareCopied ? styles.shareActionBtnCopied : ""}`}
+                    onClick={vm.onCopyShareLink}
+                    aria-label="Sao chép link"
+                  >
+                    {vm.shareCopied ? (
+                      <>
+                        <Check size={13} /> Đã sao chép
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={13} /> Sao chép
+                      </>
+                    )}
+                  </button>
+                </div>
+                {vm.hasNativeShare ? (
+                  <button
+                    type="button"
+                    className={styles.nativeShareBtn}
+                    onClick={vm.onNativeShare}
+                  >
+                    <Share2 size={14} />
+                    Chia sẻ ngay
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+
+            {/* Pricing breakdown */}
+            {vm.isCalculating && !vm.pricingBreakdown ? (
+              <div className={styles.card}>
+                <div className={styles.pricingSpinner}>
+                  <span className={styles.spinner} />
+                  <span>Đang tính toán giá...</span>
+                </div>
               </div>
             ) : vm.pricingBreakdown ? (
               <OrderPricingBreakdown
                 breakdown={vm.pricingBreakdown}
                 isGroupBuy={vm.isGroupBuy}
                 isLoading={vm.isCalculating}
+                liveMemberCount={vm.liveMemberCount}
               />
             ) : null}
 
-            {}
-            {vm.errorMessage && <Alert tone="error">{vm.errorMessage}</Alert>}
+            {/* Error */}
+            {vm.errorMessage ? (
+              <Alert tone="error">{vm.errorMessage}</Alert>
+            ) : null}
+          </div>
+        )}
 
-            {}
-            <Button
+        {/* Action bar */}
+        {vm.hasItems && !vm.orderId ? (
+          <div className={styles.actionBar}>
+            <button
               type="button"
-              variant="primary"
-              fullWidth
+              className={styles.placeOrderBtn}
               disabled={vm.isPlacingOrder || vm.isCalculating}
               onClick={vm.onPlaceOrder}
             >
-              <CreditCard size={16} />
-              {vm.isPlacingOrder ? "Đang xử lý..." : "Đặt hàng ngay"}
-            </Button>
+              {vm.isPlacingOrder ? (
+                <>
+                  <span className={styles.spinner} />
+                  Đang xử lý...
+                </>
+              ) : (
+                <>
+                  <CreditCard size={17} />
+                  Đặt hàng ngay
+                </>
+              )}
+            </button>
           </div>
-        )}
+        ) : null}
+
+        {/* Group buy real-time toasts */}
+        {vm.groupBuyToasts.length > 0 ? (
+          <div className={styles.toastContainer}>
+            {vm.groupBuyToasts.map((toast) => (
+              <div key={toast.id} className={styles.groupToast}>
+                <span className={styles.groupToastEmoji}>👋</span>
+                <span className={styles.groupToastMessage}>
+                  {toast.message}
+                </span>
+                <button
+                  type="button"
+                  className={styles.groupToastDismiss}
+                  onClick={() => vm.onDismissGroupBuyToast(toast.id)}
+                  aria-label="Đóng"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
     </AppLayout>
   );

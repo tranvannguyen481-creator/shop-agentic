@@ -7,6 +7,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: ButtonVariant;
   fullWidth?: boolean;
+  /** Icon-only button: square shape, no border, surface-soft (#f8fafc) hover */
+  iconOnly?: boolean;
 }
 
 function Button({
@@ -14,13 +16,20 @@ function Button({
   variant = "primary",
   className,
   fullWidth = false,
+  iconOnly = false,
   ...buttonProps
 }: ButtonProps) {
   return (
     <button
-      className={`${styles.button} ${styles[variant]} ${
-        fullWidth ? styles.full : ""
-      } ${className ?? ""}`.trim()}
+      className={[
+        styles.button,
+        styles[variant],
+        fullWidth ? styles.full : "",
+        iconOnly ? styles["icon-only"] : "",
+        className ?? "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       {...buttonProps}
     >
       {children}

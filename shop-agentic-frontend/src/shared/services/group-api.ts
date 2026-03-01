@@ -1,17 +1,12 @@
+import type {
+  GroupDetail,
+  GroupItem,
+  GroupRole,
+  GroupStatus,
+} from "../../features/group/types/list-my-groups-types";
 import api from "./api";
 
-export interface GroupItem {
-  id: string;
-  name?: string;
-  description?: string;
-  memberCount?: number;
-  role?: string;
-  status?: string;
-  inviteCode?: string;
-  ownerDisplayName?: string;
-  updatedAt?: number;
-  [key: string]: unknown;
-}
+export type { GroupDetail, GroupItem, GroupRole, GroupStatus };
 
 export interface MyGroupsResult {
   items: GroupItem[];
@@ -32,9 +27,11 @@ export const fetchMyGroups = async (
   return { items, total };
 };
 
-export const fetchGroupDetail = async (groupId: string): Promise<GroupItem> => {
+export const fetchGroupDetail = async (
+  groupId: string,
+): Promise<GroupDetail> => {
   const response = await api.get(`/groups/${groupId}`);
-  const group = response.data?.data as GroupItem | undefined;
+  const group = response.data?.data as GroupDetail | undefined;
 
   if (typeof group?.id !== "string") {
     throw new Error("Group detail not found");
@@ -131,4 +128,63 @@ export const resetGroupCode = async (
     inviteCode: String(response.data?.data?.inviteCode ?? ""),
     shareLink: String(response.data?.data?.shareLink ?? ""),
   };
+};
+
+// ─── Join Request API ─────────────────────────────────────────────────────────
+
+export interface RequestJoinGroupResult {
+  requestId: string;
+  alreadyRequested: boolean;
+}
+
+export const requestJoinGroup = async (
+  groupId: string,
+  eventId: string,
+): Promise<RequestJoinGroupResult> => {
+  const response = await api.post(`/groups/${groupId}/join-requests`, {
+    eventId,
+  });
+
+  const data = response.data?.data as RequestJoinGroupResult | undefined;
+
+  return {
+    requestId: String(data?.requestId ?? ""),
+    alreadyRequested: Boolean(data?.alreadyRequested),
+  };
+};
+
+// ─── Join Request Management API ──────────────────────────────────────────────
+
+export interface JoinRequestItem {
+  id: string;
+  groupId: string;
+  uid: string;
+  email: string;
+  displayName: string;
+  status: "pending" | "approved" | "rejected";
+  eventId: string;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export const fetchJoinRequests = async (
+  groupId: string,
+): Promise<JoinRequestItem[]> => {
+  const response = await api.get(`/groups/${groupId}/join-requests`);
+  const items = response.data?.data?.items as JoinRequestItem[] | undefined;
+  return Array.isArray(items) ? items : [];
+};
+
+export const approveJoinRequest = async (
+  groupId: string,
+  requestId: string,
+): Promise<void> => {
+  await api.patch(`/groups/${groupId}/join-requests/${requestId}/approve`);
+};
+
+export const rejectJoinRequest = async (
+  groupId: string,
+  requestId: string,
+): Promise<void> => {
+  await api.patch(`/groups/${groupId}/join-requests/${requestId}/reject`);
 };

@@ -7,8 +7,8 @@ import {
 import {
   updateUserProfile,
   uploadAvatar,
-  type AuthUser,
 } from "../../../shared/services/auth-api";
+import type { AuthUser } from "../../auth/types/auth-user";
 
 export function useUpdateAvatar() {
   const queryClient = useQueryClient();
@@ -56,7 +56,6 @@ export function useUpdateAvatar() {
 
       setPreviewUrl(null);
     } catch {
-
       setPreviewUrl(null);
       setUploadError("Failed to update avatar. Please try again.");
     } finally {

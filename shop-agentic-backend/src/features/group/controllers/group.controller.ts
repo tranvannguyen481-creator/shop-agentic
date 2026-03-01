@@ -3,7 +3,9 @@ import {
   createGroupBodySchema,
   groupIdParamsSchema,
   inviteCodeParamsSchema,
+  joinRequestIdParamsSchema,
   listGroupsQuerySchema,
+  requestJoinGroupBodySchema,
   updateGroupSettingsBodySchema,
 } from "@/features/group/dtos/group.dto";
 import * as groupService from "@/features/group/services/group.service";
@@ -107,6 +109,71 @@ export async function getGroupDetail(
   const { groupId } = groupIdParamsSchema.parse(req.params ?? {});
   if (!req.user) throw AppError.unauthorized();
   const result = await groupService.getGroupDetail(groupId, req.user);
+  return res
+    .status(200)
+    .json({ success: true, data: result, message: "Success" });
+}
+
+export async function requestJoinGroup(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  const { groupId } = groupIdParamsSchema.parse(req.params ?? {});
+  const payload = requestJoinGroupBodySchema.parse(req.body ?? {});
+  if (!req.user) throw AppError.unauthorized();
+  const result = await groupService.requestJoinGroup(
+    groupId,
+    payload,
+    req.user,
+  );
+  return res
+    .status(201)
+    .json({ success: true, data: result, message: "Success" });
+}
+
+export async function listJoinRequests(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  const { groupId } = groupIdParamsSchema.parse(req.params ?? {});
+  if (!req.user) throw AppError.unauthorized();
+  const result = await groupService.listJoinRequests(groupId, req.user);
+  return res
+    .status(200)
+    .json({ success: true, data: result, message: "Success" });
+}
+
+export async function approveJoinRequest(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  const { groupId, requestId } = joinRequestIdParamsSchema.parse(
+    req.params ?? {},
+  );
+  if (!req.user) throw AppError.unauthorized();
+  const result = await groupService.approveJoinRequest(
+    groupId,
+    requestId,
+    req.user,
+  );
+  return res
+    .status(200)
+    .json({ success: true, data: result, message: "Success" });
+}
+
+export async function rejectJoinRequest(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  const { groupId, requestId } = joinRequestIdParamsSchema.parse(
+    req.params ?? {},
+  );
+  if (!req.user) throw AppError.unauthorized();
+  const result = await groupService.rejectJoinRequest(
+    groupId,
+    requestId,
+    req.user,
+  );
   return res
     .status(200)
     .json({ success: true, data: result, message: "Success" });

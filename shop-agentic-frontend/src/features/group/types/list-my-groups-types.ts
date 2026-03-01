@@ -2,13 +2,6 @@ export type GroupRole = "owner" | "member";
 
 export type GroupStatus = "active" | "paused";
 
-export type GroupModalType =
-  | "create"
-  | "settings"
-  | "add-member"
-  | "share-link"
-  | null;
-
 export interface GroupItem {
   id: string;
   name: string;
@@ -19,7 +12,22 @@ export interface GroupItem {
   inviteCode: string;
   ownerDisplayName?: string;
   ownerEmail?: string;
+  updatedAt?: number;
 }
+
+export interface GroupDetail extends GroupItem {
+  ownerUid: string;
+  memberEmails: string[];
+  memberUids: string[];
+  createdAt: number;
+}
+
+export type GroupModalType =
+  | "create"
+  | "settings"
+  | "add-member"
+  | "share-link"
+  | null;
 
 export interface GroupStatusOption {
   label: string;

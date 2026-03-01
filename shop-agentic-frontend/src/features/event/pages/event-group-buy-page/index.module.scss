@@ -1,0 +1,608 @@
+@use "../../../../shared/styles/tokens";
+
+// ─── Page shell ───────────────────────────────────────────────────────────────
+.page {
+  min-height: 100dvh;
+  background: tokens.color(body-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.inner {
+  flex: 1;
+  width: 100%;
+  max-width: 42rem;
+  margin-inline: auto;
+  padding: 0 1.125rem 7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// ─── Sticky header ────────────────────────────────────────────────────────────
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(248, 250, 252, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid tokens.color(border-soft);
+  padding: 0.75rem 1.125rem;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: tokens.fs(xs);
+  font-weight: 600;
+  color: tokens.color(text-soft);
+  padding: 0.25rem 0;
+  border-radius: tokens.radius(lg);
+  transition: color 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    color: tokens.color(primary-legacy);
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 1.5rem;
+  background: tokens.color(border-muted);
+  flex-shrink: 0;
+}
+
+.headerMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.0625rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.headerTitle {
+  margin: 0;
+  font-size: tokens.fs(sm);
+  font-weight: 800;
+  color: tokens.color(body-text);
+  letter-spacing: -0.015em;
+}
+
+.headerSub {
+  font-size: tokens.fs(xs);
+  color: tokens.color(text-soft);
+}
+
+.roleBadge {
+  flex-shrink: 0;
+  font-size: tokens.fs(xs);
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: tokens.radius(full);
+  background: tokens.color(primary-soft);
+  color: tokens.color(primary-legacy);
+}
+
+// ─── Toasts ───────────────────────────────────────────────────────────────────
+.toastStack {
+  position: fixed;
+  bottom: 5.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100vw - 2rem, 22rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 100;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(10px);
+  border-radius: tokens.radius(xl);
+  padding: 0.6rem 0.75rem;
+  animation: slideUp 0.25s ease;
+}
+
+.toastText {
+  flex: 1;
+  font-size: tokens.fs(xs);
+  color: #fff;
+  line-height: 1.4;
+}
+
+.toastDismiss {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 50%;
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7);
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ─── Cards ────────────────────────────────────────────────────────────────────
+.card {
+  background: tokens.color(surface);
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(xl);
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid tokens.color(border-soft);
+}
+
+.cardIcon {
+  color: tokens.color(primary-legacy);
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  color: tokens.color(body-text);
+  flex: 1;
+}
+
+.participantCount,
+.itemCount {
+  font-size: tokens.fs(xs);
+  font-weight: 700;
+  background: tokens.color(primary-soft);
+  color: tokens.color(primary-legacy);
+  border-radius: tokens.radius(full);
+  padding: 0.125rem 0.5rem;
+}
+
+// ─── Participants list ────────────────────────────────────────────────────────
+.participantList {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+.participantItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+
+  & + & {
+    border-top: 1px solid tokens.color(border-soft);
+  }
+}
+
+.participantAvatar {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: tokens.color(primary-soft);
+  color: tokens.color(primary-legacy);
+  font-size: tokens.fs(xs);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.participantMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.participantName {
+  font-size: tokens.fs(sm);
+  font-weight: 600;
+  color: tokens.color(body-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hostTag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: tokens.color(warning-soft, #fef9c3);
+  color: tokens.color(warning, #a16207);
+  border-radius: tokens.radius(full);
+  padding: 0.1rem 0.45rem;
+  flex-shrink: 0;
+}
+
+.participantEmpty {
+  padding: 1rem;
+  text-align: center;
+  font-size: tokens.fs(sm);
+  color: tokens.color(text-soft);
+  margin: 0;
+}
+
+// ─── Share card ───────────────────────────────────────────────────────────────
+.shareCard {
+  background: tokens.color(surface);
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(xl);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.shareCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.shareCardIcon {
+  color: tokens.color(primary-legacy);
+}
+
+.shareCardTitle {
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  color: tokens.color(body-text);
+}
+
+.shareCardSub {
+  font-size: tokens.fs(xs);
+  color: tokens.color(text-soft);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.shareUrlRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: tokens.color(body-bg);
+  border: 1px solid tokens.color(border-muted);
+  border-radius: tokens.radius(lg);
+  padding: 0.375rem 0.5rem 0.375rem 0.75rem;
+}
+
+.shareUrlText {
+  flex: 1;
+  font-size: tokens.fs(xs);
+  color: tokens.color(text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.shareActionBtn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: tokens.fs(xs);
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-radius: tokens.radius(md);
+  border: none;
+  cursor: pointer;
+  background: tokens.color(primary-legacy);
+  color: #fff;
+  transition: background 0.15s;
+
+  &:hover {
+    background: tokens.color(primary-dark, #1d4ed8);
+  }
+}
+
+.shareActionBtnCopied {
+  background: tokens.color(success, #16a34a);
+
+  &:hover {
+    background: tokens.color(success, #16a34a);
+  }
+}
+
+.nativeShareBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: tokens.radius(lg);
+  border: 1.5px solid tokens.color(primary-legacy);
+  background: transparent;
+  color: tokens.color(primary-legacy);
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover {
+    background: tokens.color(primary-soft);
+  }
+}
+
+// ─── Order lines ──────────────────────────────────────────────────────────────
+.lineList {
+  padding: 0.5rem 0;
+}
+
+.lineItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.625rem 1rem;
+
+  & + & {
+    border-top: 1px solid tokens.color(border-soft);
+  }
+}
+
+.lineLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+.lineRight {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.qtyBadge {
+  flex-shrink: 0;
+  font-size: tokens.fs(xs);
+  font-weight: 700;
+  color: tokens.color(primary-legacy);
+  background: tokens.color(primary-soft);
+  border-radius: tokens.radius(md);
+  padding: 0.125rem 0.4rem;
+  margin-top: 0.1rem;
+}
+
+.lineName {
+  margin: 0;
+  font-size: tokens.fs(sm);
+  font-weight: 600;
+  color: tokens.color(body-text);
+}
+
+.lineOptions {
+  margin: 0.125rem 0 0;
+  font-size: tokens.fs(xs);
+  color: tokens.color(text-soft);
+}
+
+.lineTotal {
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  color: tokens.color(body-text);
+}
+
+// ─── Calc loader ──────────────────────────────────────────────────────────────
+.calcLoader {
+  text-align: center;
+  font-size: tokens.fs(sm);
+  color: tokens.color(text-soft);
+  padding: 1rem 0;
+}
+
+// ─── CTA bar ──────────────────────────────────────────────────────────────────
+.ctaBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.875rem 1.125rem calc(0.875rem + env(safe-area-inset-bottom));
+  background: rgba(248, 250, 252, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid tokens.color(border-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 30;
+}
+
+.placeOrderBtn {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: none;
+  border-radius: tokens.radius(xl);
+  background: tokens.color(primary-legacy);
+  color: #fff;
+  font-size: tokens.fs(sm);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    opacity 0.15s,
+    background 0.15s;
+
+  &:hover:not(:disabled) {
+    background: tokens.color(primary-dark, #1d4ed8);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.dissolveBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border-radius: tokens.radius(lg);
+  border: 1.5px solid tokens.color(danger, #dc2626);
+  background: transparent;
+  color: tokens.color(danger, #dc2626);
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) {
+    background: tokens.color(danger-soft, #fee2e2);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.leaveBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border-radius: tokens.radius(lg);
+  border: 1.5px solid tokens.color(border-muted);
+  background: transparent;
+  color: tokens.color(text-soft);
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover:not(:disabled) {
+    background: tokens.color(body-bg);
+    color: tokens.color(body-text);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+// ─── Success & empty states ───────────────────────────────────────────────────
+.successWrap,
+.emptyWrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  gap: 1rem;
+  text-align: center;
+}
+
+.successEmoji,
+.emptyIcon {
+  font-size: 3rem;
+}
+
+.successCard {
+  background: tokens.color(surface);
+  border: 1px solid tokens.color(border-soft);
+  border-radius: tokens.radius(2xl);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 22rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.successTitle,
+.emptyTitle {
+  margin: 0;
+  font-size: tokens.fs(lg);
+  font-weight: 800;
+  color: tokens.color(body-text);
+}
+
+.successSub,
+.emptySub {
+  margin: 0;
+  font-size: tokens.fs(sm);
+  color: tokens.color(text-soft);
+}
+
+.orderId {
+  display: block;
+  font-size: tokens.fs(xs);
+  background: tokens.color(body-bg);
+  border: 1px solid tokens.color(border-muted);
+  border-radius: tokens.radius(md);
+  padding: 0.375rem 0.75rem;
+  color: tokens.color(body-text);
+  word-break: break-all;
+}
+
+.emptyBackBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: tokens.radius(xl);
+  border: 1.5px solid tokens.color(border-muted);
+  background: transparent;
+  color: tokens.color(text-soft);
+  font-size: tokens.fs(sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: tokens.color(body-bg);
+    color: tokens.color(body-text);
+  }
+}
