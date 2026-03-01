@@ -2,6 +2,7 @@ export const APP_PATHS = {
   landing: "/",
   signIn: "/sign-in",
   signUp: "/sign-up",
+  signUpEmail: "/sign-up-email",
   home: "/home",
   userProfile: "/user/profile",
   createEvent: "/event/create",

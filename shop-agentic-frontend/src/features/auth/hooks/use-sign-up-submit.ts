@@ -65,7 +65,7 @@ export function useSignUpSubmit() {
       return;
     }
 
-    navigate(APP_PATHS.signIn);
+    navigate(APP_PATHS.signUpEmail);
   };
 
   return {

@@ -14,6 +14,7 @@ const PUBLIC_PATHS = new Set<string>([
   APP_PATHS.landing,
   APP_PATHS.signIn,
   APP_PATHS.signUp,
+  APP_PATHS.signUpEmail,
 ]);
 
 // Eagerly load only the `routePath` string export — zero component code loaded

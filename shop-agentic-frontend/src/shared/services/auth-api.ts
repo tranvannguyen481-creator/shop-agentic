@@ -111,3 +111,16 @@ export const uploadAvatar = async (file: File): Promise<string> => {
 
   return urls[0];
 };
+
+export interface RegisterPayload {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export const registerWithEmail = async (
+  payload: RegisterPayload,
+): Promise<void> => {
+  await api.post("/auth/register", payload);
+};

@@ -1,0 +1,120 @@
+@use "../../../../shared/styles/tokens";
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    tokens.color(primary-legacy-strong) 0%,
+    tokens.color(primary-legacy) 50%,
+    #7c3aed 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 3vw, 2rem) clamp(0.75rem, 2vw, 1.25rem);
+  font-size: tokens.fs(sm);
+}
+
+.container {
+  width: min(27.5rem, 100%);
+}
+
+.header {
+  display: grid;
+  justify-items: center;
+  gap: clamp(0.25rem, 0.8vw, 0.5rem);
+  margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
+
+  h1 {
+    margin: 0;
+    color: tokens.color(text-on-dark);
+    font-size: clamp(1.8rem, 1.5rem + 1vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: clamp(0.78rem, 0.72rem + 0.2vw, 0.9rem);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+}
+
+.card {
+  background: #fff;
+  border-radius: tokens.radius(3xl);
+  padding: clamp(1.5rem, 4vw, 2.25rem) clamp(1.25rem, 3vw, 2rem);
+  box-shadow: 0 1.25rem 3rem rgba(0, 0, 0, 0.18);
+
+  h2 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem);
+    font-weight: 700;
+    color: tokens.color(text-primary);
+    text-align: center;
+  }
+}
+
+.form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.submit-btn {
+  margin-top: 0.5rem;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: tokens.color(text-secondary);
+  display: flex;
+  align-items: center;
+  padding: 0;
+
+  &:hover {
+    color: tokens.color(text-primary);
+  }
+}
+
+.alert {
+  margin-top: 0.75rem;
+}
+
+.footer-link {
+  margin: 1rem 0 0;
+  text-align: center;
+  font-size: tokens.fs(xs);
+  color: tokens.color(text-secondary);
+
+  a {
+    color: tokens.color(primary-legacy);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    align-items: flex-start;
+    padding-top: 1.5rem;
+  }
+
+  .card {
+    border-radius: tokens.radius(3xl);
+    padding: 1.25rem 1rem;
+  }
+}

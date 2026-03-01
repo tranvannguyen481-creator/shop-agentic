@@ -32,7 +32,20 @@ export const updateProfileSchema = z.object({
   photoURL: z.string().url("Invalid photo URL").optional(),
 });
 
+export const registerSchema = z
+  .object({
+    fullName: z.string().min(1, "Full name is required").max(100, "Full name is too long"),
+    email: z.string().min(1, "Email is required").email("Email is invalid"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
 export type SessionDto = z.infer<typeof sessionSchema>;
 export type GoogleLoginDto = z.infer<typeof googleLoginSchema>;
 export type CompleteProfileDto = z.infer<typeof completeProfileSchema>;
 export type UpdateProfileDto = z.infer<typeof updateProfileSchema>;
+export type RegisterDto = z.infer<typeof registerSchema>;
